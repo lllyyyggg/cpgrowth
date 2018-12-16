@@ -101,7 +101,7 @@ public class ConstructCPTreeAndMineThird {
      * Correction of counts
      */
     public void merge() {
-        //LOGGER.info("————————————— ———————————— ———————————— ——————————— ——————————— —————————— ———————————— ———————————the beginning of merging the subtrees to the cp tree");
+        LOGGER.info("————————————— ———————————— ———————————— ——————————— ——————————— —————————— ———————————— ———————————the beginning of merging the subtrees to the cp tree");
         for (int i = 0; i < root.children().size(); i++) {
             CPTreeNode<Object> node = root.children().get(i);
 
@@ -115,14 +115,14 @@ public class ConstructCPTreeAndMineThird {
                 newChildK.set_2c(childK._2c());
                 nodeList.add(newChildK);
                 copySubTree(nodeList, childK);                                                                          //([D],0,0)
-                //LOGGER.info("—————————————————————————————————————————————————————————————————————————————————");
-                //LOGGER.info("find a subtree and the tree head is {}", newChildK);
+                LOGGER.info("—————————————————————————————————————————————————————————————————————————————————");
+                LOGGER.info("find a subtree and the tree head is {}", newChildK);
                 addSubTreeToParent(newChildK, this.root);                                                               //添加子树到cp tree并且
-                //LOGGER.info("successfully merged subtree {} to {}", newChildK, this.root);
-                //LOGGER.info("—————————————————————————————————————————————————————————————————————————————————");
+                LOGGER.info("successfully merged subtree {} to {}", newChildK, this.root);
+                LOGGER.info("—————————————————————————————————————————————————————————————————————————————————");
             }
         }
-        //LOGGER.info("————————————— ———————————— ———————————— ——————————— ——————————— —————————— ———————————— ———————————the end of merging the subtrees to the cp tree");
+        LOGGER.info("————————————— ———————————— ———————————— ——————————— ——————————— —————————— ———————————— ———————————the end of merging the subtrees to the cp tree");
     }
 
 
@@ -274,7 +274,7 @@ public class ConstructCPTreeAndMineThird {
         if (parent.children().size() == 0) {                                                                            //如果root没有孩子节点
             CPTreeNode<Object> toAdd = subTreeHead;
             while (toAdd != null) {
-                //LOGGER.info("add {} to {}'s children.", toAdd, parent);
+                LOGGER.info("add {} to {}'s children.", toAdd, parent);
                 parent.children().add(toAdd);
                 toAdd.setParent(parent);
                 traverseAndAddIndexForNodes(toAdd);                                                                     //把toAdd添加index
@@ -289,14 +289,14 @@ public class ConstructCPTreeAndMineThird {
                     if (parent.children().get(i).value().equals(toAdd.value())) {
                         currChild.set_1c(toAdd._1c() + currChild._1c());
                         currChild.set_2c(toAdd._2c() + currChild._2c());
-                        //LOGGER.info("merge {} to {}, now the node is {}", toAdd, currChild.value(), currChild);
+                        LOGGER.info("merge {} to {}, now the node is {}", toAdd, currChild.value(), currChild);
                         addSubTreeToParent(toAdd.children().size() == 0 ? null : toAdd.children().get(0), currChild);
                         break;                                                                                          //找到了就跳出循环，开始将兄弟节点添加到root
                     }
                 }
                 CPTreeNode<Object> next = toAdd.sibling();                                                              //此处也就是root没有child和toAdd的value等价，那么直接将toAdd加到root
                 if (i == parent.children().size()) {
-                    //LOGGER.info("add {} to {}'s children.", toAdd, parent);
+                    LOGGER.info("add {} to {}'s children.", toAdd, parent);
                     parent.children().get(parent.children().size() - 1).setSibling(toAdd);
                     toAdd.setSibling(null);
                     parent.children().add(toAdd);
@@ -345,7 +345,7 @@ public class ConstructCPTreeAndMineThird {
             return;
         } else {
             top.setIndex(this.index++);
-            //LOGGER.info("[{} set index {}]", top, this.index - 1);
+            LOGGER.info("[{} set index {}]", top, this.index - 1);
         }
         List<CPTreeNode<Object>> rootChildren = top.children();
         if (rootChildren.size() == 0) {

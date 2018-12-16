@@ -3,3 +3,6 @@
 /.idea
 *.iml
 *.log
+resources/ITEMSCOUNT_FILE
+resources/MIXED_DATASET
+resources/COUNT_OF*
