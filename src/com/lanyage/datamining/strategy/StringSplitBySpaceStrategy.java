@@ -74,7 +74,7 @@ public class StringSplitBySpaceStrategy implements IStringSplitStrategy<Object> 
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(dest, true)));
         String line;
         while ((line = br.readLine()) != null && !line.trim().equals("")) {
-            logger.info("origin itemset without tag: {} ", line);
+            //logger.info("origin itemset without tag: {} ", line);
             String[] items = line.split(" ");
             List<Item<Object>> itemList = new ArrayList<>();
             for (String itemString : items) {
@@ -90,7 +90,7 @@ public class StringSplitBySpaceStrategy implements IStringSplitStrategy<Object> 
             }
             sb.deleteCharAt(sb.length() - 1);
             sb.append(",").append(classTag);
-            logger.info("sorted itemset    with tag: {} ", sb.toString());
+            //logger.info("sorted itemset    with tag: {} ", sb.toString());
             bw.write(sb.toString());
             bw.newLine();
             bw.flush();

@@ -65,9 +65,18 @@ public class CPTreeNode<T> {
         this.sibling = sibling;
     }
 
+    public double supportOfD1(Integer N1) {
+        return (double)this._1c / N1;
+    }
+
+    public double supportOfD2(Integer N2) {
+        return (double)this._2c / N2;
+    }
+
     public static <T> CPTreeNode<T> getInstance() {
         return new CPTreeNode<>();
     }
+
     @Override
     public String toString() {
         return "<" + index + ":" +

@@ -28,17 +28,17 @@ public class CalculateItemCountFirst {
 
     public static void main(String[] args) throws IOException {
 
-        logger.info("———————————————————————————————————————————————————————————————————————————————————————————————————the beginning of calculating item counts");
+        //logger.info("———————————————————————————————————————————————————————————————————————————————————————————————————the beginning of calculating item counts");
 
         Map<Object, Integer> itemCountMap = new HashMap<>();
         Map<Object, Integer> map1 = calculateCountOfItems(DATASET_I);
-        logger.info("successfully count items from \"{}\"", DATASET_I);
+        //logger.info("successfully count items from \"{}\"", DATASET_I);
         Map<Object, Integer> map2 = calculateCountOfItems("resources/DATASET_II");
-        logger.info("successfully count items from \"{}\"", DATASET_II);
+        //logger.info("successfully count items from \"{}\"", DATASET_II);
 
-        logger.info("———————————————————————————————————————————————————————————————————————————————————————————————————the end of calculating item counts");
+        //logger.info("———————————————————————————————————————————————————————————————————————————————————————————————————the end of calculating item counts");
 
-        logger.info("———————————————————————————————————————————————————————————————————————————————————————————————————the beginning of mixing item counts");
+        //logger.info("———————————————————————————————————————————————————————————————————————————————————————————————————the beginning of mixing item counts");
         itemCountMap.putAll(map1);
         for (Map.Entry<Object, Integer> entry : map2.entrySet()) {
             Object key = entry.getKey();
@@ -57,14 +57,14 @@ public class CalculateItemCountFirst {
             String content = key + " " + count;
             bw.write(content);
             bw.newLine();
-            logger.info("write <{}={}> to the file \"{}\"", key, count, ITEMSCOUNT_FILE);
+            //logger.info("write <{}={}> to the file \"{}\"", key, count, ITEMSCOUNT_FILE);
         }
         bw.flush();
         bw.close();
-        logger.info("———————————————————————————————————————————————————————————————————————————————————————————————————the end of mixing item counts");
+        //logger.info("———————————————————————————————————————————————————————————————————————————————————————————————————the end of mixing item counts");
     }
 
-     /*——————————————————————————————————————result log————————————————————————————————————————
+     /*——————————————————————————————————————result log————————————————————————————————————————————
      |2018-12-13 11:06:41  [ main:0 ] - [ INFO ]  write <A=2> to the file resources/ITEMSCOUNT_FILE|
      |2018-12-13 11:06:41  [ main:0 ] - [ INFO ]  write <B=3> to the file resources/ITEMSCOUNT_FILE|
      |2018-12-13 11:06:41  [ main:1 ] - [ INFO ]  write <C=4> to the file resources/ITEMSCOUNT_FILE|
@@ -72,5 +72,5 @@ public class CalculateItemCountFirst {
      |2018-12-13 11:06:41  [ main:1 ] - [ INFO ]  write <E=3> to the file resources/ITEMSCOUNT_FILE|
      |2018-12-13 11:06:41  [ main:1 ] - [ INFO ]  write <F=6> to the file resources/ITEMSCOUNT_FILE|
      |2018-12-13 11:06:41  [ main:1 ] - [ INFO ]  write <G=4> to the file resources/ITEMSCOUNT_FILE|
-      ————————————————————————————————————————————————————————————————————————————————————————*/
+      ————————————————————————————————————————————————————————————————————————————————————————————*/
 }

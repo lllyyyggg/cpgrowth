@@ -25,19 +25,19 @@ public class SortItemsForItemSetSecond {
     }
 
     public static void main(String[] args) throws IOException {
-        logger.info("———————————————————————————————————————————————————————————————————————————————————————————————————the beginning of getting map entries from \"resources/ITEMSCOUNT_FILE\"");
+        //logger.info("———————————————————————————————————————————————————————————————————————————————————————————————————the beginning of getting map entries from \"resources/ITEMSCOUNT_FILE\"");
         Map<Object, Integer> valueAndCount = new HashMap<>();
         BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(ITEMSCOUNT_FILE)));
         String line;
         while ((line = br.readLine()) != null && !line.trim().equals("")) {
             Object[] objects = line.split(" ");
             valueAndCount.put(objects[0], Integer.valueOf((String) objects[1]));
-            logger.info("get map entry : <{}={}> ", objects[0], objects[1]);
+            //logger.info("get map entry : <{}={}> ", objects[0], objects[1]);
         }
         br.close();
-        logger.info("———————————————————————————————————————————————————————————————————————————————————————————————————the end of getting map entries from \"resources/ITEMSCOUNT_FILE\"");
+        //logger.info("———————————————————————————————————————————————————————————————————————————————————————————————————the end of getting map entries from \"resources/ITEMSCOUNT_FILE\"");
 
-        logger.info("———————————————————————————————————————————————————————————————————————————————————————————————————the beginning of putting sorted itemsets into \"resources/MIXED_DATASET\"");
+        //logger.info("———————————————————————————————————————————————————————————————————————————————————————————————————the beginning of putting sorted itemsets into \"resources/MIXED_DATASET\"");
         String dest = "resources/MIXED_DATASET";
         File destFile = new File(dest);
         if (destFile.exists()) {
@@ -46,10 +46,10 @@ public class SortItemsForItemSetSecond {
             destFile.createNewFile();
         }
 
-        sortAndAddTags(valueAndCount, DATASET_I, dest, 1);                                      //将两个数据集排序好然后存入DATASET_ALL
+        sortAndAddTags(valueAndCount, DATASET_I, dest, 1);                                                         //将两个数据集排序好然后存入DATASET_ALL
         sortAndAddTags(valueAndCount, DATASET_II, dest, 2);
         br.close();
-        logger.info("———————————————————————————————————————————————————————————————————————————————————————————————————the end of putting sorted itemsets into \"resources/MIXED_DATASET\"");
+        //logger.info("———————————————————————————————————————————————————————————————————————————————————————————————————the end of putting sorted itemsets into \"resources/MIXED_DATASET\"");
     }
 
     /*————————————————————————————————————————————————————————————————————————

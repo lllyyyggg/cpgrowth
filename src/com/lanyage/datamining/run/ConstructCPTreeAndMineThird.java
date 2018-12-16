@@ -3,10 +3,12 @@ package com.lanyage.datamining.run;
 import com.lanyage.datamining.datastructure.CPTreeNode;
 import com.lanyage.datamining.factory.StrategyFactory;
 import com.lanyage.datamining.strategy.IStringSplitStrategy;
+import com.sun.corba.se.spi.ior.ObjectKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,19 +16,32 @@ import java.util.List;
  * 三 构建初始CP树和merge CPTree
  */
 public class ConstructCPTreeAndMineThird {
-    private static final Logger logger = LoggerFactory.getLogger(ConstructCPTreeAndMineThird.class);
-    private static final String COUNT_OF_TRANSACTIONS_IN_BOTH_DATASET = "resources/COUNT_OF_TRANSACTIONS_IN_BOTH_DATASET";
-    private static final String MIXED_DATASET = "resources/MIXED_DATASET";
+    public static final Logger LOGGER = LoggerFactory.getLogger(ConstructCPTreeAndMineThird.class);
+    public static final String COUNT_OF_TRANSACTIONS_IN_BOTH_DATASET = "resources/COUNT_OF_TRANSACTIONS_IN_BOTH_DATASET";
+    public static final String MIXED_DATASET = "resources/MIXED_DATASET";
+    public static final ConstructCPTreeAndMineThird INSTANCE = new ConstructCPTreeAndMineThird();
+    public static final IStringSplitStrategy STRATEGY = StrategyFactory.stringSplitStrategy();
+    public static final double MINIMAL_THRESHOLD = 0.6d;                                                                //0.6,   0.8,   1.0,   0.8,   0.8
+    public static final double MAXIMUM_THRESHOLD = 0.050d;                                                              //0.050, 0.050, 0.050, 0.025, 0.075
+    public static final List<String> initialTreeTransactionList = new ArrayList<>();
+    //public static final double MINIMAL_THRESHOLD = 0.8d;
+    //public static final double MAXIMUM_THRESHOLD = 0.050d;
 
-    private static final IStringSplitStrategy STRATEGY = StrategyFactory.stringSplitStrategy();
+    //public static final double MINIMAL_THRESHOLD = 1.0d;
+    //public static final double MAXIMUM_THRESHOLD = 0.050d;
 
+    //public static final double MINIMAL_THRESHOLD = 0.8d;
+    //public static final double MAXIMUM_THRESHOLD = 0.025d;
+
+    //public static final double MINIMAL_THRESHOLD = 0.8d;
+    //public static final double MAXIMUM_THRESHOLD = 0.075d;
     private CPTreeNode<Object> root;
     private int _1total = 0;
     private int _2total = 0;
     private Integer index = 0;
 
     public void initialize() {
-        logger.info("————————————— ———————————— ———————————— ——————————— ——————————— —————————— ———————————— ———————————the beginning of initializing the cp tree with a root node");
+        //LOGGER.info("————————————— ———————————— ———————————— ——————————— ——————————— —————————— ———————————— ———————————the beginning of initializing the cp tree with a root node");
         root = new CPTreeNode<>();
         root.setIndex(index++);
         root.setValue("root");
@@ -34,12 +49,12 @@ public class ConstructCPTreeAndMineThird {
         root.set_2c(0);
         root.setParent(null);
         root.setSibling(null);
-        logger.info("the root node is {}", this.root);
-        logger.info("————————————— ———————————— ———————————— ——————————— ——————————— —————————— ———————————— ———————————the end of initializing the cp tree with a root node");
+        //LOGGER.info("the root node is {}", this.root);
+        //LOGGER.info("————————————— ———————————— ———————————— ——————————— ——————————— —————————— ———————————— ———————————the end of initializing the cp tree with a root node");
     }
 
     public void createInitialCPTree() throws IOException {
-        logger.info("————————————— ———————————— ———————————— ——————————— ——————————— —————————— ———————————— ———————————the beginning of constructing an cp tree with existing transactions");
+        //LOGGER.info("————————————— ———————————— ———————————— ——————————— ——————————— —————————— ———————————— ———————————the beginning of constructing an cp tree with existing transactions");
         File file = new File(MIXED_DATASET);
         BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
 
@@ -48,9 +63,9 @@ public class ConstructCPTreeAndMineThird {
             String[] nodesAndTag = line.split(",");
             String nodesString = nodesAndTag[0];
             String classTag = nodesAndTag[1];
-            logger.info("start——————current transaction is {}, classTag is {} ——————start", nodesString, classTag);
+            //LOGGER.info("start——————current transaction is {}, classTag is {} ——————start", nodesString, classTag);
             nodeStringToItemSetAndAppendToRoot(nodesString, classTag);                                                  //根据(FDGB,1)类型的数据生成小树并添加到cptree上
-            logger.info("end  ——————current transaction is {}, classTag is {} ——————  end", nodesString, classTag);
+            //LOGGER.info("end  ——————current transaction is {}, classTag is {} ——————  end", nodesString, classTag);
             if (classTag.equals("1")) {                                                                                 //纪录每个数据集的transaction的条数
                 this._1total++;
             }
@@ -58,7 +73,7 @@ public class ConstructCPTreeAndMineThird {
                 this._2total++;
             }
         }
-        logger.info("————————————— ———————————— ———————————— ——————————— ——————————— —————————— ———————————— ———————————the end of constructing an cp tree with existing transactions");
+        //LOGGER.info("————————————— ———————————— ———————————— ——————————— ——————————— —————————— ———————————— ———————————the end of constructing an cp tree with existing transactions");
     }
 
     private void nodeStringToItemSetAndAppendToRoot(String nodesString, String classTag) {
@@ -69,7 +84,7 @@ public class ConstructCPTreeAndMineThird {
     }
 
     public void flushTotalOfBothDataSetToFile() throws IOException {
-        logger.info("————————————— ———————————— ———————————— ——————————— ——————————— —————————— ———————————— ———————————the beginning of counting numbers of both datasets");
+        //LOGGER.info("————————————— ———————————— ———————————— ——————————— ——————————— —————————— ———————————— ———————————the beginning of counting numbers of both datasets");
         File file = new File(COUNT_OF_TRANSACTIONS_IN_BOTH_DATASET);
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file)));
         bw.write(String.valueOf(this._1total));
@@ -77,8 +92,8 @@ public class ConstructCPTreeAndMineThird {
         bw.write(String.valueOf(this._2total));
         bw.newLine();
         bw.flush();
-        logger.info("flush total of records of both datasets into file : {} and {}", this._1total, this._2total);
-        logger.info("————————————— ———————————— ———————————— ——————————— ——————————— —————————— ———————————— ———————————the end of counting numbers of both datasets");
+        //LOGGER.info("flush total of records of both datasets into file : {} and {}", this._1total, this._2total);
+        //LOGGER.info("————————————— ———————————— ———————————— ——————————— ——————————— —————————— ———————————— ———————————the end of counting numbers of both datasets");
     }
 
     /**
@@ -86,9 +101,10 @@ public class ConstructCPTreeAndMineThird {
      * Correction of counts
      */
     public void merge() {
-        logger.info("————————————— ———————————— ———————————— ——————————— ——————————— —————————— ———————————— ———————————the beginning of merging the subtrees to the cp tree");
+        //LOGGER.info("————————————— ———————————— ———————————— ——————————— ——————————— —————————— ———————————— ———————————the beginning of merging the subtrees to the cp tree");
         for (int i = 0; i < root.children().size(); i++) {
             CPTreeNode<Object> node = root.children().get(i);
+
             List<CPTreeNode<Object>> nodeChildren = node.children();
             for (int k = 0; k < nodeChildren.size(); k++) {
                 List<CPTreeNode<Object>> nodeList = new ArrayList<>();
@@ -99,16 +115,93 @@ public class ConstructCPTreeAndMineThird {
                 newChildK.set_2c(childK._2c());
                 nodeList.add(newChildK);
                 copySubTree(nodeList, childK);                                                                          //([D],0,0)
-                logger.info("————————————————————————————————————————————————————————————————————————————————————————");
-                logger.info("find a subtree and the tree head is {}", newChildK);
+                //LOGGER.info("—————————————————————————————————————————————————————————————————————————————————");
+                //LOGGER.info("find a subtree and the tree head is {}", newChildK);
                 addSubTreeToParent(newChildK, this.root);                                                               //添加子树到cp tree并且
-                logger.info("successfully merged subtree {} to {}", newChildK, this.root);
-                logger.info("————————————————————————————————————————————————————————————————————————————————————————");
+                //LOGGER.info("successfully merged subtree {} to {}", newChildK, this.root);
+                //LOGGER.info("—————————————————————————————————————————————————————————————————————————————————");
             }
-            //break;
         }
-        logger.info("————————————— ———————————— ———————————— ——————————— ——————————— —————————— ———————————— ———————————the end of merging the subtrees to the cp tree");
+        //LOGGER.info("————————————— ———————————— ———————————— ——————————— ——————————— —————————— ———————————— ———————————the end of merging the subtrees to the cp tree");
+    }
 
+
+    public int mineCpFromNode(CPTreeNode<Object> node) {                                                                //返回-1说明删掉了一个节点
+        return mineTraverse(new ArrayList<>(), node);
+    }
+
+    private int mineTraverse(List<CPTreeNode<Object>> prefix, CPTreeNode<Object> top) {
+        if (top == null) {
+            return 0;
+        } else {
+            DecimalFormat decimalFormat = new DecimalFormat("#0.0000");
+            if (isContrastPattern(top)) {   //如果当前是对比模式
+                prefix.add(top);        //添加到前缀
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < prefix.size(); i++) {
+                    sb.append(prefix.get(i).value());
+                }
+                LOGGER.info("{},[{} {}],[{} {}],[{} {}]", sb.toString(), top._1c(), top._2c(), decimalFormat.format(top.supportOfD1(_1total)), decimalFormat.format(top.supportOfD2(_2total)), MINIMAL_THRESHOLD, MAXIMUM_THRESHOLD);
+            } else if (!canPrune(top)) {
+                prefix.add(top);                                                                                        //添加到前缀
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < prefix.size(); i++) {
+                    sb.append(prefix.get(i).value());
+                }
+                LOGGER.info("{} 不是对比模式, 但是其后缀可能是, 可以继续遍历。[{} {}], {},{},{},{}", sb.toString(), top._1c(), top._2c(), decimalFormat.format(top.supportOfD1(_1total)), decimalFormat.format(top.supportOfD2(_2total)), MINIMAL_THRESHOLD, MAXIMUM_THRESHOLD);
+            } else {
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < prefix.size(); i++) {
+                    sb.append(prefix.get(i).value());
+                }
+                sb.append(top.value());
+                LOGGER.info("{} 不满足对比模式定义, 并且也不满足第二个条件, 其之后的后缀都可以剪枝。[{} {}] {},{},{},{}", sb.toString(), top._1c(), top._2c(), decimalFormat.format(top.supportOfD1(_1total)), decimalFormat.format(top.supportOfD2(_2total)), MINIMAL_THRESHOLD, MAXIMUM_THRESHOLD);
+
+                List<CPTreeNode<Object>> topChildren = top.parent().children();                                         //top.parent不可能为null
+                for (int i = 0; i < topChildren.size(); i++) {
+                    CPTreeNode<Object> node = topChildren.get(i);
+                    if (node.sibling() == top) {
+                        node.setSibling(top.sibling());
+                        break;
+                    }
+                    if (node == top) {
+                        break;
+                    }
+                }
+                top.parent().children().remove(top);
+                return -1;
+            }
+        }
+
+
+        List<CPTreeNode<Object>> topChildren = top.children();
+        if (topChildren.size() == 0) {
+            prefix.remove(prefix.size() - 1);
+            return 0;
+        }
+        for (int i = 0; i < topChildren.size(); i++) {
+            CPTreeNode<Object> currChild = topChildren.get(i);
+            int response = mineTraverse(prefix, currChild);
+            if (response == -1) {
+                i--;
+            }
+        }
+        prefix.remove(prefix.size() - 1);
+        return 0;
+    }
+
+    private boolean isContrastPattern(CPTreeNode<Object> node) {
+        double supportOfD1 = node.supportOfD1(_1total);
+        double supportOfD2 = node.supportOfD2(_2total);
+        boolean result = (supportOfD1 > MINIMAL_THRESHOLD && supportOfD2 <= MAXIMUM_THRESHOLD) || (supportOfD2 > MINIMAL_THRESHOLD && supportOfD1 <= MAXIMUM_THRESHOLD);
+        return result;
+    }
+
+    private boolean canPrune(CPTreeNode<Object> node) {
+        double supportOfD1 = node.supportOfD1(_1total);
+        double supportOfD2 = node.supportOfD2(_2total);
+        boolean result = supportOfD1 > MINIMAL_THRESHOLD || supportOfD2 > MINIMAL_THRESHOLD;
+        return !result;
     }
 
     /**
@@ -167,11 +260,11 @@ public class ConstructCPTreeAndMineThird {
 
 
     public void traverseRoot() {
-        logger.info("————————————— ———————————— ———————————— ——————————— ——————————— —————————— ———————————— ———————————the beginning of traversing the cp tree");
+        //LOGGER.info("————————————— ———————————— ———————————— ——————————— ——————————— —————————— ———————————— ———————————the beginning of traversing the cp tree");
         for (int i = 0; i < this.root.children().size(); i++) {
             traverse(new ArrayList<>(0), this.root.children().get(i));
         }
-        logger.info("————————————— ———————————— ———————————— ——————————— ——————————— —————————— ———————————— ———————————the end of traversing the cp tree");
+        //LOGGER.info("————————————— ———————————— ———————————— ——————————— ——————————— —————————— ———————————— ———————————the end of traversing the cp tree");
     }
 
     private void addSubTreeToParent(CPTreeNode<Object> subTreeHead, CPTreeNode<Object> parent) {                        //在这里父子关系已经从做好了，开始做兄弟关系
@@ -181,7 +274,7 @@ public class ConstructCPTreeAndMineThird {
         if (parent.children().size() == 0) {                                                                            //如果root没有孩子节点
             CPTreeNode<Object> toAdd = subTreeHead;
             while (toAdd != null) {
-                logger.info("add {} to {}'s children.", toAdd, parent);
+                //LOGGER.info("add {} to {}'s children.", toAdd, parent);
                 parent.children().add(toAdd);
                 toAdd.setParent(parent);
                 traverseAndAddIndexForNodes(toAdd);                                                                     //把toAdd添加index
@@ -196,14 +289,14 @@ public class ConstructCPTreeAndMineThird {
                     if (parent.children().get(i).value().equals(toAdd.value())) {
                         currChild.set_1c(toAdd._1c() + currChild._1c());
                         currChild.set_2c(toAdd._2c() + currChild._2c());
-                        logger.info("merge {} to {}, now the node is {}", toAdd, currChild.value(), currChild);
+                        //LOGGER.info("merge {} to {}, now the node is {}", toAdd, currChild.value(), currChild);
                         addSubTreeToParent(toAdd.children().size() == 0 ? null : toAdd.children().get(0), currChild);
                         break;                                                                                          //找到了就跳出循环，开始将兄弟节点添加到root
                     }
                 }
                 CPTreeNode<Object> next = toAdd.sibling();                                                              //此处也就是root没有child和toAdd的value等价，那么直接将toAdd加到root
                 if (i == parent.children().size()) {
-                    logger.info("add {} to {}'s children.", toAdd, parent);
+                    //LOGGER.info("add {} to {}'s children.", toAdd, parent);
                     parent.children().get(parent.children().size() - 1).setSibling(toAdd);
                     toAdd.setSibling(null);
                     parent.children().add(toAdd);
@@ -227,25 +320,32 @@ public class ConstructCPTreeAndMineThird {
         } else {
             nodeList.add(top);
         }
-        List<CPTreeNode<Object>> rootChildren = top.children();
-        if (rootChildren.size() == 0) {
-            logger.info("find transaction {}", nodeList);
+        List<CPTreeNode<Object>> topChildren = top.children();
+        if (topChildren.size() == 0) {
+            //LOGGER.info("find transaction {}", nodeList);
+            StringBuilder sb = new StringBuilder();
+            for(int i = 0; i <nodeList.size(); i++) {
+                sb.append(nodeList.get(i).value()).append(" ");
+            }
+            sb.deleteCharAt(sb.length() -1);
+            initialTreeTransactionList.add(sb.toString());
             nodeList.remove(nodeList.size() - 1);
             return;
         }
-        for (int i = 0; i < rootChildren.size(); i++) {
-            CPTreeNode<Object> currChild = rootChildren.get(i);
+        for (int i = 0; i < topChildren.size(); i++) {
+            CPTreeNode<Object> currChild = topChildren.get(i);
             traverse(nodeList, currChild);
         }
         nodeList.remove(nodeList.size() - 1);
     }
+
 
     private void traverseAndAddIndexForNodes(CPTreeNode<Object> top) {
         if (top == null) {
             return;
         } else {
             top.setIndex(this.index++);
-            logger.info("[{} set index {}]", top, this.index - 1);
+            //LOGGER.info("[{} set index {}]", top, this.index - 1);
         }
         List<CPTreeNode<Object>> rootChildren = top.children();
         if (rootChildren.size() == 0) {
@@ -266,33 +366,33 @@ public class ConstructCPTreeAndMineThird {
                 curr.setParent(prev);
             }
         } else {
-            logger.info("nodeList size = 1，no need to set the parent-child relationship");
+            //LOGGER.info("nodeList size = 1，no need to set the parent-child relationship");
         }
     }
 
+
     public static void main(String[] args) throws IOException {
-        ConstructCPTreeAndMineThird constructor = new ConstructCPTreeAndMineThird();
-        constructor.initialize();                                                                                       //初始化创建根节点
-        logger.info("|");
-        logger.info("|");
-        logger.info("|");
-        constructor.createInitialCPTree();                                                                              //构建初始CP树
-        logger.info("|");
-        logger.info("|");
-        logger.info("|");
-        constructor.traverseRoot();
-        logger.info("|");
-        logger.info("|");
-        logger.info("|");
-        constructor.flushTotalOfBothDataSetToFile();                                                                    //将两个数据集的总transaction数
-        logger.info("|");
-        logger.info("|");
-        logger.info("|");
-        constructor.merge();
-        logger.info("|");
-        logger.info("|");
-        logger.info("|");
-        constructor.traverseRoot();
+        INSTANCE.initialize();                                                                                          //初始化创建根节点
+        //LOGGER.info("|");
+        //LOGGER.info("|");
+        //LOGGER.info("|");
+        INSTANCE.createInitialCPTree();                                                                                 //构建初始CP树
+        //LOGGER.info("|");
+        //LOGGER.info("|");
+        //LOGGER.info("|");
+        INSTANCE.traverseRoot();
+        //LOGGER.info("|");
+        //LOGGER.info("|");
+        //LOGGER.info("|");
+        INSTANCE.flushTotalOfBothDataSetToFile();                                                                       //将两个数据集的总transaction数
+        //LOGGER.info("|");
+        //LOGGER.info("|");
+        //LOGGER.info("|");
+        INSTANCE.merge();
+        //LOGGER.info("|");
+        //LOGGER.info("|");
+        //LOGGER.info("|");
+        //INSTANCE.traverseRoot();
     }
 }
 

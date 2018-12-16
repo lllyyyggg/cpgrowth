@@ -72,7 +72,7 @@ public class StringSplitToCharactersStrategy implements IStringSplitStrategy<Obj
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(dest, true)));
         String line;
         while ((line = br.readLine()) != null && !line.trim().equals("")) {
-            logger.info("origin itemset without tag: {} ", line);
+            //logger.info("origin itemset without tag: {} ", line);
             char[] cs = line.toCharArray();
             List<Item<Object>> itemList = new ArrayList<>();
             for (char c : cs) {
@@ -87,7 +87,7 @@ public class StringSplitToCharactersStrategy implements IStringSplitStrategy<Obj
                 sb.append(item.value());
             }
             sb.append(",").append(classTag);
-            logger.info("sorted itemset    with tag: {} ", sb.toString());
+            //logger.info("sorted itemset    with tag: {} ", sb.toString());
             bw.write(sb.toString());
             bw.newLine();
             bw.flush();
