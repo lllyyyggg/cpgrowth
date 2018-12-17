@@ -8,7 +8,6 @@ public class CPTreeNode<T> {
     private Integer _1c; //第一个类的count
     private Integer _2c; //第二个类的count
     private Integer index;  //索引
-
     private CPTreeNode<T> parent;   //父节点
     private List<CPTreeNode<T>> children = new ArrayList<>(0);    //孩子节点集合
     private CPTreeNode<T> sibling;  //右边的兄弟节点
@@ -66,11 +65,11 @@ public class CPTreeNode<T> {
     }
 
     public double supportOfD1(Integer N1) {
-        return (double)this._1c / N1;
+        return (double) this._1c / N1;
     }
 
     public double supportOfD2(Integer N2) {
-        return (double)this._2c / N2;
+        return (double) this._2c / N2;
     }
 
     public static <T> CPTreeNode<T> getInstance() {
