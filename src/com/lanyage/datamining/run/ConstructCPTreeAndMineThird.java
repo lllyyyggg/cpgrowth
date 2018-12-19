@@ -26,23 +26,31 @@ public class ConstructCPTreeAndMineThird {
     private CPTreeNode<Object> root;
     private int _1total = 0;
     private int _2total = 0;
-    private Integer index = 0;
+    public static Integer index = 0;
 
     /*—————————-
     |初始化根节点|
      ——————————*/
     public void initialize() throws IOException {
-        //LOGGER.info("———————————————————————————————————————————————————————————————————————————————————————————————————the beginning of initializing the cp tree with a root node");
-        root = new CPTreeNode<>();
-        root.setIndex(index++);
-        root.setValue("ROOT");
-        root.set_1c(0);
-        root.set_2c(0);
-        root.setParent(null);
-        root.setSibling(null);
+        this.root = new CPTreeNode<>();
+        this.root.setIndex(index++);
+        this.root.setValue("ROOT");
+        this.root.set_1c(0);
+        this.root.set_2c(0);
+        this.root.setParent(null);
+        this.root.setSibling(null);
         getNodeCount();
-        //LOGGER.info("the root node is {}", this.root);
-        //LOGGER.info("———————————————————————————————————————————————————————————————————————————————————————————————————the end of initializing the cp tree with a root node");
+    }
+    /*———————————————————————————
+   | 获取节点的在数据集中出现的总数 |
+    ———————————————————————————*/
+    private void getNodeCount() throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(ITEMSCOUNT_FILE)));
+        String line;
+        while ((line = br.readLine()) != null && !line.trim().equals("")) {
+            Object[] objects = line.split(" ");
+            NODEANDCOUNT.put(objects[0], Integer.valueOf((String) objects[1]));
+        }
     }
 
     /*——————————————————————————————
@@ -76,22 +84,6 @@ public class ConstructCPTreeAndMineThird {
         setupRelationship(nodes);                                                                                       //给待添加到CPTree的ItemSet添加父子关系
         CPTreeNode<Object> head = nodes.get(0);                                                                         //node.size() > 0一定成立
         addSubTreeToParent(head, this.root);
-    }
-
-    /*———————————————————————
-    |获取两个数据集的BOTH COUNT|
-     ————————————————————————*/
-    public void flushTotalOfBothDataSetToFile() throws IOException {
-        //LOGGER.info("———————————————————————————————————————————————————————————————————————————————————————————————————the beginning of counting numbers of both datasets");
-        File file = new File(COUNT_OF_TRANSACTIONS_IN_BOTH_DATASET);
-        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file)));
-        bw.write(String.valueOf(this._1total));
-        bw.newLine();
-        bw.write(String.valueOf(this._2total));
-        bw.newLine();
-        bw.flush();
-        //LOGGER.info("flush total of records of both datasets into file : {} and {}", this._1total, this._2total);
-        //LOGGER.info("———————————————————————————————————————————————————————————————————————————————————————————————————the end of counting numbers of both datasets");
     }
 
     /*————————————————————————
@@ -168,9 +160,9 @@ public class ConstructCPTreeAndMineThird {
         LOGGER.info("———————————————————————————————————————————————————————————————————————————————————————————————————the end of merging the subtrees to the cp tree");
     }
 
-    /*—————————————————————————————————————————————
-    | 从指的节点开始挖掘对比模式，todo 还需要进一步测试 |
-     —————————————————————————————————————————————*/
+    /*————————————————————————
+    | 从指的节点开始挖掘对比模式 |
+     ————————————————————————*/
     public int mineCpFromNode(CPTreeNode<Object> node) {                                                                //返回-1说明删掉了一个节点
         return mineTraverse(new ArrayList<>(), node);
     }
@@ -432,57 +424,23 @@ public class ConstructCPTreeAndMineThird {
         }
     }
 
-    /*———————————————————————————
-    | 获取节点的在数据集中出现的总数 |
-     ———————————————————————————*/
-    private void getNodeCount() throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(ITEMSCOUNT_FILE)));
-        String line;
-        while ((line = br.readLine()) != null && !line.trim().equals("")) {
-            Object[] objects = line.split(" ");
-            NODEANDCOUNT.put(objects[0], Integer.valueOf((String) objects[1]));
-        }
-    }
-
-    //private void printNodesAndCounts() {
-    //    List<Map.Entry<Object, Integer>> entryList = new ArrayList<>(NODEANDCOUNT.entrySet());
-    //    Collections.sort(entryList, (o1, o2) -> {
-    //        if (!o1.getValue().equals(o2.getValue())) {
-    //            return o2.getValue().compareTo(o1.getValue());
-    //        } else {
-    //            return ((Comparable) o1.getKey()).compareTo(o2.getKey());
-    //        }
-    //    });
-    //    for (Map.Entry<Object, Integer> entry : entryList) {
-    //        System.out.println(entry.getKey() + " " + entry.getValue());
-    //    }
-    //}
-
-    public static void main(String[] args) throws IOException {
-        INSTANCE.initialize();                                                                                          //初始化创建根节点
-        INSTANCE.createInitialCPTree();                                                                                 //构建初始CP树
-        INSTANCE.traverseRoot();
-        INSTANCE.merge();                                                                                               //融合并挖掘
-        INSTANCE.traverseRoot();
-        LOGGER.info("INDEX {}", INSTANCE.index - 1);
-        //int sum = 0;
-        //for (CPTreeNode<Object> node : INSTANCE.root.children()) {
-        //    sum += (node._1c() + node._2c());
-        //    System.out.println(node.value() + " " + (node._1c() + node._2c()));
-        //}
-        //System.out.println("sum = " + sum);
-        //todo 挖掘的剪枝会干掉所有的可能是模式的节点及其后缀
-        INSTANCE.startMining();
-
-    }
-
-    private void startMining() {
+    public void startMining() {
         LOGGER.info("———————————————————————————————————————————————————————————————————————————————————————————————————the beginning of mining the merged cp tree");
         for (int i = 0; i < INSTANCE.root.children().size(); i++) {                                                      //开始挖掘
             CPTreeNode<Object> node = INSTANCE.root.children().get(i);
             INSTANCE.mineCpFromNode(node);
         }
         LOGGER.info("———————————————————————————————————————————————————————————————————————————————————————————————————the end of mining the merged cp tree");
+    }
+
+    public static void main(String[] args) throws IOException {
+        INSTANCE.initialize();                                                                                          //初始化创建根节点,并且将ITEM出现次数存到Map中
+        INSTANCE.createInitialCPTree();                                                                                 //构建初始CP树
+        INSTANCE.traverseRoot();                                                                                        //遍历ROOT，确保所有路径正确。如:FDGB
+        INSTANCE.merge();                                                                                               //融合并挖掘
+        INSTANCE.traverseRoot();                                                                                        //遍历ROOT，确保所有路径正确。如:FDGB
+        INSTANCE.startMining();                                                                                         //开始挖掘
+        LOGGER.info("INDEX {}", INSTANCE.index - 1);
     }
 }
 

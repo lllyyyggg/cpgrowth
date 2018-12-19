@@ -5,13 +5,14 @@ import java.util.List;
 
 public class CPTreeNode<T> {
     private T value;
-    private Integer _1c; //第一个类的count
-    private Integer _2c; //第二个类的count
-    private Integer index;  //索引
-    private CPTreeNode<T> parent;   //父节点
-    private List<CPTreeNode<T>> children = new ArrayList<>(0);    //孩子节点集合
-    private CPTreeNode<T> sibling;  //右边的兄弟节点
-
+    private Integer _1c;                                                                                                //第一个类的count
+    private Integer _2c;                                                                                                //第二个类的count
+    private Integer index;                                                                                              //索引
+    private CPTreeNode<T> parent;                                                                                       //父节点
+    private List<CPTreeNode<T>> children = new ArrayList<>(0);                                             //孩子节点集合
+    private CPTreeNode<T> sibling;                                                                                      //右边的兄弟节点
+    private Integer preIndex;
+    private Integer postIndex;
     public CPTreeNode() {
     }
 
@@ -83,6 +84,22 @@ public class CPTreeNode<T> {
 
     public static <T> CPTreeNode<T> getInstance() {
         return new CPTreeNode<>();
+    }
+
+    public Integer preIndex() {
+        return preIndex;
+    }
+
+    public void setPreIndex(Integer preIndex) {
+        this.preIndex = preIndex;
+    }
+
+    public Integer postIndex() {
+        return postIndex;
+    }
+
+    public void setPostIndex(Integer postIndex) {
+        this.postIndex = postIndex;
     }
 
     @Override
