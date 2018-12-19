@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
-import java.text.DecimalFormat;
 import java.util.*;
 
 /**
@@ -15,13 +14,12 @@ import java.util.*;
  */
 public class ConstructCPTreeAndMineThird {
     public static final Logger LOGGER = LoggerFactory.getLogger(ConstructCPTreeAndMineThird.class);
-    public static final String COUNT_OF_TRANSACTIONS_IN_BOTH_DATASET = "resources/COUNT_OF_TRANSACTIONS_IN_BOTH_DATASET";
     public static final String MIXED_DATASET = "resources/MIXED_DATASET";
     public static final ConstructCPTreeAndMineThird INSTANCE = new ConstructCPTreeAndMineThird();
     public static final IStringSplitStrategy STRATEGY = StrategyFactory.stringSplitStrategy();
     private static final String ITEMSCOUNT_FILE = "resources/ITEMSCOUNT_FILE";
-    public static final double MINIMAL_THRESHOLD = 0.7d;                                                                //0.6,   0.8,   1.0,   0.8,   0.8
-    public static final double MAXIMUM_THRESHOLD = 0.30d;                                                              //0.050, 0.050, 0.050, 0.025, 0.075
+    public static final double MINIMAL_THRESHOLD = 0.6d;                                                                //0.6,   0.8,   1.0,   0.8,   0.8
+    public static final double MAXIMUM_THRESHOLD = 0.05d;                                                              //0.050, 0.050, 0.050, 0.025, 0.075
     public static final Map<Object, Integer> NODEANDCOUNT = new HashMap<>();
     private CPTreeNode<Object> root;
     private int _1total = 0;
@@ -41,6 +39,7 @@ public class ConstructCPTreeAndMineThird {
         this.root.setSibling(null);
         getNodeCount();
     }
+
     /*———————————————————————————
    | 获取节点的在数据集中出现的总数 |
     ———————————————————————————*/
@@ -105,10 +104,10 @@ public class ConstructCPTreeAndMineThird {
                 nodeList.add(currNew);
                 copySubTree(nodeList, curr);
                 CPTreeNode<Object> toAdd = currNew;
-                LOGGER.info("—————————————————————————————————————————————————————————————————————————————————");
+                LOGGER.info("———————————————————————————————————merge—————————————————————————————————————————");
                 LOGGER.info("SUBHEAD {} APPENDED TO {}", toAdd, this.root);
                 addSubTreeToParent(toAdd, this.root);
-                LOGGER.info("—————————————————————————————————————————————————————————————————————————————————");
+                LOGGER.info("—————————————————————————————————merge——end——————————————————————————————————————");
                 Collections.sort(root.children(), (o1, o2) -> {
                     if (!NODEANDCOUNT.get(o1.value()).equals(NODEANDCOUNT.get(o2.value()))) {
                         return NODEANDCOUNT.get(o2.value()).compareTo(NODEANDCOUNT.get(o1.value()));
@@ -123,39 +122,9 @@ public class ConstructCPTreeAndMineThird {
                     now.setSibling(null);
                 }
             }
-            //—————————————————————————————————————————————————————————————————
-            //CPTreeNode<Object> newNode = new CPTreeNode<>();
-            //newNode.setValue(node.value());
-            //newNode.set_1c(node._1c());
-            //newNode.set_2c(node._2c());
-            //List<CPTreeNode<Object>> nodeList = new ArrayList<>();
-            //nodeList.add(newNode);
-            //copySubTree(nodeList, node);                                                                                //直接拷贝整颗子树
-            //
-            //
-            //if (newNode.children().size() > 0) {
-            //    CPTreeNode<Object> toAdd = newNode.children().get(0);
-            //    LOGGER.info("—————————————————————————————————————————————————————————————————————————————————");
-            //    LOGGER.info("SUBHEAD {} APPENDED TO {}", toAdd, this.root);
-            //    addSubTreeToParent(toAdd, this.root);
-            //    LOGGER.info("—————————————————————————————————————————————————————————————————————————————————");
-            //}
-            //
-            //Collections.sort(root.children(), (o1, o2) -> {
-            //    if (!NODEANDCOUNT.get(o1.value()).equals(NODEANDCOUNT.get(o2.value()))) {
-            //        return NODEANDCOUNT.get(o2.value()).compareTo(NODEANDCOUNT.get(o1.value()));
-            //    } else {
-            //        return ((Comparable) o1.value()).compareTo(o2.value());
-            //    }
-            //});
-            //
-            //for (int k = 1; k < root.children().size(); k++) {
-            //    CPTreeNode<Object> prev = root.children().get(k - 1);
-            //    CPTreeNode<Object> curr = root.children().get(k);
-            //    prev.setSibling(curr);
-            //    curr.setSibling(null);
-            //}
-            //—————————————————————————————————————————————————————————————————
+            LOGGER.info("————————————————————————————————mine {}——————————————————————————————————", node);
+            i = i + (INSTANCE.mineCpFromNode(node) ? -1 : 0);                                                           //如果删除的是直接孩子节点，那么必须退一格
+            LOGGER.info("—————————————————————————————————mine——end———————————————————————————————————————");
         }
         LOGGER.info("———————————————————————————————————————————————————————————————————————————————————————————————————the end of merging the subtrees to the cp tree");
     }
@@ -163,36 +132,39 @@ public class ConstructCPTreeAndMineThird {
     /*————————————————————————
     | 从指的节点开始挖掘对比模式 |
      ————————————————————————*/
-    public int mineCpFromNode(CPTreeNode<Object> node) {                                                                //返回-1说明删掉了一个节点
-        return mineTraverse(new ArrayList<>(), node);
+    public boolean mineCpFromNode(CPTreeNode<Object> node) {                                                                //返回-1说明删掉了一个节点
+        return mineTraverse(new ArrayList<>(), node) == -1;
     }
 
     private int mineTraverse(List<CPTreeNode<Object>> prefix, CPTreeNode<Object> top) {
         if (top == null) {
             return 0;
         } else {
-            DecimalFormat decimalFormat = new DecimalFormat("#0.0000");
+            //DecimalFormat decimalFormat = new DecimalFormat("#0.0000");
             if (isContrastPattern(top)) {                                                                               //如果当前是对比模式
                 prefix.add(top);                                                                                        //添加到前缀
                 StringBuilder sb = new StringBuilder();
                 for (int i = 0; i < prefix.size(); i++) {
                     sb.append(prefix.get(i).value());
                 }
-                LOGGER.info("1 - {},[{} {}],[{} {}],[{} {}]", sb.toString(), top._1c(), top._2c(), decimalFormat.format(top.supportOfD1(_1total)), decimalFormat.format(top.supportOfD2(_2total)), MINIMAL_THRESHOLD, MAXIMUM_THRESHOLD);
+                //LOGGER.info("1 - {},[{} {}],[{} {}],[{} {}]", sb.toString(), top._1c(), top._2c(), decimalFormat.format(top.supportOfD1(_1total)), decimalFormat.format(top.supportOfD2(_2total)), MINIMAL_THRESHOLD, MAXIMUM_THRESHOLD);
+                LOGGER.info("1 - {},[{} {}],[{} {}]", sb.toString(), top._1c(), top._2c(), _1total * MINIMAL_THRESHOLD, _2total * MAXIMUM_THRESHOLD);
             } else if (!canPrune(top)) {
                 prefix.add(top);                                                                                        //添加到前缀
                 StringBuilder sb = new StringBuilder();
                 for (int i = 0; i < prefix.size(); i++) {
                     sb.append(prefix.get(i).value());
                 }
-                LOGGER.info("2 - {},[{} {}],[{} {}],[{} {}]", sb.toString(), top._1c(), top._2c(), decimalFormat.format(top.supportOfD1(_1total)), decimalFormat.format(top.supportOfD2(_2total)), MINIMAL_THRESHOLD, MAXIMUM_THRESHOLD);
+                //LOGGER.info("2 - {},[{} {}],[{} {}],[{} {}]", sb.toString(), top._1c(), top._2c(), decimalFormat.format(top.supportOfD1(_1total)), decimalFormat.format(top.supportOfD2(_2total)), MINIMAL_THRESHOLD, MAXIMUM_THRESHOLD);
+                LOGGER.info("2 - {},[{} {}],[{} {}]", sb.toString(), top._1c(), top._2c(), _1total * MINIMAL_THRESHOLD, _2total * MAXIMUM_THRESHOLD);
             } else {
                 StringBuilder sb = new StringBuilder();
                 for (int i = 0; i < prefix.size(); i++) {
                     sb.append(prefix.get(i).value());
                 }
                 sb.append(top.value());
-                LOGGER.info("3 - {},[{} {}],[{} {}],[{} {}]", sb.toString(), top._1c(), top._2c(), decimalFormat.format(top.supportOfD1(_1total)), decimalFormat.format(top.supportOfD2(_2total)), MINIMAL_THRESHOLD, MAXIMUM_THRESHOLD);
+                //LOGGER.info("3 - {},[{} {}],[{} {}],[{} {}]", sb.toString(), top._1c(), top._2c(), decimalFormat.format(top.supportOfD1(_1total)), decimalFormat.format(top.supportOfD2(_2total)), MINIMAL_THRESHOLD, MAXIMUM_THRESHOLD);
+                LOGGER.info("3 - {},[{} {}],[{} {}]", sb.toString(), top._1c(), top._2c(), _1total * MINIMAL_THRESHOLD, _2total * MAXIMUM_THRESHOLD);
 
                 List<CPTreeNode<Object>> topChildren = top.parent().children();                                         //top.parent不可能为null
                 for (int i = 0; i < topChildren.size(); i++) {
@@ -229,9 +201,10 @@ public class ConstructCPTreeAndMineThird {
     |判断是不是对比模式|
      ——————————————-*/
     private boolean isContrastPattern(CPTreeNode<Object> node) {
-        double supportOfD1 = node.supportOfD1(_1total);
-        double supportOfD2 = node.supportOfD2(_2total);
-        boolean result = (supportOfD1 > MINIMAL_THRESHOLD && supportOfD2 <= MAXIMUM_THRESHOLD) || (supportOfD2 > MINIMAL_THRESHOLD && supportOfD1 <= MAXIMUM_THRESHOLD);
+        //double supportOfD1 = node.supportOfD1(_1total);
+        //double supportOfD2 = node.supportOfD2(_2total);
+        //boolean result = (supportOfD1 > MINIMAL_THRESHOLD && supportOfD2 <= MAXIMUM_THRESHOLD) || (supportOfD2 > MINIMAL_THRESHOLD && supportOfD1 <= MAXIMUM_THRESHOLD);
+        boolean result = (node._1c() > MINIMAL_THRESHOLD * _1total && node._2c() <= MAXIMUM_THRESHOLD * _2total) || (node._2c() > MINIMAL_THRESHOLD * _2total && node._1c() <= MAXIMUM_THRESHOLD * _1total);
         return result;
     }
 
@@ -239,9 +212,10 @@ public class ConstructCPTreeAndMineThird {
     | 判断是不是能剪枝 |
      ——————————————-*/
     private boolean canPrune(CPTreeNode<Object> node) {
-        double supportOfD1 = node.supportOfD1(_1total);
-        double supportOfD2 = node.supportOfD2(_2total);
-        boolean result = supportOfD1 > MINIMAL_THRESHOLD || supportOfD2 > MINIMAL_THRESHOLD;
+        //double supportOfD1 = node.supportOfD1(_1total);
+        //double supportOfD2 = node.supportOfD2(_2total);
+        //boolean result = supportOfD1 > MINIMAL_THRESHOLD || supportOfD2 > MINIMAL_THRESHOLD;
+        boolean result = node._1c() > MINIMAL_THRESHOLD * _1total || node._2c() > MINIMAL_THRESHOLD * _2total;
         return !result;
     }
 
@@ -424,22 +398,12 @@ public class ConstructCPTreeAndMineThird {
         }
     }
 
-    public void startMining() {
-        LOGGER.info("———————————————————————————————————————————————————————————————————————————————————————————————————the beginning of mining the merged cp tree");
-        for (int i = 0; i < INSTANCE.root.children().size(); i++) {                                                      //开始挖掘
-            CPTreeNode<Object> node = INSTANCE.root.children().get(i);
-            INSTANCE.mineCpFromNode(node);
-        }
-        LOGGER.info("———————————————————————————————————————————————————————————————————————————————————————————————————the end of mining the merged cp tree");
-    }
-
     public static void main(String[] args) throws IOException {
         INSTANCE.initialize();                                                                                          //初始化创建根节点,并且将ITEM出现次数存到Map中
         INSTANCE.createInitialCPTree();                                                                                 //构建初始CP树
         INSTANCE.traverseRoot();                                                                                        //遍历ROOT，确保所有路径正确。如:FDGB
         INSTANCE.merge();                                                                                               //融合并挖掘
         INSTANCE.traverseRoot();                                                                                        //遍历ROOT，确保所有路径正确。如:FDGB
-        INSTANCE.startMining();                                                                                         //开始挖掘
         LOGGER.info("INDEX {}", INSTANCE.index - 1);
     }
 }

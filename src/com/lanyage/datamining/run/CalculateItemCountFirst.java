@@ -3,8 +3,6 @@ package com.lanyage.datamining.run;
 
 import com.lanyage.datamining.factory.StrategyFactory;
 import com.lanyage.datamining.strategy.IStringSplitStrategy;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 import java.io.*;
@@ -14,7 +12,7 @@ import java.util.*;
  * 一 首先计算所有的Item在两个数据集D1和D2中的Count。
  */
 public class CalculateItemCountFirst {
-    private static final Logger logger = LoggerFactory.getLogger(CalculateItemCountFirst.class);
+    //private static final Logger logger = LoggerFactory.getLogger(CalculateItemCountFirst.class);
     private static final String DATASET_I = "resources/DATASET_I";
     private static final String DATASET_II = "resources/DATASET_II";
     private static final String ITEMSCOUNT_FILE = "resources/ITEMSCOUNT_FILE";

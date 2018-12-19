@@ -52,11 +52,11 @@ public class StringSplitBySpaceStrategy implements IStringSplitStrategy<Object> 
         BufferedReader br =
                 new BufferedReader(new InputStreamReader(new FileInputStream(source)));
         String line;
-        int index = 0;
+        //int index = 0;
         while ((line = br.readLine()) != null && !line.trim().equals("")) {
-            if (line.contains("V3")) {
-                index++;
-            }
+            //if (line.contains("V3")) {
+            //    index++;
+            //}
             String[] items = line.trim().split(" ");
             for (String item : items) {
                 if (!map.containsKey(item)) {
@@ -66,7 +66,7 @@ public class StringSplitBySpaceStrategy implements IStringSplitStrategy<Object> 
                 }
             }
         }
-        System.out.println("V3 " + index);
+        //System.out.println("V3 " + index);
         br.close();
         return map;
     }
