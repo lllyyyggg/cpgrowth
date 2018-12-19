@@ -1,5 +1,7 @@
 package com.lanyage.datamining.entity;
 
+import com.lanyage.datamining.datastructure.CPTreeNode;
+
 import java.util.*;
 
 public class Item<T> implements Comparable<Item> {
@@ -51,10 +53,29 @@ public class Item<T> implements Comparable<Item> {
 
     @Override
     public int compareTo(Item o) {
-        if (o.count != this.count) {
+        if (!o.count.equals(this.count)) {
             return o.count.compareTo(this.count);
         } else {
             return ((Comparable) this.value).compareTo(o.value);
         }
     }
+
+    //public static void main(String[] args) {
+    //    List<Item<Object>> nodes = new ArrayList<>();
+    //    Item<Object> node1 = new Item<>();
+    //    Item<Object> node2 = new Item<>();
+    //
+    //    node1.setValue("E9");
+    //    node1.setCount(222);
+    //
+    //    node2.setValue("E4");
+    //    node2.setCount(222);
+    //
+    //    nodes.add(node1);
+    //    nodes.add(node2);
+    //
+    //
+    //    Collections.sort(nodes);
+    //    System.out.println(nodes);
+    //}
 }

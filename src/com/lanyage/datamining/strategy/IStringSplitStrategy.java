@@ -29,5 +29,5 @@ public interface IStringSplitStrategy<T> {
     /*----------------------------------------------------------
     | 给Items进行排序，并且将排好序的ItemSet打上类标签汇总到一个文件中 |
      ---------------------------------------------------------——*/
-    void sortAndAddTags(Map<T, Integer> valueAndCount, String source, String dest, Integer tag) throws IOException;
+    void sortAndAddTags(Map<Object, Integer> valueAndCount, String dest, Integer[] tags, String[] sources) throws IOException;
 }

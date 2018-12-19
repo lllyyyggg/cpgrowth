@@ -8,8 +8,7 @@ import org.slf4j.LoggerFactory;
 
 
 import java.io.*;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 一 首先计算所有的Item在两个数据集D1和D2中的Count。
@@ -19,7 +18,6 @@ public class CalculateItemCountFirst {
     private static final String DATASET_I = "resources/DATASET_I";
     private static final String DATASET_II = "resources/DATASET_II";
     private static final String ITEMSCOUNT_FILE = "resources/ITEMSCOUNT_FILE";
-
     private static final IStringSplitStrategy STRATEGY = StrategyFactory.stringSplitStrategy();
 
     public static Map<Object, Integer> calculateCountOfItems(String source) throws IOException {                        //计算Item的Count
@@ -33,7 +31,7 @@ public class CalculateItemCountFirst {
         Map<Object, Integer> itemCountMap = new HashMap<>();
         Map<Object, Integer> map1 = calculateCountOfItems(DATASET_I);
         //logger.info("successfully count items from \"{}\"", DATASET_I);
-        Map<Object, Integer> map2 = calculateCountOfItems("resources/DATASET_II");
+        Map<Object, Integer> map2 = calculateCountOfItems(DATASET_II);
         //logger.info("successfully count items from \"{}\"", DATASET_II);
 
         //logger.info("———————————————————————————————————————————————————————————————————————————————————————————————————the end of calculating item counts");
@@ -49,9 +47,16 @@ public class CalculateItemCountFirst {
                 itemCountMap.put(key, count);
             }
         }
-
+        List<Map.Entry<Object, Integer>> entryList = new ArrayList<>(itemCountMap.entrySet());
+        Collections.sort(entryList, (o1, o2) -> {
+            if (!o1.getValue().equals(o2.getValue())) {
+                return o2.getValue().compareTo(o1.getValue());
+            } else {
+                return ((Comparable) o1.getKey()).compareTo(o2.getKey());
+            }
+        });
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(ITEMSCOUNT_FILE)));
-        for (Map.Entry<Object, Integer> entry : itemCountMap.entrySet()) {
+        for (Map.Entry<Object, Integer> entry : entryList) {
             Object key = entry.getKey();
             Integer count = entry.getValue();
             String content = key + " " + count;
@@ -63,14 +68,4 @@ public class CalculateItemCountFirst {
         bw.close();
         //logger.info("———————————————————————————————————————————————————————————————————————————————————————————————————the end of mixing item counts");
     }
-
-     /*——————————————————————————————————————result log————————————————————————————————————————————
-     |2018-12-13 11:06:41  [ main:0 ] - [ INFO ]  write <A=2> to the file resources/ITEMSCOUNT_FILE|
-     |2018-12-13 11:06:41  [ main:0 ] - [ INFO ]  write <B=3> to the file resources/ITEMSCOUNT_FILE|
-     |2018-12-13 11:06:41  [ main:1 ] - [ INFO ]  write <C=4> to the file resources/ITEMSCOUNT_FILE|
-     |2018-12-13 11:06:41  [ main:1 ] - [ INFO ]  write <D=5> to the file resources/ITEMSCOUNT_FILE|
-     |2018-12-13 11:06:41  [ main:1 ] - [ INFO ]  write <E=3> to the file resources/ITEMSCOUNT_FILE|
-     |2018-12-13 11:06:41  [ main:1 ] - [ INFO ]  write <F=6> to the file resources/ITEMSCOUNT_FILE|
-     |2018-12-13 11:06:41  [ main:1 ] - [ INFO ]  write <G=4> to the file resources/ITEMSCOUNT_FILE|
-      ————————————————————————————————————————————————————————————————————————————————————————————*/
 }

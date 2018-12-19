@@ -12,6 +12,15 @@ public class CPTreeNode<T> {
     private List<CPTreeNode<T>> children = new ArrayList<>(0);    //孩子节点集合
     private CPTreeNode<T> sibling;  //右边的兄弟节点
 
+    public CPTreeNode() {
+    }
+
+    public CPTreeNode(T value, Integer _1c, Integer _2c) {
+        this.value = value;
+        this._1c = _1c;
+        this._2c = _2c;
+    }
+
     public T value() {
         return value;
     }
@@ -78,10 +87,11 @@ public class CPTreeNode<T> {
 
     @Override
     public String toString() {
-        return "<" + index + ":" +
+        return "(" +
                 value + "," +
                 _1c + "," +
-                _2c +
-                '>';
+                _2c + "," +
+                index +
+                ')';
     }
 }
