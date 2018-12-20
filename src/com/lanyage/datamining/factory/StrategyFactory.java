@@ -5,6 +5,6 @@ import com.lanyage.datamining.strategy.IStringSplitStrategy;
 
 public class StrategyFactory {
     public static IStringSplitStrategy stringSplitStrategy() {
-        return StringSplitStrategyEnum.STRING_STRATEGY.getInstance();
+        return StringSplitStrategyEnum.CHARACTER_STRATEGY.getInstance();
     }
 }
