@@ -32,7 +32,7 @@ public class CPTreeConstructor {
      ——————————*/
     private void initializeRoot(CPTreeNode<Object> root) {
         //root.setIndex(0);
-        root.setValue("ROOT");
+        root.setValue("$");
         root.setC1(0);
         root.setC2(0);
         root.setParent(null);

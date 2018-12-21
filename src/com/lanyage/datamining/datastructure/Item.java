@@ -1,6 +1,4 @@
-package com.lanyage.datamining.entity;
-
-import com.lanyage.datamining.datastructure.CPTreeNode;
+package com.lanyage.datamining.datastructure;
 
 import java.util.*;
 

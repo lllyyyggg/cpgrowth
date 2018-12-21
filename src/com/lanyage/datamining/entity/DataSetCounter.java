@@ -5,7 +5,7 @@ import com.lanyage.datamining.enums.FilePathEnum;
 import java.io.*;
 
 /**
- *  获取每个数据集的大小
+ *  获取每个数据集中的TRANSACTION的个数并且返回
  */
 public class DataSetCounter {
     public Integer[] getCountOfDataSets() throws IOException {
@@ -22,6 +22,7 @@ public class DataSetCounter {
         while ( br.readLine() != null) {
             countII++;
         }
+        br.close();
         result[1] = countII;
         return result;
     }

@@ -68,7 +68,7 @@ public class CPGrowth {
     /*———————————————————————————————————
     |根据head节点拷贝树，返回拷贝的树的头节点|
      ———————————————————————————————————*/
-    private CPTreeNode<Object> copyTree(CPTreeNode<Object> head) {
+    public CPTreeNode<Object> copyTree(CPTreeNode<Object> head) {
         CPTreeNode<Object> newHead = new CPTreeNode<>();
         newHead.setValue(head.value());
         newHead.setC1(head.c1());

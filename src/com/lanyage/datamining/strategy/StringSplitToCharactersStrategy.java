@@ -1,8 +1,8 @@
 package com.lanyage.datamining.strategy;
 
 import com.lanyage.datamining.datastructure.CPTreeNode;
-import com.lanyage.datamining.entity.Item;
-import com.lanyage.datamining.entity.ItemSet;
+import com.lanyage.datamining.datastructure.Item;
+import com.lanyage.datamining.datastructure.ItemSet;
 
 import java.io.*;
 import java.util.*;

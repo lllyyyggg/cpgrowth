@@ -1,4 +1,4 @@
-package com.lanyage.datamining.entity;
+package com.lanyage.datamining.datastructure;
 
 
 import java.util.*;

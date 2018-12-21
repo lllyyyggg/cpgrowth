@@ -22,7 +22,7 @@ public class BuildAndMergeCPTreeThird {
         | 遍历ROOT，确保所有路径正确。如:FDGB |
          ————————————————————————————-————*/
         TreeTraverser treeTraverser = new TreeTraverser();
-        treeTraverser.traverse(root);
+        treeTraverser.traverseAndPrintTransactions(root);
 
         /*—————————————
         | merge并且挖掘 |
@@ -34,7 +34,7 @@ public class BuildAndMergeCPTreeThird {
         /*—————————————————————————————————
         | 遍历ROOT，确保所有路径正确。如:FDGB |
          —————————————————————————————————*/
-        treeTraverser.traverse(root);
+        treeTraverser.traverseAndPrintTransactions(root);
         LOGGER.info("INDEX {}", TreeAppender.INDEX - 1);
     }
 }
