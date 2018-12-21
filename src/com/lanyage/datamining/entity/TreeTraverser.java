@@ -4,7 +4,9 @@ import com.lanyage.datamining.datastructure.CPTreeNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class TreeTraverser {
@@ -16,12 +18,15 @@ public class TreeTraverser {
     public void traverse(CPTreeNode<Object> head) {
         LOGGER.info("———————————————————————————————————————————————————————————————————————————————————————————————————the beginning of traversing the cp tree");
         for (int i = 0; i < head.children().size(); i++) {
-            traverse(new ArrayList<>(0), head.children().get(i));
+            traverseHelp(new ArrayList<>(0), head.children().get(i));
         }
         LOGGER.info("———————————————————————————————————————————————————————————————————————————————————————————————————the end of traversing the cp tree");
     }
 
-    private void traverse(List<CPTreeNode<Object>> nodeList, CPTreeNode<Object> top) {
+    /*————————————————————————————
+    |遍历根节点，打印所有transaction|
+     ————————————————————————————*/
+    private void traverseHelp(List<CPTreeNode<Object>> nodeList, CPTreeNode<Object> top) {
         if (top == null) {
             return;
         } else {
@@ -40,8 +45,63 @@ public class TreeTraverser {
         }
         for (int i = 0; i < topChildren.size(); i++) {
             CPTreeNode<Object> currChild = topChildren.get(i);
-            traverse(nodeList, currChild);
+            traverseHelp(nodeList, currChild);
         }
         nodeList.remove(nodeList.size() - 1);
+    }
+
+    /*————————————————————
+    |前序遍历并且添加前序索引|
+     ————————————————————*/
+    public void preTraverse(CPTreeNode<Object> root) {
+        int preIndex = 0;
+        LinkedList<CPTreeNode<Object>> stack = new LinkedList<>();
+        stack.addLast(root);
+
+        while (!stack.isEmpty()) {
+            CPTreeNode<Object> node = stack.pollLast();
+            node.setPreIndex(preIndex++);
+            int childSize;
+            if ((childSize = node.children().size()) > 0) {
+                for (int i = childSize - 1; i >= 0; i--) {
+                    stack.addLast(node.children().get(i));
+                }
+            }
+        }
+    }
+
+
+    /*————————————————————
+    |后序遍历并且添加后序索引|
+     ————————————————————*/
+    public void postTraverse(CPTreeNode<Object> root) {
+        int postIndex = 0;
+        LinkedList<CPTreeNode<Object>> stack = new LinkedList<>();
+        stack.addLast(root);
+        while (!stack.isEmpty()) {
+            CPTreeNode<Object> curr = stack.peekLast();
+            while (curr.children().size() > 0 && !curr.children().get(0).isVisited()) {
+                curr = curr.children().get(0);
+                stack.addLast(curr);
+            }
+            CPTreeNode<Object> popOut = stack.pollLast();
+            popOut.setVisited(true);
+            popOut.setPostIndex(postIndex++);
+            if (popOut.sibling() != null) {
+                stack.addLast(popOut.sibling());
+            }
+        }
+    }
+
+    public static void main(String[] args) throws IOException {
+        CPTreeConstructor constructor = new CPTreeConstructor();
+        CPTreeNode<Object> root = constructor.createInitialCPTree();
+
+        TreeTraverser traverser = new TreeTraverser();
+        traverser.preTraverse(root);
+        traverser.postTraverse(root);
+        traverser.traverse(root);
+
+        LOGGER.info("TOTAL NODES NUMBER : {}", TreeAppender.INDEX - 1);
     }
 }

@@ -3,15 +3,12 @@ package com.lanyage.datamining.strategy;
 import com.lanyage.datamining.datastructure.CPTreeNode;
 import com.lanyage.datamining.entity.Item;
 import com.lanyage.datamining.entity.ItemSet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.*;
 
 public class StringSplitToCharactersStrategy implements IStringSplitStrategy<Object> {
 
-    private static final Logger logger = LoggerFactory.getLogger(StringSplitToCharactersStrategy.class);
     public static final IStringSplitStrategy<Object> INSTANCE = new StringSplitToCharactersStrategy();
 
     private StringSplitToCharactersStrategy() {
@@ -29,12 +26,12 @@ public class StringSplitToCharactersStrategy implements IStringSplitStrategy<Obj
             CPTreeNode<Object> node = new CPTreeNode<>();
             node.setValue(value);                                                                                       //设置值
             if (classTag.equals("1")) {                                                                                 //设置左右计数
-                node.set_1c(1);
-                node.set_2c(0);
+                node.setC1(1);
+                node.setC2(0);
             }
             if (classTag.equals("2")) {
-                node.set_1c(0);
-                node.set_2c(1);
+                node.setC1(0);
+                node.setC2(1);
             }
             nodes.add(node);
         }
@@ -93,7 +90,7 @@ public class StringSplitToCharactersStrategy implements IStringSplitStrategy<Obj
         itemSetList.addAll(itemSetStringMap.keySet());
         Collections.sort(itemSetList);
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(dest, true)));
-        for(int i = 0; i < itemSetList.size(); i++) {
+        for (int i = 0; i < itemSetList.size(); i++) {
             StringBuilder sb = new StringBuilder();
             for (Item<Object> item : itemSetList.get(i).items()) {
                 sb.append(item.value());

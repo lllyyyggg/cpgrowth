@@ -71,8 +71,8 @@ public class CPGrowth {
     private CPTreeNode<Object> copyTree(CPTreeNode<Object> head) {
         CPTreeNode<Object> newHead = new CPTreeNode<>();
         newHead.setValue(head.value());
-        newHead.set_1c(head._1c());
-        newHead.set_2c(head._2c());
+        newHead.setC1(head.c1());
+        newHead.setC2(head.c2());
         List<CPTreeNode<Object>> nodeList = new ArrayList<>();
         nodeList.add(newHead);
         copySubTree(nodeList, head);
@@ -87,7 +87,7 @@ public class CPGrowth {
         //double supportOfD1 = node.supportOfD1(_1total);
         //double supportOfD2 = node.supportOfD2(_2total);
         //boolean result = (supportOfD1 > MINIMAL_THRESHOLD && supportOfD2 <= MAXIMUM_THRESHOLD) || (supportOfD2 > MINIMAL_THRESHOLD && supportOfD1 <= MAXIMUM_THRESHOLD);
-        boolean result = (node._1c() > MINIMAL_THRESHOLD * this.n1 && node._2c() <= MAXIMUM_THRESHOLD * this.n2) || (node._2c() > MINIMAL_THRESHOLD * this.n2 && node._1c() <= MAXIMUM_THRESHOLD * this.n1);
+        boolean result = (node.c1() > MINIMAL_THRESHOLD * this.n1 && node.c2() <= MAXIMUM_THRESHOLD * this.n2) || (node.c2() > MINIMAL_THRESHOLD * this.n2 && node.c1() <= MAXIMUM_THRESHOLD * this.n1);
         return result;
     }
 
@@ -98,7 +98,7 @@ public class CPGrowth {
         //double supportOfD1 = node.supportOfD1(_1total);
         //double supportOfD2 = node.supportOfD2(_2total);
         //boolean result = supportOfD1 > MINIMAL_THRESHOLD || supportOfD2 > MINIMAL_THRESHOLD;
-        boolean result = node._1c() > MINIMAL_THRESHOLD * this.n1 || node._2c() > MINIMAL_THRESHOLD * this.n2;
+        boolean result = node.c1() > MINIMAL_THRESHOLD * this.n1 || node.c2() > MINIMAL_THRESHOLD * this.n2;
         return !result;
     }
 
@@ -121,7 +121,7 @@ public class CPGrowth {
                     sb.append(prefix.get(i).value());
                 }
                 //LOGGER.info("1 - {},[{} {}],[{} {}],[{} {}]", sb.toString(), top._1c(), top._2c(), decimalFormat.format(top.supportOfD1(_1total)), decimalFormat.format(top.supportOfD2(_2total)), MINIMAL_THRESHOLD, MAXIMUM_THRESHOLD);
-                LOGGER.info("1 - {},[{} {}],[{} {}]", sb.toString(), top._1c(), top._2c(), this.n1 * MINIMAL_THRESHOLD, this.n2 * MAXIMUM_THRESHOLD);
+                LOGGER.info("1 - {},[{} {}],[{} {}]", sb.toString(), top.c1(), top.c2(), this.n1 * MINIMAL_THRESHOLD, this.n2 * MAXIMUM_THRESHOLD);
             } else if (!canPrune(top)) {
                 prefix.add(top);                                                                                        //添加到前缀
                 StringBuilder sb = new StringBuilder();
@@ -129,7 +129,7 @@ public class CPGrowth {
                     sb.append(prefix.get(i).value());
                 }
                 //LOGGER.info("2 - {},[{} {}],[{} {}],[{} {}]", sb.toString(), top._1c(), top._2c(), decimalFormat.format(top.supportOfD1(_1total)), decimalFormat.format(top.supportOfD2(_2total)), MINIMAL_THRESHOLD, MAXIMUM_THRESHOLD);
-                LOGGER.info("2 - {},[{} {}],[{} {}]", sb.toString(), top._1c(), top._2c(), this.n1 * MINIMAL_THRESHOLD, this.n2 * MAXIMUM_THRESHOLD);
+                LOGGER.info("2 - {},[{} {}],[{} {}]", sb.toString(), top.c1(), top.c2(), this.n1 * MINIMAL_THRESHOLD, this.n2 * MAXIMUM_THRESHOLD);
             } else {
                 StringBuilder sb = new StringBuilder();
                 for (int i = 0; i < prefix.size(); i++) {
@@ -137,7 +137,7 @@ public class CPGrowth {
                 }
                 sb.append(top.value());
                 //LOGGER.info("3 - {},[{} {}],[{} {}],[{} {}]", sb.toString(), top._1c(), top._2c(), decimalFormat.format(top.supportOfD1(_1total)), decimalFormat.format(top.supportOfD2(_2total)), MINIMAL_THRESHOLD, MAXIMUM_THRESHOLD);
-                LOGGER.info("3 - {},[{} {}],[{} {}]", sb.toString(), top._1c(), top._2c(), this.n1 * MINIMAL_THRESHOLD, this.n2 * MAXIMUM_THRESHOLD);
+                LOGGER.info("3 - {},[{} {}],[{} {}]", sb.toString(), top.c1(), top.c2(), this.n1 * MINIMAL_THRESHOLD, this.n2 * MAXIMUM_THRESHOLD);
 
                 List<CPTreeNode<Object>> topChildren = top.parent().children();                                         //top.parent不可能为null
                 for (int i = 0; i < topChildren.size(); i++) {
@@ -192,8 +192,8 @@ public class CPGrowth {
                 CPTreeNode<Object> child = topChildren.get(i);
                 CPTreeNode<Object> newChild = CPTreeNode.getInstance();
                 newChild.setValue(child.value());
-                newChild.set_1c(child._1c());
-                newChild.set_2c(child._2c());
+                newChild.setC1(child.c1());
+                newChild.setC2(child.c2());
 
                 parent.children().add(newChild);
                 newChild.setParent(parent);

@@ -35,6 +35,6 @@ public class BuildAndMergeCPTreeThird {
         | 遍历ROOT，确保所有路径正确。如:FDGB |
          —————————————————————————————————*/
         treeTraverser.traverse(root);
-        LOGGER.info("INDEX {}", TreeAppender.INDEX);
+        LOGGER.info("INDEX {}", TreeAppender.INDEX - 1);
     }
 }

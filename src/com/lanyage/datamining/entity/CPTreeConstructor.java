@@ -18,6 +18,7 @@ public class CPTreeConstructor {
     public static final Logger LOGGER = LoggerFactory.getLogger(CPTreeConstructor.class);
     public static final IStringSplitStrategy STRATEGY = StrategyFactory.stringSplitStrategy();
     private Map<Object, Integer> nodeAndCount;
+
     public CPTreeConstructor() {
         this.nodeAndCount = new NodeCounter(FilePathEnum.ITEM_COUNT_FILE.getSource()).getNodeCountMap();
     }
@@ -30,10 +31,10 @@ public class CPTreeConstructor {
     |初始化根节点|
      ——————————*/
     private void initializeRoot(CPTreeNode<Object> root) {
-        root.setIndex(0);
+        //root.setIndex(0);
         root.setValue("ROOT");
-        root.set_1c(0);
-        root.set_2c(0);
+        root.setC1(0);
+        root.setC2(0);
         root.setParent(null);
         root.setSibling(null);
     }

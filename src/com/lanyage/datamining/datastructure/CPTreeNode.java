@@ -5,33 +5,44 @@ import java.util.List;
 
 public class CPTreeNode<T> {
     private T value;
-    private Integer _1c;                                                                                                //第一个类的count
-    private Integer _2c;                                                                                                //第二个类的count
-    private Integer index;                                                                                              //索引
+    private Integer c1;                                                                                                 //第一个类的count
+    private Integer c2;                                                                                                 //第二个类的count
     private CPTreeNode<T> parent;                                                                                       //父节点
     private List<CPTreeNode<T>> children = new ArrayList<>(0);                                             //孩子节点集合
     private CPTreeNode<T> sibling;                                                                                      //右边的兄弟节点
     private Integer preIndex;
     private Integer postIndex;
+    private Boolean isVisited;
+
     public CPTreeNode() {
+        this.isVisited = false;
     }
 
     public CPTreeNode(T value, Integer _1c, Integer _2c) {
         this.value = value;
-        this._1c = _1c;
-        this._2c = _2c;
+        this.c1 = _1c;
+        this.c2 = _2c;
+        this.isVisited = false;
     }
 
     public T value() {
         return value;
     }
 
-    public Integer _1c() {
-        return _1c;
+    public Integer c1() {
+        return c1;
     }
 
-    public Integer _2c() {
-        return _2c;
+    public void setC1(Integer c1) {
+        this.c1 = c1;
+    }
+
+    public Integer c2() {
+        return c2;
+    }
+
+    public void setC2(Integer c2) {
+        this.c2 = c2;
     }
 
     public CPTreeNode<T> parent() {
@@ -46,25 +57,11 @@ public class CPTreeNode<T> {
         return sibling;
     }
 
-    public Integer index() {
-        return index;
-    }
-
-    public void setIndex(Integer index) {
-        this.index = index;
-    }
 
     public void setValue(T value) {
         this.value = value;
     }
 
-    public void set_1c(Integer _1c) {
-        this._1c = _1c;
-    }
-
-    public void set_2c(Integer _2c) {
-        this._2c = _2c;
-    }
 
     public void setParent(CPTreeNode<T> parent) {
         this.parent = parent;
@@ -75,11 +72,11 @@ public class CPTreeNode<T> {
     }
 
     public double supportOfD1(Integer N1) {
-        return (double) this._1c / N1;
+        return (double) this.c1 / N1;
     }
 
     public double supportOfD2(Integer N2) {
-        return (double) this._2c / N2;
+        return (double) this.c2 / N2;
     }
 
     public static <T> CPTreeNode<T> getInstance() {
@@ -102,13 +99,22 @@ public class CPTreeNode<T> {
         this.postIndex = postIndex;
     }
 
+    public Boolean isVisited() {
+        return isVisited;
+    }
+
+    public void setVisited(Boolean visited) {
+        isVisited = visited;
+    }
+
     @Override
     public String toString() {
         return "(" +
                 value + "," +
-                _1c + "," +
-                _2c + "," +
-                index +
+                c1 + "," +
+                c2 + "," +
+                preIndex + "," +
+                postIndex +
                 ')';
     }
 }

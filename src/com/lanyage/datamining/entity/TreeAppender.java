@@ -12,7 +12,7 @@ import java.util.Map;
 public class TreeAppender {
     public static final Logger LOGGER = LoggerFactory.getLogger(TreeAppender.class);
     public static final Map<Object, Integer> NODE_AND_COUNT = new NodeCounter(FilePathEnum.ITEM_COUNT_FILE.getSource()).getNodeCountMap();
-    public static Integer INDEX = 0;
+    public static Integer INDEX = 1;
 
     /*————————————————————
     | 将一颗树添加到另一棵树 |
@@ -37,9 +37,9 @@ public class TreeAppender {
                 for (i = 0; i < parent.children().size(); i++) {
                     CPTreeNode<Object> currChild = parent.children().get(i);
                     if (parent.children().get(i).value().equals(toAdd.value())) {
-                        CPTreeNode<Object> prev = new CPTreeNode<>(currChild.value(), currChild._1c(), currChild._2c());
-                        currChild.set_1c(toAdd._1c() + currChild._1c());
-                        currChild.set_2c(toAdd._2c() + currChild._2c());
+                        CPTreeNode<Object> prev = new CPTreeNode<>(currChild.value(), currChild.c1(), currChild.c2());
+                        currChild.setC1(toAdd.c1() + currChild.c1());
+                        currChild.setC2(toAdd.c2() + currChild.c2());
                         LOGGER.info("MERGE {} TO {}, now the node is {}", toAdd, prev, currChild);
                         addTreeToTree(toAdd.children().size() == 0 ? null : toAdd.children().get(0), currChild);
                         break;                                                                                          //找到了就跳出循环，开始将兄弟节点添加到root
@@ -82,7 +82,8 @@ public class TreeAppender {
         if (top == null) {
             return;
         } else {
-            top.setIndex(INDEX++);
+            //top.setIndex(++INDEX);
+            INDEX++;
             LOGGER.info("SET {} INDEX {}]", top, INDEX - 1);
         }
         List<CPTreeNode<Object>> rootChildren = top.children();
