@@ -31,7 +31,7 @@ public class CPGrowth {
     |将所有的后缀融合到CPTree上去|
      —————————————————————————*/
     public void mergeAndMine(CPTreeNode<Object> root) {
-        LOGGER.info("———————————————————————————————————————————————————————————————————————————————————————————————————the beginning of merging the subtrees to the cp tree");
+        LOGGER.info("———————————————————————————————————————————————————————————————————————————————————————————————————the beginning of merging and mining");
         for (int i = 0; i < root.children().size(); i++) {
             CPTreeNode<Object> node = root.children().get(i);                                                           //root的直接子节点
             //————————————————————————————————————————————————————————————————
@@ -40,10 +40,10 @@ public class CPGrowth {
             for (int j = 0; j < nodeChildren.size(); j++) {
                 CPTreeNode<Object> subHead = nodeChildren.get(j);
                 CPTreeNode<Object> toAdd = copyTree(subHead);                                                           //拷贝子树
-                LOGGER.info("———————————————————————————————————merge—————————————————————————————————————————");
-                LOGGER.info("SUBHEAD {} APPENDED TO {}", toAdd, root);
+                //LOGGER.info("———————————————————————————————————merge—————————————————————————————————————————");
+                //LOGGER.info("SUBHEAD {} APPENDED TO {}", toAdd, root);
                 treeAppender.addTreeToTree(toAdd, root);
-                LOGGER.info("—————————————————————————————————merge——end——————————————————————————————————————");
+                //LOGGER.info("—————————————————————————————————merge——end——————————————————————————————————————");
                 Collections.sort(root.children(), (o1, o2) -> {
                     if (!this.nodeCountMap.get(o1.value()).equals(this.nodeCountMap.get(o2.value()))) {
                         return this.nodeCountMap.get(o2.value()).compareTo(this.nodeCountMap.get(o1.value()));
@@ -58,11 +58,12 @@ public class CPGrowth {
                     now.setSibling(null);
                 }
             }
-            LOGGER.info("————————————————————————————————mine {}——————————————————————————————————", node);
+            //LOGGER.info("————————————————————————————————mine {}——————————————————————————————————", node);
             i = i + (mineCpFromNode(node) ? -1 : 0);                                                                    //如果删除的是直接孩子节点，那么必须退一格
-            LOGGER.info("—————————————————————————————————mine——end———————————————————————————————————————");
+            //LOGGER.info("—————————————————————————————————mine——end———————————————————————————————————————");
         }
-        LOGGER.info("———————————————————————————————————————————————————————————————————————————————————————————————————the end of merging the subtrees to the cp tree");
+        LOGGER.info("———————————————————————————————————————————————————————————————————————————————————————————————————the beginning of merging and mining");
+
     }
 
     /*———————————————————————————————————
@@ -84,9 +85,6 @@ public class CPGrowth {
     |判断是不是对比模式|
      ——————————————-*/
     private boolean isContrastPattern(CPTreeNode<Object> node) {
-        //double supportOfD1 = node.supportOfD1(_1total);
-        //double supportOfD2 = node.supportOfD2(_2total);
-        //boolean result = (supportOfD1 > MINIMAL_THRESHOLD && supportOfD2 <= MAXIMUM_THRESHOLD) || (supportOfD2 > MINIMAL_THRESHOLD && supportOfD1 <= MAXIMUM_THRESHOLD);
         boolean result = (node.c1() > MINIMAL_THRESHOLD * this.n1 && node.c2() <= MAXIMUM_THRESHOLD * this.n2) || (node.c2() > MINIMAL_THRESHOLD * this.n2 && node.c1() <= MAXIMUM_THRESHOLD * this.n1);
         return result;
     }
@@ -95,9 +93,6 @@ public class CPGrowth {
     | 判断是不是能剪枝 |
      ——————————————-*/
     private boolean canPrune(CPTreeNode<Object> node) {
-        //double supportOfD1 = node.supportOfD1(_1total);
-        //double supportOfD2 = node.supportOfD2(_2total);
-        //boolean result = supportOfD1 > MINIMAL_THRESHOLD || supportOfD2 > MINIMAL_THRESHOLD;
         boolean result = node.c1() > MINIMAL_THRESHOLD * this.n1 || node.c2() > MINIMAL_THRESHOLD * this.n2;
         return !result;
     }
@@ -120,23 +115,20 @@ public class CPGrowth {
                 for (int i = 0; i < prefix.size(); i++) {
                     sb.append(prefix.get(i).value());
                 }
-                //LOGGER.info("1 - {},[{} {}],[{} {}],[{} {}]", sb.toString(), top._1c(), top._2c(), decimalFormat.format(top.supportOfD1(_1total)), decimalFormat.format(top.supportOfD2(_2total)), MINIMAL_THRESHOLD, MAXIMUM_THRESHOLD);
-                LOGGER.info("1 - {},[{} {}],[{} {}]", sb.toString(), top.c1(), top.c2(), this.n1 * MINIMAL_THRESHOLD, this.n2 * MAXIMUM_THRESHOLD);
+                LOGGER.info("1 - {}, [{} {}], [{} {}]", sb.toString(), top.c1(), top.c2(), this.n1 * MINIMAL_THRESHOLD, this.n2 * MAXIMUM_THRESHOLD);
             } else if (!canPrune(top)) {
                 prefix.add(top);                                                                                        //添加到前缀
                 StringBuilder sb = new StringBuilder();
                 for (int i = 0; i < prefix.size(); i++) {
                     sb.append(prefix.get(i).value());
                 }
-                //LOGGER.info("2 - {},[{} {}],[{} {}],[{} {}]", sb.toString(), top._1c(), top._2c(), decimalFormat.format(top.supportOfD1(_1total)), decimalFormat.format(top.supportOfD2(_2total)), MINIMAL_THRESHOLD, MAXIMUM_THRESHOLD);
-                LOGGER.info("2 - {},[{} {}],[{} {}]", sb.toString(), top.c1(), top.c2(), this.n1 * MINIMAL_THRESHOLD, this.n2 * MAXIMUM_THRESHOLD);
+                LOGGER.info("2 - {}, [{} {}], [{} {}]", sb.toString(), top.c1(), top.c2(), this.n1 * MINIMAL_THRESHOLD, this.n2 * MAXIMUM_THRESHOLD);
             } else {
                 StringBuilder sb = new StringBuilder();
                 for (int i = 0; i < prefix.size(); i++) {
                     sb.append(prefix.get(i).value());
                 }
                 sb.append(top.value());
-                //LOGGER.info("3 - {},[{} {}],[{} {}],[{} {}]", sb.toString(), top._1c(), top._2c(), decimalFormat.format(top.supportOfD1(_1total)), decimalFormat.format(top.supportOfD2(_2total)), MINIMAL_THRESHOLD, MAXIMUM_THRESHOLD);
                 LOGGER.info("3 - {},[{} {}],[{} {}]", sb.toString(), top.c1(), top.c2(), this.n1 * MINIMAL_THRESHOLD, this.n2 * MAXIMUM_THRESHOLD);
 
                 List<CPTreeNode<Object>> topChildren = top.parent().children();                                         //top.parent不可能为null

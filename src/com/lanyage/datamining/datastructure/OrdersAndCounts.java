@@ -22,6 +22,13 @@ public class OrdersAndCounts {
         this.c2 = c2;
     }
 
+    public OrdersAndCounts(OrdersAndCounts cpone) {
+        this.preIndex = cpone.preIndex;
+        this.postIndex = cpone.postIndex;
+        this.c1 = cpone.c1;
+        this.c2 = cpone.c2;
+    }
+
     public Integer preIndex() {
         return preIndex;
     }
@@ -68,8 +75,7 @@ public class OrdersAndCounts {
                 preIndex + ","
                 + postIndex + ","
                 + c1 + ","
-                + c2 + ","
-                + endNode.value() +
+                + c2 +
                 ")";
     }
 }

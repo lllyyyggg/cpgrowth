@@ -24,7 +24,7 @@ public class TreeAppender {
         if (parent.children().size() == 0) {                                                                            //如果root没有孩子节点
             CPTreeNode<Object> toAdd = subTreeHead;
             while (toAdd != null) {
-                LOGGER.info("ADD {} TO {}", toAdd, parent);
+                //LOGGER.info("ADD {} TO {}", toAdd, parent);
                 parent.children().add(toAdd);
                 toAdd.setParent(parent);
                 traverseAndAddIndexForNodes(toAdd);                                                                     //把toAdd添加index
@@ -40,14 +40,14 @@ public class TreeAppender {
                         CPTreeNode<Object> prev = new CPTreeNode<>(currChild.value(), currChild.c1(), currChild.c2());
                         currChild.setC1(toAdd.c1() + currChild.c1());
                         currChild.setC2(toAdd.c2() + currChild.c2());
-                        LOGGER.info("COMBINE {} TO {}, now the node is {}", toAdd, prev, currChild);
+                        //LOGGER.info("COMBINE {} TO {}, now the node is {}", toAdd, prev, currChild);
                         addTreeToTree(toAdd.children().size() == 0 ? null : toAdd.children().get(0), currChild);
                         break;                                                                                          //找到了就跳出循环，开始将兄弟节点添加到root
                     }
                 }
                 CPTreeNode<Object> next = toAdd.sibling();                                                              //此处也就是root没有child和toAdd的value等价，那么直接将toAdd加到root
                 if (i == parent.children().size()) {
-                    LOGGER.info("ADD {} TO {}", toAdd, parent);
+                    //LOGGER.info("ADD {} TO {}", toAdd, parent);
                     parent.children().get(parent.children().size() - 1).setSibling(toAdd);
                     toAdd.setSibling(null);
                     parent.children().add(toAdd);
@@ -84,7 +84,7 @@ public class TreeAppender {
         } else {
             //top.setIndex(++INDEX);
             INDEX++;
-            LOGGER.info("SET {} INDEX {}]", top, INDEX - 1);
+            //LOGGER.info("SET {} INDEX {}]", top, INDEX - 1);
         }
         List<CPTreeNode<Object>> rootChildren = top.children();
         if (rootChildren.size() == 0) {

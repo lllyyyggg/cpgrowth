@@ -42,25 +42,36 @@ public class CPTreeConstructor {
     /*——————————————————————————————
     |根据已有的transactions生成初始CP树|
      ———————————————————————————————*/
-    public CPTreeNode<Object> createInitialCPTree() throws IOException {
+    public CPTreeNode<Object> createInitialCPTree(){
         CPTreeNode<Object> root = new CPTreeNode<>();
         initializeRoot(root);                                                                                           //初始化root节点
 
-        LOGGER.info("———————————————————————————————————————————————————————————————————————————————————————————————————the beginning of constructing a cp tree with existing transactions");
-        File file = new File(FilePathEnum.MIX_DATASET.getSource());
-        BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
-        String line;
+        //LOGGER.info("———————————————————————————————————————————————————————————————————————————————————————————————————the beginning of constructing a cp tree with existing transactions");
         TreeAppender addTreeToTree = new TreeAppender();
-        while ((line = br.readLine()) != null && !line.trim().equals("")) {
-            String[] nodesAndTag = line.split(",");
-            String nodesString = nodesAndTag[0];
-            String classTag = nodesAndTag[1];
-            LOGGER.info("{},{} —————————————— start", nodesString, classTag);
-            CPTreeNode<Object> head = nodeStringToItemSet(nodesString, classTag);                                       //根据(FDGB,1)类型的数据生成小树并添加到cptree上
-            addTreeToTree.addTreeToTree(head, root);
-            LOGGER.info("{},{} —————————————— end", nodesString, classTag);
+        File file = new File(FilePathEnum.MIX_DATASET.getSource());
+        BufferedReader br = null;
+        try {
+            br = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+            String line;
+            while ((line = br.readLine()) != null && !line.trim().equals("")) {
+                String[] nodesAndTag = line.split(",");
+                String nodesString = nodesAndTag[0];
+                String classTag = nodesAndTag[1];
+                //LOGGER.info("{},{} —————————————— start", nodesString, classTag);
+                CPTreeNode<Object> head = nodeStringToItemSet(nodesString, classTag);                                       //根据(FDGB,1)类型的数据生成小树并添加到cptree上
+                addTreeToTree.addTreeToTree(head, root);
+                //LOGGER.info("{},{} —————————————— end", nodesString, classTag);
+            }
+        }catch (IOException e){
+            throw new RuntimeException("发生了IO异常");
+        }finally {
+            try {
+                br.close();
+            } catch (IOException e) {
+                throw new RuntimeException("流关闭错误");
+            }
         }
-        LOGGER.info("———————————————————————————————————————————————————————————————————————————————————————————————————the end of constructing a cp tree with existing transactions");
+        //LOGGER.info("———————————————————————————————————————————————————————————————————————————————————————————————————the end of constructing a cp tree with existing transactions");
         return root;
     }
 

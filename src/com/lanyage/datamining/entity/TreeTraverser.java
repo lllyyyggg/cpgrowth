@@ -4,7 +4,6 @@ import com.lanyage.datamining.datastructure.CPTreeNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -39,7 +38,7 @@ public class TreeTraverser {
                 sb.append(nodeList.get(i)).append(" ");
             }
             sb.deleteCharAt(sb.length() - 1);
-            LOGGER.info("TRANSACTION — {}", sb.toString());
+            //LOGGER.info("TRANSACTION — {}", sb.toString());
             nodeList.remove(nodeList.size() - 1);
             return;
         }
