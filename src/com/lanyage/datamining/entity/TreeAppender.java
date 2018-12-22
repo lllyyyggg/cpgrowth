@@ -40,7 +40,7 @@ public class TreeAppender {
                         CPTreeNode<Object> prev = new CPTreeNode<>(currChild.value(), currChild.c1(), currChild.c2());
                         currChild.setC1(toAdd.c1() + currChild.c1());
                         currChild.setC2(toAdd.c2() + currChild.c2());
-                        LOGGER.info("MERGE {} TO {}, now the node is {}", toAdd, prev, currChild);
+                        LOGGER.info("COMBINE {} TO {}, now the node is {}", toAdd, prev, currChild);
                         addTreeToTree(toAdd.children().size() == 0 ? null : toAdd.children().get(0), currChild);
                         break;                                                                                          //找到了就跳出循环，开始将兄弟节点添加到root
                     }

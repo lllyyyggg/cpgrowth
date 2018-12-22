@@ -13,6 +13,11 @@ public class Item<T> implements Comparable<Item> {
         this.value = value;
     }
 
+    public Item(T value, Integer count) {
+        this.value = value;
+        this.count = count;
+    }
+
     public T value() {
         return this.value;
     }

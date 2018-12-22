@@ -16,11 +16,11 @@ public class TreeTraverser {
     |遍历根节点，打印所有transaction|
      ————————————————————————————*/
     public void traverseAndPrintTransactions(CPTreeNode<Object> head) {
-        LOGGER.info("———————————————————————————————————————————————————————————————————————————————————————————————————the beginning of traversing the cp tree");
+        //LOGGER.info("———————————————————————————————————————————————————————————————————————————————————————————————————the beginning of traversing the cp tree");
         for (int i = 0; i < head.children().size(); i++) {
             traverseHelp(new ArrayList<>(0), head.children().get(i));
         }
-        LOGGER.info("———————————————————————————————————————————————————————————————————————————————————————————————————the end of traversing the cp tree");
+        //LOGGER.info("———————————————————————————————————————————————————————————————————————————————————————————————————the end of traversing the cp tree");
     }
 
     /*————————————————————————————
@@ -54,7 +54,7 @@ public class TreeTraverser {
     |前序遍历并且添加前序索引|
      ————————————————————*/
     public void preTraverse(CPTreeNode<Object> root) {
-        LOGGER.info("———————————————————————————————————————————————————————————————————————————————————————————————————the beginning of pre-traversing");
+        //LOGGER.info("———————————————————————————————————————————————————————————————————————————————————————————————————the beginning of pre-traversing");
         int preIndex = 0;
         LinkedList<CPTreeNode<Object>> stack = new LinkedList<>();
         stack.addLast(root);
@@ -62,7 +62,7 @@ public class TreeTraverser {
         while (!stack.isEmpty()) {
             CPTreeNode<Object> node = stack.pollLast();
             node.setPreIndex(preIndex++);
-            LOGGER.info("{}", node);
+            //LOGGER.info("{}", node);
             int childSize;
             if ((childSize = node.children().size()) > 0) {
                 for (int i = childSize - 1; i >= 0; i--) {
@@ -70,7 +70,7 @@ public class TreeTraverser {
                 }
             }
         }
-        LOGGER.info("———————————————————————————————————————————————————————————————————————————————————————————————————the end of pre-traversing");
+        //LOGGER.info("———————————————————————————————————————————————————————————————————————————————————————————————————the end of pre-traversing");
     }
 
 
@@ -78,7 +78,7 @@ public class TreeTraverser {
     |后序遍历并且添加后序索引|
      ————————————————————*/
     public void postTraverse(CPTreeNode<Object> root) {
-        LOGGER.info("———————————————————————————————————————————————————————————————————————————————————————————————————the beginning of post-traversing");
+        //LOGGER.info("———————————————————————————————————————————————————————————————————————————————————————————————————the beginning of post-traversing");
         int postIndex = 0;
         LinkedList<CPTreeNode<Object>> stack = new LinkedList<>();
         stack.addLast(root);
@@ -91,21 +91,22 @@ public class TreeTraverser {
             CPTreeNode<Object> node = stack.pollLast();
             node.setVisited(true);
             node.setPostIndex(postIndex++);
-            LOGGER.info("{}", node);
+            //LOGGER.info("{}", node);
             if (node.sibling() != null) {
                 stack.addLast(node.sibling());
             }
         }
-        LOGGER.info("———————————————————————————————————————————————————————————————————————————————————————————————————the end of post-traversing");
+        //LOGGER.info("———————————————————————————————————————————————————————————————————————————————————————————————————the end of post-traversing");
     }
 
-    public static void main(String[] args) throws IOException {
-        CPTreeConstructor constructor = new CPTreeConstructor();
-        CPTreeNode<Object> root = constructor.createInitialCPTree();
-        TreeTraverser traverser = new TreeTraverser();
-        traverser.preTraverse(root);
-        traverser.postTraverse(root);
-        LOGGER.info("TOTAL NODES NUMBER : {}", TreeAppender.INDEX - 1);
-    }
+    //public static void main(String[] args) throws IOException {
+    //    CPTreeConstructor constructor = new CPTreeConstructor();
+    //    CPTreeNode<Object> root = constructor.createInitialCPTree();
+    //    TreeTraverser traverser = new TreeTraverser();
+    //    traverser.preTraverse(root);
+    //    traverser.postTraverse(root);
+    //    traverser.traverseAndPrintTransactions(root);
+    //    LOGGER.info("TOTAL NODES NUMBER : {}", TreeAppender.INDEX - 1);
+    //}
 }
 

@@ -111,10 +111,10 @@ public class CPTreeNode<T> {
     public String toString() {
         return "(" +
                 value + "," +
-                c1 + "," +
-                c2 + "," +
                 preIndex + "," +
-                postIndex +
+                postIndex + "," +
+                c1 + "," +
+                c2 +
                 ')';
     }
 }

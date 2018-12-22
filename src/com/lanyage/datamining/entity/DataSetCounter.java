@@ -8,6 +8,9 @@ import java.io.*;
  *  获取每个数据集中的TRANSACTION的个数并且返回
  */
 public class DataSetCounter {
+    /*———————————————————————————————
+    | 获取每个数据集的TRANSACTION的个数 |
+     ———————————————————————————————*/
     public Integer[] getCountOfDataSets() throws IOException {
         Integer[] result = new Integer[2];
         BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(FilePathEnum.DATA_SET_I.getSource())));
