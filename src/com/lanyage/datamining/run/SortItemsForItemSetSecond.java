@@ -26,13 +26,15 @@ public class SortItemsForItemSetSecond {
         Map<Object, Integer> valueAndCount = new HashMap<>();
         BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(FilePathEnum.ITEM_COUNT_FILE.getSource())));
         String line;
+        int total = 0;
         while ((line = br.readLine()) != null && !line.trim().equals("")) {
             Object[] objects = line.split(" ");
             valueAndCount.put(objects[0], Integer.valueOf((String) objects[1]));
+            total += Integer.valueOf((String) objects[1]);
             LOGGER.info("get map entry : <{}={}> ", objects[0], objects[1]);
         }
         br.close();
-        LOGGER.info("———————————————————————————————————————————————————————————————————————————————————————————————————the end of getting map entries from \"resources/ITEMSCOUNT_FILE\"");
+        LOGGER.info("———————————————————————————————————————————————————————————————————————————————————————————————————the end of getting map entries from \"resources/ITEMSCOUNT_FILE\",total = " + total);
 
         LOGGER.info("———————————————————————————————————————————————————————————————————————————————————————————————————the beginning of putting sorted itemsets into \"resources/MIXED_DATASET\"");
         String dest = FilePathEnum.MIX_DATASET.getSource();

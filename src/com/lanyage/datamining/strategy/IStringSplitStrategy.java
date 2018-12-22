@@ -23,10 +23,12 @@ public interface IStringSplitStrategy<T> {
     /*-------------------------
     | 计算一个文件中ITEM出现的次数|
      -------------------------*/
-    Map<T,Integer> calculateCountOfItems(String source) throws IOException;
+    Map<T, Integer> calculateCountOfItems(String source) throws IOException;
 
     /*----------------------------------------------------------
     | 给Items进行排序，并且将排好序的ItemSet打上类标签汇总到一个文件中 |
      ---------------------------------------------------------——*/
     void sortAndAddTags(Map<Object, Integer> valueAndCount, String dest, Integer[] tags, String[] sources) throws IOException;
+
+    Object getPrefix(String sequence);
 }

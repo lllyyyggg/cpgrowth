@@ -15,6 +15,7 @@ public class MineFromNodeListForth {
     public static void main(String[] args) {
         CPTreeConstructor treeConstructor = new CPTreeConstructor();
         CPTreeNode<Object> root = treeConstructor.createInitialCPTree();                                                //创建初始CP树
+        LOGGER.info("INDEX {}", TreeAppender.INDEX - 1);
 
         TreeTraverser treeTraverser = new TreeTraverser();
         treeTraverser.preTraverse(root);
@@ -28,9 +29,6 @@ public class MineFromNodeListForth {
         CPNodeListMiner nodeListMiner = new CPNodeListMiner();
         nodeListMiner.mineFromNodeList(initialNodeListMap);                                                             //挖掘NodeList
 
-        /*—————————————————————————————————
-        | 遍历ROOT，确保所有路径正确。如:FDGB |
-         —————————————————————————————————*/
         treeTraverser.traverseAndPrintTransactions(root);
         LOGGER.info("INDEX {}", TreeAppender.INDEX - 1);
     }

@@ -114,5 +114,10 @@ public class StringSplitBySpaceStrategy implements IStringSplitStrategy<Object> 
         }
         bw.close();
     }
+
+    @Override
+    public String getPrefix(String sequence) {
+        return sequence.split(" ")[0];
+    }
 }
 

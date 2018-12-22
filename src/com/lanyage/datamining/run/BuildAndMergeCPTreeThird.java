@@ -16,7 +16,7 @@ public class BuildAndMergeCPTreeThird {
          ————————————————————————————-————————————*/
         CPTreeConstructor constructor = new CPTreeConstructor();
         CPTreeNode<Object> root = constructor.createInitialCPTree();
-
+        LOGGER.info("INDEX {}", TreeAppender.INDEX - 1);
         /*—————————————————————————————————
         | 遍历ROOT，确保所有路径正确。如:FDGB |
          ————————————————————————————-————*/

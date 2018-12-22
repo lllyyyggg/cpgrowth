@@ -102,4 +102,9 @@ public class StringSplitToCharactersStrategy implements IStringSplitStrategy<Obj
         }
         bw.close();
     }
+
+    @Override
+    public Object getPrefix(String sequence) {
+        return sequence.charAt(0);
+    }
 }
