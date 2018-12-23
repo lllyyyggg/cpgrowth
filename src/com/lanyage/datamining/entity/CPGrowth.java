@@ -124,16 +124,16 @@ public class CPGrowth {
                 prefix.add(top);                                                                                        //添加到前缀
                 StringBuilder sb = new StringBuilder();
                 for (int i = 0; i < prefix.size(); i++) {
-                    sb.append(prefix.get(i).value());
+                    sb.append(prefix.get(i).value()).append(" ");
                 }
-                LOGGER.info("2 - {}, [{} {}], [{} {}]", sb.toString(), top.c1(), top.c2(), this.n1 * MINIMAL_THRESHOLD, this.n2 * MAXIMUM_THRESHOLD);
+                LOGGER.info("2 - {}, [{} {}], [{} {}]", sb.toString().trim(), top.c1(), top.c2(), this.n1 * MINIMAL_THRESHOLD, this.n2 * MAXIMUM_THRESHOLD);
             } else {
                 StringBuilder sb = new StringBuilder();
                 for (int i = 0; i < prefix.size(); i++) {
-                    sb.append(prefix.get(i).value());
+                    sb.append(prefix.get(i).value()).append(" ");
                 }
                 sb.append(top.value());
-                LOGGER.info("3 - {},[{} {}],[{} {}]", sb.toString(), top.c1(), top.c2(), this.n1 * MINIMAL_THRESHOLD, this.n2 * MAXIMUM_THRESHOLD);
+                LOGGER.info("3 - {}, [{} {}], [{} {}]", sb.toString().trim(), top.c1(), top.c2(), this.n1 * MINIMAL_THRESHOLD, this.n2 * MAXIMUM_THRESHOLD);
 
                 List<CPTreeNode<Object>> topChildren = top.parent().children();                                         //top.parent不可能为null
                 for (int i = 0; i < topChildren.size(); i++) {

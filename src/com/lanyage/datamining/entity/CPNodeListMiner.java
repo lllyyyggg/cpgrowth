@@ -15,6 +15,7 @@ public class CPNodeListMiner {
     //public static final double MAXIMUM_THRESHOLD = 0.05d;
     public static final double MINIMAL_THRESHOLD = 0.7d;
     public static final double MAXIMUM_THRESHOLD = 0.3d;
+    public static final Set<String> PRUNE_SET = new HashSet<>();
     private Integer N1;
     private Integer N2;
     private static int cpcount = 0;
@@ -26,8 +27,8 @@ public class CPNodeListMiner {
     }
 
     /*————————————————————————————————————————
-        | 组合两个父子节点的NodeList形成新的NodeList |
-         ————————————————————————————————————————*/
+    | 组合两个父子节点的NodeList形成新的NodeList |
+     ————————————————————————————————————————*/
     public List<OrdersAndCounts> combine(List<OrdersAndCounts> parent, List<OrdersAndCounts> child) {
         int i = 0, j = 0;
         List<OrdersAndCounts> highLevelItemSet = new ArrayList<>();
@@ -97,56 +98,63 @@ public class CPNodeListMiner {
      ——————————————————————————————————————————*/
     private void mineNodeList(Map<Object, List<OrdersAndCounts>> nodeListMap) {
         for (Map.Entry<Object, List<OrdersAndCounts>> entry : nodeListMap.entrySet()) {                                 //打印并且挖掘, 循环次数和项集的大小有关
-            //Object key = entry.getKey();
             List<OrdersAndCounts> nodeList = entry.getValue();
             Map<String, OrdersAndCounts> candidatesMap = new HashMap<>();
-            //String fancyString = fillCandidatesAndReturnFancyString(nodeList, candidatesMap);
-            fillCandidatesAndReturnFancyString(nodeList, candidatesMap);
-            //LOGGER.info("{} {}", key, fancyString);
+            fillCandidates(nodeList, candidatesMap);
             mine(candidatesMap);
         }
     }
 
-    private void fillCandidatesAndReturnFancyString(List<OrdersAndCounts> nodeList, Map<String, OrdersAndCounts> candidatesMap) {
-        //StringBuilder sb = new StringBuilder("[");
+    /*————————————————————————————————————————————————————————
+    |    打印一个项集的toString, 并且填充待挖掘的candidatesMap    |
+     —————————————————————————————————————————————————————————*/
+    private void fillCandidates(List<OrdersAndCounts> nodeList, Map<String, OrdersAndCounts> candidatesMap) {
         for (int i = 0; i < nodeList.size(); i++) {                                                                     //遍历NodeList然后如果getCompleteSequence一样就进行融合
-
             OrdersAndCounts oac = nodeList.get(i);
             String s = getCompleteSequence(oac);
-
             if (candidatesMap.containsKey(s)) {                                                                         //这里用于将路径相同的NodeList进行合并
                 OrdersAndCounts origin = candidatesMap.get(s);
                 origin.setC1(oac.c1() + origin.c1());
                 origin.setC2(oac.c2() + origin.c2());
             } else {
                 OrdersAndCounts tempOac = new OrdersAndCounts(oac);
+                tempOac.setPreIndex(-1);
+                tempOac.setPostIndex(-1);
                 candidatesMap.put(s, tempOac);
             }
-
-            //sb.append("(").append(oac.preIndex()).append(",").append(oac.postIndex()).append(",").append(oac.c1()).append(",").append(oac.c2()).append(",").append(s).append(")");
         }
-        //sb.append("]");
-        //return sb.toString();
     }
 
     /*————————————————————————————————————————
     |    挖掘对比模式并且返回需要移除的后缀KEY    |
      ————————————————————————————————————————*/
     private void mine(Map<String, OrdersAndCounts> candidatesMap) {
-
+        if (candidatesMap.size() > 1) {
+            LOGGER.info(">>>>>> >>>>>> >>>>>>");
+        }
         for (Map.Entry<String, OrdersAndCounts> entry : candidatesMap.entrySet()) {
             String key = entry.getKey();
             OrdersAndCounts oac = entry.getValue();
+            if (PRUNE_SET.contains(key.substring(0, key.length() - 2).trim())) {
+                continue;
+            }
             calccount++;
             if (isContrastPattern(oac, this.N1, this.N2)) {
                 cpcount++;
                 LOGGER.info("1 - {}, [{} {}], [{} {}]", key, oac.c1(), oac.c2(), MINIMAL_THRESHOLD * this.N1, MAXIMUM_THRESHOLD * this.N2);
+            } else if (!canPrune(oac, this.N1, this.N2)) {
+                LOGGER.info("2 - {}, [{} {}], [{} {}]", key, oac.c1(), oac.c2(), MINIMAL_THRESHOLD * this.N1, MAXIMUM_THRESHOLD * this.N2);
             } else {
+                PRUNE_SET.add(key);
                 LOGGER.info("3 - {}, [{} {}], [{} {}]", key, oac.c1(), oac.c2(), MINIMAL_THRESHOLD * this.N1, MAXIMUM_THRESHOLD * this.N2);
             }
         }
     }
 
+    private boolean canPrune(OrdersAndCounts oac, Integer N1, Integer N2) {
+        boolean result = oac.c1() > MINIMAL_THRESHOLD * N1 || oac.c2() > MINIMAL_THRESHOLD * N2;
+        return !result;
+    }
 
     /*————————————————————————————————————————
     |               是不是对比模式             |
@@ -163,7 +171,7 @@ public class CPNodeListMiner {
         CPTreeNode<Object> currNode = ordersAndCounts.endNode();
         CPTreeNode<Object> toNode = ordersAndCounts.startNode();
         StringBuilder sb = new StringBuilder();
-        LinkedList<CPTreeNode<Object>> nodeValueList = new LinkedList<>(); //from A to A
+        LinkedList<CPTreeNode<Object>> nodeValueList = new LinkedList<>();
         while (currNode != toNode) {
             nodeValueList.addLast(currNode);
             currNode = currNode.parent();
