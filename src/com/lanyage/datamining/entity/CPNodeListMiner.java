@@ -11,10 +11,10 @@ import java.util.*;
 
 public class CPNodeListMiner {
     public static final Logger LOGGER = LoggerFactory.getLogger(CPNodeListMiner.class);
-    //public static final double MINIMAL_THRESHOLD = 0.6d;
-    //public static final double MAXIMUM_THRESHOLD = 0.05d;
-    public static final double MINIMAL_THRESHOLD = 0.7d;
-    public static final double MAXIMUM_THRESHOLD = 0.3d;
+    public static final double MINIMAL_THRESHOLD = 0.6d;
+    public static final double MAXIMUM_THRESHOLD = 0.05d;
+    //public static final double MINIMAL_THRESHOLD = 0.7d;
+    //public static final double MAXIMUM_THRESHOLD = 0.3d;
     public static final Set<String> PRUNE_SET = new HashSet<>();
     private Integer N1;
     private Integer N2;
@@ -91,6 +91,7 @@ public class CPNodeListMiner {
         }
         LOGGER.info("———————————————————————————————————————————————————————————————————————————————————————————————————the end of mining from nodelists");
         LOGGER.info("TOTAL OF CPS : {}, AND CALCULATED FOR {} TIMES", cpcount, calccount);
+        LOGGER.info("SIZE OF PRUNE PREFIX : {}", PRUNE_SET.size());
     }
 
     /*——————————————————————————————————————————
@@ -129,13 +130,27 @@ public class CPNodeListMiner {
     |    挖掘对比模式并且返回需要移除的后缀KEY    |
      ————————————————————————————————————————*/
     private void mine(Map<String, OrdersAndCounts> candidatesMap) {
-        if (candidatesMap.size() > 1) {
-            LOGGER.info(">>>>>> >>>>>> >>>>>>");
-        }
         for (Map.Entry<String, OrdersAndCounts> entry : candidatesMap.entrySet()) {
             String key = entry.getKey();
+            //LOGGER.info("key is {}", key);
+            //if(key .equals("F11 C1 B1")) {
+            //    System.out.println(key);
+            //}
             OrdersAndCounts oac = entry.getValue();
-            if (PRUNE_SET.contains(key.substring(0, key.length() - 2).trim())) {
+            int lastIndexOfSpace = key.lastIndexOf(" ");
+            lastIndexOfSpace = lastIndexOfSpace > 0 ? lastIndexOfSpace : 0;
+            String prefix = key.substring(0, lastIndexOfSpace).trim();
+            boolean exists = false;
+            while (prefix.length() > 0) {
+                if (PRUNE_SET.contains(prefix)) {
+                    exists = true;
+                    break;
+                }
+                int lstIndexOfSpace = prefix.lastIndexOf(" ");
+                lstIndexOfSpace = lstIndexOfSpace > 0 ? lstIndexOfSpace : 0;
+                prefix = key.substring(0, lstIndexOfSpace).trim();
+            }
+            if (exists) {
                 continue;
             }
             calccount++;
@@ -143,10 +158,10 @@ public class CPNodeListMiner {
                 cpcount++;
                 LOGGER.info("1 - {}, [{} {}], [{} {}]", key, oac.c1(), oac.c2(), MINIMAL_THRESHOLD * this.N1, MAXIMUM_THRESHOLD * this.N2);
             } else if (!canPrune(oac, this.N1, this.N2)) {
-                LOGGER.info("2 - {}, [{} {}], [{} {}]", key, oac.c1(), oac.c2(), MINIMAL_THRESHOLD * this.N1, MAXIMUM_THRESHOLD * this.N2);
+                //LOGGER.info("2 - {}, [{} {}], [{} {}]", key, oac.c1(), oac.c2(), MINIMAL_THRESHOLD * this.N1, MAXIMUM_THRESHOLD * this.N2);
             } else {
                 PRUNE_SET.add(key);
-                LOGGER.info("3 - {}, [{} {}], [{} {}]", key, oac.c1(), oac.c2(), MINIMAL_THRESHOLD * this.N1, MAXIMUM_THRESHOLD * this.N2);
+                //LOGGER.info("3 - {}, [{} {}], [{} {}]", key, oac.c1(), oac.c2(), MINIMAL_THRESHOLD * this.N1, MAXIMUM_THRESHOLD * this.N2);
             }
         }
     }
