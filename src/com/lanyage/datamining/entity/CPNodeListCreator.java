@@ -37,6 +37,7 @@ public class CPNodeListCreator {
                 nodeListMap.put(node.value(), nodeList);
             }
             OrdersAndCounts oac = new OrdersAndCounts(node.preIndex(), node.postIndex(), node.c1(), node.c2());
+            oac.setStartNode(node);
             oac.setEndNode(node);
             nodeList.add(oac);
             int childSize;

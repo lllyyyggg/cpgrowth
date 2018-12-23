@@ -15,13 +15,10 @@ public class MineFromNodeListForth {
     public static void main(String[] args) {
         CPTreeConstructor treeConstructor = new CPTreeConstructor();
         CPTreeNode<Object> root = treeConstructor.createInitialCPTree();                                                //创建初始CP树
-        LOGGER.info("INDEX {}", TreeAppender.INDEX - 1);
 
         TreeTraverser treeTraverser = new TreeTraverser();
         treeTraverser.preTraverse(root);
         treeTraverser.postTraverse(root);                                                                               //前后序遍历添加索引
-
-        //treeTraverser.traverseAndPrintTransactions(root);
 
         CPNodeListCreator cpNodeListCreator = new CPNodeListCreator();
         Map<Object, List<OrdersAndCounts>> initialNodeListMap = cpNodeListCreator.createInitialNodeList(root);          //根据root创建初始NodeList
@@ -29,7 +26,6 @@ public class MineFromNodeListForth {
         CPNodeListMiner nodeListMiner = new CPNodeListMiner();
         nodeListMiner.mineFromNodeList(initialNodeListMap);                                                             //挖掘NodeList
 
-        treeTraverser.traverseAndPrintTransactions(root);
         LOGGER.info("INDEX {}", TreeAppender.INDEX - 1);
     }
 }

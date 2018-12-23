@@ -13,6 +13,7 @@ public class OrdersAndCounts {
     private Integer postIndex;
     private Integer c1;
     private Integer c2;
+    private CPTreeNode<Object> startNode;
     private CPTreeNode<Object> endNode;
 
     public OrdersAndCounts(Integer preIndex, Integer postIndex, Integer c1, Integer c2) {
@@ -27,6 +28,8 @@ public class OrdersAndCounts {
         this.postIndex = cpone.postIndex;
         this.c1 = cpone.c1;
         this.c2 = cpone.c2;
+        this.startNode = cpone.startNode;
+        this.endNode = cpone.endNode;
     }
 
     public Integer preIndex() {
@@ -67,6 +70,14 @@ public class OrdersAndCounts {
 
     public void setEndNode(CPTreeNode<Object> endNode) {
         this.endNode = endNode;
+    }
+
+    public CPTreeNode<Object> startNode() {
+        return startNode;
+    }
+
+    public void setStartNode(CPTreeNode<Object> startNode) {
+        this.startNode = startNode;
     }
 
     @Override

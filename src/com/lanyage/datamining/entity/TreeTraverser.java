@@ -38,7 +38,7 @@ public class TreeTraverser {
                 sb.append(nodeList.get(i)).append(" ");
             }
             sb.deleteCharAt(sb.length() - 1);
-            //LOGGER.info("TRANSACTION — {}", sb.toString());
+            LOGGER.info("TRANSACTION — {}", sb.toString());
             nodeList.remove(nodeList.size() - 1);
             return;
         }

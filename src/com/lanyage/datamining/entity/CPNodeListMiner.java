@@ -4,8 +4,6 @@ import com.lanyage.datamining.datastructure.CPTreeNode;
 import com.lanyage.datamining.datastructure.Item;
 import com.lanyage.datamining.datastructure.OrdersAndCounts;
 import com.lanyage.datamining.enums.FilePathEnum;
-import com.lanyage.datamining.factory.StrategyFactory;
-import com.lanyage.datamining.strategy.IStringSplitStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,150 +11,129 @@ import java.util.*;
 
 public class CPNodeListMiner {
     public static final Logger LOGGER = LoggerFactory.getLogger(CPNodeListMiner.class);
-    public static final IStringSplitStrategy STRATEGY = StrategyFactory.stringSplitStrategy();
     public static final double MINIMAL_THRESHOLD = 0.7d;
     public static final double MAXIMUM_THRESHOLD = 0.3d;
     public static final Integer[] NS = new DataSetCounter().getCountOfDataSets();
-    public static final Set<Object> MINED_ALREADY = new HashSet<>();
+
+    /*————————————————————————————————————————
+    | 组合两个父子节点的NodeList形成新的NodeList |
+     ————————————————————————————————————————*/
+    public List<OrdersAndCounts> combine(List<OrdersAndCounts> parent, List<OrdersAndCounts> child) {
+        int i = 0, j = 0;
+        List<OrdersAndCounts> highLevelItemSet = new ArrayList<>();
+        while (i < parent.size() && j < child.size()) {
+            OrdersAndCounts poc = parent.get(i);
+            OrdersAndCounts coc = child.get(j);
+            if (poc.preIndex() < coc.preIndex()) {
+                if (poc.postIndex() > coc.postIndex()) {
+                    OrdersAndCounts combinedOne = new OrdersAndCounts(poc.preIndex(), poc.postIndex(), coc.c1(), coc.c2());
+                    combinedOne.setStartNode(poc.startNode());
+                    combinedOne.setEndNode(coc.endNode());
+                    String fullString = combinedOne.startNode().value() + " " + getCompleteSequence(coc);
+                    String combinedString = getCompleteSequence(combinedOne);
+                    if (fullString.equals(combinedString)) {
+                        highLevelItemSet.add(combinedOne);
+                    }
+                    j++;
+                } else {
+                    i++;
+                }
+            } else {
+                j++;
+            }
+        }
+        return highLevelItemSet.size() == 0 ? null : highLevelItemSet;
+    }
 
     /*——————————————————
     | 从NodeList中挖掘模式|
      ———————————————————*/
     public void mineFromNodeList(Map<Object, List<OrdersAndCounts>> initialNodeListMap) {
-        List<Item<Object>> sortedItemList = getSortedItemList();                                                        //前置条件initialNodeListMap、sortedItemList
-        Map<Object, Integer> sortedItemMap = new HashMap<>();
+        List<Item<Object>> sortedItemList = getSortedItemList();                                                        //排好序的Item
+        Map<Object, Integer> sortedItemMap = new HashMap<>();                                                           //Item -> index, 用于快速查找后缀的前缀
         for (int i = 0; i < sortedItemList.size(); i++) {
             sortedItemMap.put(sortedItemList.get(i).value(), i);
         }
         Map<Object, List<OrdersAndCounts>> newMap = new HashMap<>(initialNodeListMap);                                  //生成的高项集的NodeList的Map
+        newMap.remove("$");
         LOGGER.info("———————————————————————————————————————————————————————————————————————————————————————————————————the beginning of mining from nodelists");
-        while (newMap != null) {
-            newMap = startMining(sortedItemList, sortedItemMap, initialNodeListMap, newMap);
-        }
-        LOGGER.info("———————————————————————————————————————————————————————————————————————————————————————————————————the end of mining from nodelists");
-    }
+        while (newMap != null) {                                                                                        //和数据集的维数有关
+            LOGGER.info("项集大小 : {}", newMap.size());
+            mineNodeList(newMap);
+            Map<Object, List<OrdersAndCounts>> tempTable = new HashMap<>();                                             //临时的Map用于存储高项集的NodeList
+            for (Object key : newMap.keySet()) {
+                Object prefix = ((String) key).split(" ")[0];                                                    //获取首Item,如 A11 D1获取A11
+                int parentIndex = sortedItemMap.get(prefix) - 1;
+                for (int i = parentIndex; i >= 0; i--) {
+                    Item<Object> parentItem = sortedItemList.get(i);
+                    List<OrdersAndCounts> parentNodeList = initialNodeListMap.get(parentItem.value());                  //每次都要从initialNodeListMap选取一个头进行combine
+                    List<OrdersAndCounts> tobeCombinedNodeList = newMap.get(key);
 
-    /*——————————————————
-    |       开始挖掘     |
-     ———————————————————*/
-    private Map<Object, List<OrdersAndCounts>> startMining(List<Item<Object>> sortedItemList, Map<Object, Integer> sortedItemMap, Map<Object, List<OrdersAndCounts>> initialNodeListMap, Map<Object, List<OrdersAndCounts>> newMap) {
+                    List<OrdersAndCounts> newOrdersAndCounts = combine(parentNodeList, tobeCombinedNodeList);           //生成高项集
 
-        newMap = mineNodeListMapAndRemoveUselessSuffix(newMap);                                                          //此处可以进行挖掘和剪枝操作
-
-        Map<Object, List<OrdersAndCounts>> tempTable = new HashMap<>();                                                 //临时的Map用于存储高项集的NodeList
-
-        for (Object key : newMap.keySet()) {
-            if (key.equals("$"))                                                                                        //如果是$代表是根节点。
-                continue;
-            Object prefix = String.valueOf(((String) key).split(" ")[0]).intern();                               //获取首Item,如 A11 D1获取A1
-            int parentIndex = sortedItemMap.get(prefix) - 1;
-            for (int i = parentIndex; i >= 0; i--) {
-                List<OrdersAndCounts> parentNodeList = initialNodeListMap.get(sortedItemList.get(i).value());           //每次都要从initialNodeListMap选取一个头进行combine
-                List<OrdersAndCounts> tobeCombinedNodeList = newMap.get(key);
-                List<OrdersAndCounts> newOrdersAndCounts = combine(parentNodeList, tobeCombinedNodeList);               //生成高项集
-                if (newOrdersAndCounts != null) {
-                    tempTable.put(sortedItemList.get(i).value() + " " + key, newOrdersAndCounts);
+                    if (newOrdersAndCounts != null) {
+                        tempTable.put(sortedItemList.get(i).value() + " " + key, newOrdersAndCounts);
+                    }
                 }
             }
+            newMap = tempTable.size() == 0 ? null : tempTable;
         }
-        return tempTable.size() == 0 ? null : tempTable;
+        LOGGER.info("———————————————————————————————————————————————————————————————————————————————————————————————————the end of mining from nodelists");
     }
 
     /*——————————————————————————————————————————
     | 挖掘模式、移除不是对比模式的后缀用于后续combine|
      ——————————————————————————————————————————*/
-    private Map<Object, List<OrdersAndCounts>> mineNodeListMapAndRemoveUselessSuffix(Map<Object, List<OrdersAndCounts>> nodeListMap) {                              //arg = newMap
-
-        Set<Object> tobeRemoved = new HashSet<>();                                                                      //用于存储剪枝的key
-        for (Map.Entry<Object, List<OrdersAndCounts>> entry : nodeListMap.entrySet()) {                                 //打印并且挖掘
-            Object key = entry.getKey();
+    private void mineNodeList(Map<Object, List<OrdersAndCounts>> nodeListMap) {
+        for (Map.Entry<Object, List<OrdersAndCounts>> entry : nodeListMap.entrySet()) {                                 //打印并且挖掘, 循环次数和项集的大小有关
+            //Object key = entry.getKey();
             List<OrdersAndCounts> nodeList = entry.getValue();
             Map<String, OrdersAndCounts> candidatesMap = new HashMap<>();
-            StringBuilder sb = new StringBuilder("[");
-            for (int i = 0; i < nodeList.size(); i++) {                                                                 //遍历NodeList然后如果getCompleteSequence一样就进行融合
-
-                OrdersAndCounts oac = nodeList.get(i);
-                String s = getCompleteSequence(oac);
-
-                if (candidatesMap.containsKey(s)) {                                                                     //这里用于将路径相同的NodeList进行合并
-                    OrdersAndCounts origin = candidatesMap.get(s);
-                    origin.setC1(oac.c1() + origin.c1());
-                    origin.setC2(oac.c2() + origin.c2());
-                } else {
-                    OrdersAndCounts tempOac = new OrdersAndCounts(oac);
-                    candidatesMap.put(s, tempOac);
-                }
-
-                sb.append("(").append(oac.preIndex()).append(",").append(oac.postIndex()).append(",").append(oac.c1()).append(",").append(oac.c2()).append(",").append(s).append(")");
-            }
-            sb.append("]");
-            LOGGER.info("{} {}", key, sb.toString());
-            /*—————————————————
-            | 判断是不是对比模式 |
-             —————————————————*/
-            tobeRemoved.addAll(mineAndReturnTobeRemoved(candidatesMap));
-            /*—————————————————————
-            | 判断是不是对比模式:EOF |
-             —————————————————————*/
+            //String fancyString = fillCandidatesAndReturnFancyString(nodeList, candidatesMap);
+            fillCandidatesAndReturnFancyString(nodeList, candidatesMap);
+            //LOGGER.info("{} {}", key, fancyString);
+            mine(candidatesMap);
         }
+    }
 
+    private void fillCandidatesAndReturnFancyString(List<OrdersAndCounts> nodeList, Map<String, OrdersAndCounts> candidatesMap) {
+        //StringBuilder sb = new StringBuilder("[");
+        for (int i = 0; i < nodeList.size(); i++) {                                                                     //遍历NodeList然后如果getCompleteSequence一样就进行融合
 
-        Map<Object, List<OrdersAndCounts>> replacementMap = new HashMap<>();
+            OrdersAndCounts oac = nodeList.get(i);
+            String s = getCompleteSequence(oac);
 
-        for (Map.Entry<Object, List<OrdersAndCounts>> entry : nodeListMap.entrySet()) {
-            Object key = entry.getKey();
-            List<OrdersAndCounts> nodeList = entry.getValue();
-            List<OrdersAndCounts> replacementList = new ArrayList<>();
-            for (int i = 0; i < nodeList.size(); i++) {
-                OrdersAndCounts oac = nodeList.get(i);
-                if (tobeRemoved.contains(getCompleteSequence(oac))) {
-                    //nodeList.remove(i--);
-                    continue;
-                } else {
-                    replacementList.add(oac);
-                }
+            if (candidatesMap.containsKey(s)) {                                                                         //这里用于将路径相同的NodeList进行合并
+                OrdersAndCounts origin = candidatesMap.get(s);
+                origin.setC1(oac.c1() + origin.c1());
+                origin.setC2(oac.c2() + origin.c2());
+            } else {
+                OrdersAndCounts tempOac = new OrdersAndCounts(oac);
+                candidatesMap.put(s, tempOac);
             }
-            if (replacementList.size() > 0) {
-                replacementMap.put(key, replacementList);
-            }
+
+            //sb.append("(").append(oac.preIndex()).append(",").append(oac.postIndex()).append(",").append(oac.c1()).append(",").append(oac.c2()).append(",").append(s).append(")");
         }
-        nodeListMap.clear();
-        return replacementMap;
+        //sb.append("]");
+        //return sb.toString();
     }
 
     /*————————————————————————————————————————
     |    挖掘对比模式并且返回需要移除的后缀KEY    |
      ————————————————————————————————————————*/
-    private Set<Object> mineAndReturnTobeRemoved(Map<String, OrdersAndCounts> candidatesMap) {
+    private void mine(Map<String, OrdersAndCounts> candidatesMap) {
 
-        Set<Object> tempSet = new HashSet<>();
         for (Map.Entry<String, OrdersAndCounts> entry : candidatesMap.entrySet()) {
             String key = entry.getKey();
-            if (checkMined(key)) {
-                LOGGER.info("{} already mined!!!@ so do not need to be mined again", key);
-                continue;
-            }
             OrdersAndCounts oac = entry.getValue();
             if (isContrastPattern(oac, NS[0], NS[1])) {
                 LOGGER.info("1 - {}, [{} {}], [{} {}]", key, oac.c1(), oac.c2(), MINIMAL_THRESHOLD * NS[0], MAXIMUM_THRESHOLD * NS[1]);
             } else {
-                tempSet.add(key);                                                                                   //如果不符合模式，那么以它为后缀的所有sequence都不可能是对比模式，因此不需要参与后续的combine了，因此将其再次移除
                 LOGGER.info("3 - {}, [{} {}], [{} {}]", key, oac.c1(), oac.c2(), MINIMAL_THRESHOLD * NS[0], MAXIMUM_THRESHOLD * NS[1]);
             }
         }
-        return tempSet;
     }
 
-    /*————————————————————————————————————————
-    |          该路径是否已经挖掘过了           |
-     ————————————————————————————————————————*/
-    private boolean checkMined(Object key) {
-        boolean result = MINED_ALREADY.contains(key);
-        if (!result) {
-            MINED_ALREADY.add(key);
-        }
-        return result;
-    }
 
     /*————————————————————————————————————————
     |               是不是对比模式             |
@@ -169,20 +146,18 @@ public class CPNodeListMiner {
     /*————————————————————————————————————————
     |       根据EndNode来获取完整路径           |
      ————————————————————————————————————————*/
-    private String getCompleteSequence(OrdersAndCounts ordersAndCounts) {
-        Integer preIndex = ordersAndCounts.preIndex();
-        Integer postIndex = ordersAndCounts.postIndex();
-        CPTreeNode<Object> endNode = ordersAndCounts.endNode();
+    private String getCompleteSequence(OrdersAndCounts ordersAndCounts) {                                               //复杂度为O(H),H为树的高度
+        CPTreeNode<Object> currNode = ordersAndCounts.endNode();
+        CPTreeNode<Object> toNode = ordersAndCounts.startNode();
         StringBuilder sb = new StringBuilder();
-        List<CPTreeNode<Object>> nodeValueList = new ArrayList<>();
-        while (true) {
-            nodeValueList.add(endNode);
-            if (endNode.preIndex().equals(preIndex) && endNode.postIndex().equals(postIndex))
-                break;
-            endNode = endNode.parent();
+        LinkedList<CPTreeNode<Object>> nodeValueList = new LinkedList<>(); //from A to A
+        while (currNode != toNode) {
+            nodeValueList.addLast(currNode);
+            currNode = currNode.parent();
         }
-        for (int i = nodeValueList.size() - 1; i >= 0; i--) {
-            sb.append(nodeValueList.get(i).value()).append(" ");
+        nodeValueList.addLast(toNode);
+        while (!nodeValueList.isEmpty()) {
+            sb.append(nodeValueList.pollLast().value()).append(" ");
         }
         return sb.toString().trim();
     }
@@ -200,30 +175,5 @@ public class CPNodeListMiner {
         }
         Collections.sort(itemList);
         return itemList;
-    }
-
-    /*————————————————————————————————————————
-    | 组合两个父子节点的NodeList形成新的NodeList |
-     ————————————————————————————————————————*/
-    public List<OrdersAndCounts> combine(List<OrdersAndCounts> parent, List<OrdersAndCounts> child) {
-        int i = 0, j = 0;
-        List<OrdersAndCounts> result = new ArrayList<>();
-        while (i < parent.size() && j < child.size()) {
-            OrdersAndCounts poc = parent.get(i);
-            OrdersAndCounts coc = child.get(j);
-            if (poc.preIndex() < coc.preIndex()) {
-                if (poc.postIndex() > coc.postIndex()) {
-                    OrdersAndCounts combinedOne = new OrdersAndCounts(poc.preIndex(), poc.postIndex(), coc.c1(), coc.c2());
-                    combinedOne.setEndNode(coc.endNode());
-                    result.add(combinedOne);
-                    j++;
-                } else {
-                    i++;
-                }
-            } else {
-                j++;
-            }
-        }
-        return result.size() == 0 ? null : result;
     }
 }

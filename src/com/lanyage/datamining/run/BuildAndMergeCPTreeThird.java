@@ -16,12 +16,11 @@ public class BuildAndMergeCPTreeThird {
          ————————————————————————————-————————————*/
         CPTreeConstructor constructor = new CPTreeConstructor();
         CPTreeNode<Object> root = constructor.createInitialCPTree();
-        LOGGER.info("INDEX {}", TreeAppender.INDEX - 1);
         /*—————————————————————————————————
         | 遍历ROOT，确保所有路径正确。如:FDGB |
          ————————————————————————————-————*/
-        TreeTraverser treeTraverser = new TreeTraverser();
-        treeTraverser.traverseAndPrintTransactions(root);
+        //TreeTraverser treeTraverser = new TreeTraverser();
+        //treeTraverser.traverseAndPrintTransactions(root);
 
         /*—————————————
         | merge并且挖掘 |
@@ -33,7 +32,7 @@ public class BuildAndMergeCPTreeThird {
         /*—————————————————————————————————
         | 遍历ROOT，确保所有路径正确。如:FDGB |
          —————————————————————————————————*/
-        treeTraverser.traverseAndPrintTransactions(root);
+        //treeTraverser.traverseAndPrintTransactions(root);
         LOGGER.info("INDEX {}", TreeAppender.INDEX - 1);
     }
 }
