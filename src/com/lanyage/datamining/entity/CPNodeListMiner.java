@@ -11,6 +11,8 @@ import java.util.*;
 
 public class CPNodeListMiner {
     public static final Logger LOGGER = LoggerFactory.getLogger(CPNodeListMiner.class);
+    //public static final double MINIMAL_THRESHOLD = 0.6d;
+    //public static final double MAXIMUM_THRESHOLD = 0.05d;
     public static final double MINIMAL_THRESHOLD = 0.7d;
     public static final double MAXIMUM_THRESHOLD = 0.3d;
     public static final Integer[] NS = new DataSetCounter().getCountOfDataSets();
@@ -58,7 +60,7 @@ public class CPNodeListMiner {
         newMap.remove("$");
         LOGGER.info("———————————————————————————————————————————————————————————————————————————————————————————————————the beginning of mining from nodelists");
         while (newMap != null) {                                                                                        //和数据集的维数有关
-            LOGGER.info("项集大小 : {}", newMap.size());
+            //LOGGER.info("项集大小 : {}", newMap.size());
             mineNodeList(newMap);
             Map<Object, List<OrdersAndCounts>> tempTable = new HashMap<>();                                             //临时的Map用于存储高项集的NodeList
             for (Object key : newMap.keySet()) {
@@ -129,7 +131,7 @@ public class CPNodeListMiner {
             if (isContrastPattern(oac, NS[0], NS[1])) {
                 LOGGER.info("1 - {}, [{} {}], [{} {}]", key, oac.c1(), oac.c2(), MINIMAL_THRESHOLD * NS[0], MAXIMUM_THRESHOLD * NS[1]);
             } else {
-                LOGGER.info("3 - {}, [{} {}], [{} {}]", key, oac.c1(), oac.c2(), MINIMAL_THRESHOLD * NS[0], MAXIMUM_THRESHOLD * NS[1]);
+                //LOGGER.info("3 - {}, [{} {}], [{} {}]", key, oac.c1(), oac.c2(), MINIMAL_THRESHOLD * NS[0], MAXIMUM_THRESHOLD * NS[1]);
             }
         }
     }
