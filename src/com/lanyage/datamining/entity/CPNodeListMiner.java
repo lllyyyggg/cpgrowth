@@ -15,11 +15,19 @@ public class CPNodeListMiner {
     //public static final double MAXIMUM_THRESHOLD = 0.05d;
     public static final double MINIMAL_THRESHOLD = 0.7d;
     public static final double MAXIMUM_THRESHOLD = 0.3d;
-    public static final Integer[] NS = new DataSetCounter().getCountOfDataSets();
+    private Integer N1;
+    private Integer N2;
+    private static int cpcount = 0;
+    private static int calccount = 0;
+
+    public CPNodeListMiner(Integer N1, Integer N2) {
+        this.N1 = N1;
+        this.N2 = N2;
+    }
 
     /*————————————————————————————————————————
-    | 组合两个父子节点的NodeList形成新的NodeList |
-     ————————————————————————————————————————*/
+        | 组合两个父子节点的NodeList形成新的NodeList |
+         ————————————————————————————————————————*/
     public List<OrdersAndCounts> combine(List<OrdersAndCounts> parent, List<OrdersAndCounts> child) {
         int i = 0, j = 0;
         List<OrdersAndCounts> highLevelItemSet = new ArrayList<>();
@@ -81,6 +89,7 @@ public class CPNodeListMiner {
             newMap = tempTable.size() == 0 ? null : tempTable;
         }
         LOGGER.info("———————————————————————————————————————————————————————————————————————————————————————————————————the end of mining from nodelists");
+        LOGGER.info("TOTAL OF CPS : {}, AND CALCULATED FOR {} TIMES", cpcount, calccount);
     }
 
     /*——————————————————————————————————————————
@@ -128,10 +137,12 @@ public class CPNodeListMiner {
         for (Map.Entry<String, OrdersAndCounts> entry : candidatesMap.entrySet()) {
             String key = entry.getKey();
             OrdersAndCounts oac = entry.getValue();
-            if (isContrastPattern(oac, NS[0], NS[1])) {
-                LOGGER.info("1 - {}, [{} {}], [{} {}]", key, oac.c1(), oac.c2(), MINIMAL_THRESHOLD * NS[0], MAXIMUM_THRESHOLD * NS[1]);
+            calccount++;
+            if (isContrastPattern(oac, this.N1, this.N2)) {
+                cpcount++;
+                LOGGER.info("1 - {}, [{} {}], [{} {}]", key, oac.c1(), oac.c2(), MINIMAL_THRESHOLD * this.N1, MAXIMUM_THRESHOLD * this.N2);
             } else {
-                //LOGGER.info("3 - {}, [{} {}], [{} {}]", key, oac.c1(), oac.c2(), MINIMAL_THRESHOLD * NS[0], MAXIMUM_THRESHOLD * NS[1]);
+                LOGGER.info("3 - {}, [{} {}], [{} {}]", key, oac.c1(), oac.c2(), MINIMAL_THRESHOLD * this.N1, MAXIMUM_THRESHOLD * this.N2);
             }
         }
     }

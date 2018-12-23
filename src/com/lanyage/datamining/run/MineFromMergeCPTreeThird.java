@@ -5,8 +5,7 @@ import com.lanyage.datamining.entity.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-public class BuildAndMergeCPTreeThird {
+public class MineFromMergeCPTreeThird {
     public static final Logger LOGGER = LoggerFactory.getLogger(TreeTraverser.class);
 
     public static void main(String[] args) {
@@ -27,12 +26,12 @@ public class BuildAndMergeCPTreeThird {
          ——————————————*/
         Integer[] Ns = new DataSetCounter().getCountOfDataSets();
         CPGrowth cpGrowth = new CPGrowth(constructor.nodeAndCount(), Ns[0], Ns[1]);
-        cpGrowth.mergeAndMine(root);
 
-        /*—————————————————————————————————
-        | 遍历ROOT，确保所有路径正确。如:FDGB |
-         —————————————————————————————————*/
-        //treeTraverser.traverseAndPrintTransactions(root);
-        LOGGER.info("INDEX {}", TreeAppender.INDEX - 1);
+        long start = System.currentTimeMillis();
+        cpGrowth.mergeAndMine(root);
+        long end = System.currentTimeMillis();
+
+        LOGGER.info("INDEX {}, N1 {}, N2 {}", TreeAppender.INDEX - 1, Ns[0], Ns[1]);
+        LOGGER.info("cost : {} ms.", end - start);
     }
 }

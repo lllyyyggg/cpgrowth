@@ -17,7 +17,8 @@ public class CPGrowth {
     public static final double MINIMAL_THRESHOLD = 0.7d;
     public static final double MAXIMUM_THRESHOLD = 0.3d;
 
-
+    private static int cpcount = 0;
+    private static int calccount = 0;
     private int n1;
     private int n2;
     private Map<Object, Integer> nodeCountMap;
@@ -65,7 +66,7 @@ public class CPGrowth {
             //LOGGER.info("—————————————————————————————————mine——end———————————————————————————————————————");
         }
         LOGGER.info("———————————————————————————————————————————————————————————————————————————————————————————————————the beginning of merging and mining");
-
+        LOGGER.info("TOTAL OF CPS : {}, AND CALCULATED FOR {} TIMES", cpcount, calccount);
     }
 
     /*———————————————————————————————————
@@ -110,13 +111,14 @@ public class CPGrowth {
         if (top == null) {
             return 0;
         } else {
-            //DecimalFormat decimalFormat = new DecimalFormat("#0.0000");
+            calccount++;
             if (isContrastPattern(top)) {                                                                               //如果当前是对比模式
                 prefix.add(top);                                                                                        //添加到前缀
                 StringBuilder sb = new StringBuilder();
                 for (int i = 0; i < prefix.size(); i++) {
                     sb.append(prefix.get(i).value()).append(" ");
                 }
+                cpcount++;
                 LOGGER.info("1 - {}, [{} {}], [{} {}]", sb.toString().trim(), top.c1(), top.c2(), this.n1 * MINIMAL_THRESHOLD, this.n2 * MAXIMUM_THRESHOLD);
             } else if (!canPrune(top)) {
                 prefix.add(top);                                                                                        //添加到前缀
@@ -124,14 +126,14 @@ public class CPGrowth {
                 for (int i = 0; i < prefix.size(); i++) {
                     sb.append(prefix.get(i).value());
                 }
-                //LOGGER.info("2 - {}, [{} {}], [{} {}]", sb.toString(), top.c1(), top.c2(), this.n1 * MINIMAL_THRESHOLD, this.n2 * MAXIMUM_THRESHOLD);
+                LOGGER.info("2 - {}, [{} {}], [{} {}]", sb.toString(), top.c1(), top.c2(), this.n1 * MINIMAL_THRESHOLD, this.n2 * MAXIMUM_THRESHOLD);
             } else {
                 StringBuilder sb = new StringBuilder();
                 for (int i = 0; i < prefix.size(); i++) {
                     sb.append(prefix.get(i).value());
                 }
                 sb.append(top.value());
-                //LOGGER.info("3 - {},[{} {}],[{} {}]", sb.toString(), top.c1(), top.c2(), this.n1 * MINIMAL_THRESHOLD, this.n2 * MAXIMUM_THRESHOLD);
+                LOGGER.info("3 - {},[{} {}],[{} {}]", sb.toString(), top.c1(), top.c2(), this.n1 * MINIMAL_THRESHOLD, this.n2 * MAXIMUM_THRESHOLD);
 
                 List<CPTreeNode<Object>> topChildren = top.parent().children();                                         //top.parent不可能为null
                 for (int i = 0; i < topChildren.size(); i++) {

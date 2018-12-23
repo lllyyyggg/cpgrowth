@@ -13,19 +13,35 @@ public class MineFromNodeListForth {
     public static final Logger LOGGER = LoggerFactory.getLogger(MineFromNodeListForth.class);
 
     public static void main(String[] args) {
+        /*—————————————————————————————————————————
+        | 初始化创建根节点,并且将ITEM出现次数存到Map中 |
+         ————————————————————————————-————————————*/
         CPTreeConstructor treeConstructor = new CPTreeConstructor();
         CPTreeNode<Object> root = treeConstructor.createInitialCPTree();                                                //创建初始CP树
 
         TreeTraverser treeTraverser = new TreeTraverser();
         treeTraverser.preTraverse(root);
         treeTraverser.postTraverse(root);                                                                               //前后序遍历添加索引
+        /*—————————————————————————————————
+        | 遍历ROOT，确保所有路径正确。如:FDGB |
+         ————————————————————————————-————*/
+        //treeTraverser.traverseAndPrintTransactions(root);
 
         CPNodeListCreator cpNodeListCreator = new CPNodeListCreator();
         Map<Object, List<OrdersAndCounts>> initialNodeListMap = cpNodeListCreator.createInitialNodeList(root);          //根据root创建初始NodeList
 
-        CPNodeListMiner nodeListMiner = new CPNodeListMiner();
-        nodeListMiner.mineFromNodeList(initialNodeListMap);                                                             //挖掘NodeList
 
-        LOGGER.info("INDEX {}", TreeAppender.INDEX - 1);
+        /*———————————————
+        | 开始挖掘对比模式 |
+         ————————————————*/
+        Integer[] Ns = new DataSetCounter().getCountOfDataSets();
+        CPNodeListMiner nodeListMiner = new CPNodeListMiner(Ns[0], Ns[1]);
+
+        long start = System.currentTimeMillis();
+        nodeListMiner.mineFromNodeList(initialNodeListMap);                                                             //挖掘NodeList
+        long end = System.currentTimeMillis();
+
+        LOGGER.info("INDEX {}, N1 {}, N2 {}", TreeAppender.INDEX - 1, Ns[0], Ns[1]);
+        LOGGER.info("cost : {} ms.", end - start);
     }
 }
