@@ -35,6 +35,7 @@ public class CPTreeConstructor {
         root.setValue("$");
         root.setC1(0);
         root.setC2(0);
+        //root.setLevel(0);
         root.setParent(null);
         root.setSibling(null);
     }

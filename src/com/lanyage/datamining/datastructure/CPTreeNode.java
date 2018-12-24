@@ -13,6 +13,7 @@ public class CPTreeNode<T> {
     private Integer preIndex;
     private Integer postIndex;
     private Boolean isVisited;
+    //private Integer level;
 
     public CPTreeNode() {
         this.isVisited = false;
@@ -24,6 +25,14 @@ public class CPTreeNode<T> {
         this.c2 = _2c;
         this.isVisited = false;
     }
+
+    //public Integer level() {
+    //    return level;
+    //}
+    //
+    //public void setLevel(Integer level) {
+    //    this.level = level;
+    //}
 
     public T value() {
         return value;

@@ -31,7 +31,7 @@ public class MineFromMergeCPTreeThird {
         cpGrowth.mergeAndMine(root);
         long end = System.currentTimeMillis();
 
-        LOGGER.info("INDEX {}, N1 {}, N2 {}", TreeAppender.INDEX - 1, Ns[0], Ns[1]);
+        LOGGER.info("NUMBER OF NODES : {}, N1 {}, N2 {}", TreeAppender.INDEX - 1, Ns[0], Ns[1]);
         LOGGER.info("cost : {} ms.", end - start);
     }
 }

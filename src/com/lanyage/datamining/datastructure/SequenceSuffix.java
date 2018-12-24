@@ -8,28 +8,40 @@ package com.lanyage.datamining.datastructure;
  * @see com.lanyage.datamining.entity.CPNodeListCreator
  * ————————————————————————————————————————————————————————————
  **/
-public class OrdersAndCounts {
+public class SequenceSuffix {
     private Integer preIndex;
     private Integer postIndex;
     private Integer c1;
     private Integer c2;
-    private CPTreeNode<Object> startNode;
-    private CPTreeNode<Object> endNode;
+    private Object sequence;
+    private CPTreeNode<Object> node;
 
-    public OrdersAndCounts(Integer preIndex, Integer postIndex, Integer c1, Integer c2) {
+    public SequenceSuffix() {
+        this.c1 = 0;
+        this.c2 = 0;
+    }
+
+    public SequenceSuffix(Integer preIndex, Integer postIndex, Integer c1, Integer c2) {
         this.preIndex = preIndex;
         this.postIndex = postIndex;
         this.c1 = c1;
         this.c2 = c2;
     }
 
-    public OrdersAndCounts(OrdersAndCounts cpone) {
-        this.preIndex = cpone.preIndex;
-        this.postIndex = cpone.postIndex;
-        this.c1 = cpone.c1;
-        this.c2 = cpone.c2;
-        this.startNode = cpone.startNode;
-        this.endNode = cpone.endNode;
+    public CPTreeNode<Object> node() {
+        return node;
+    }
+
+    public void setNode(CPTreeNode<Object> node) {
+        this.node = node;
+    }
+
+    public Object sequence() {
+        return sequence;
+    }
+
+    public void setSequence(Object sequence) {
+        this.sequence = sequence;
     }
 
     public Integer preIndex() {
@@ -64,25 +76,10 @@ public class OrdersAndCounts {
         this.c2 = c2;
     }
 
-    public CPTreeNode<Object> endNode() {
-        return endNode;
-    }
-
-    public void setEndNode(CPTreeNode<Object> endNode) {
-        this.endNode = endNode;
-    }
-
-    public CPTreeNode<Object> startNode() {
-        return startNode;
-    }
-
-    public void setStartNode(CPTreeNode<Object> startNode) {
-        this.startNode = startNode;
-    }
-
     @Override
     public String toString() {
         return "(" +
+                sequence + "," +
                 preIndex + ","
                 + postIndex + ","
                 + c1 + ","

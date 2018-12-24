@@ -98,14 +98,20 @@ public class TreeTraverser {
         //LOGGER.info("———————————————————————————————————————————————————————————————————————————————————————————————————the end of post-traversing");
     }
 
-    //public static void main(String[] args) throws IOException {
-    //    CPTreeConstructor constructor = new CPTreeConstructor();
-    //    CPTreeNode<Object> root = constructor.createInitialCPTree();
-    //    TreeTraverser traverser = new TreeTraverser();
-    //    traverser.preTraverse(root);
-    //    traverser.postTraverse(root);
-    //    traverser.traverseAndPrintTransactions(root);
-    //    LOGGER.info("TOTAL NODES NUMBER : {}", TreeAppender.INDEX - 1);
-    //}
+    public void breadthFirstTraverse(CPTreeNode<Object> root) {
+        LinkedList<CPTreeNode<Object>> queue = new LinkedList<>();
+        for (CPTreeNode<Object> rootChild : root.children()) {
+            queue.addFirst(rootChild);
+        }
+        while (!queue.isEmpty()) {
+            CPTreeNode<Object> node = queue.pollLast();
+            CPTreeNode<Object> parent = node.parent();
+            //node.setLevel(parent.level() + 1);
+            //System.out.println(node + " " + node.level());
+            for (CPTreeNode<Object> child : node.children()) {
+                queue.addFirst(child);
+            }
+        }
+    }
 }
 

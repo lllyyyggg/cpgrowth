@@ -1,7 +1,7 @@
 package com.lanyage.datamining.run;
 
 import com.lanyage.datamining.datastructure.CPTreeNode;
-import com.lanyage.datamining.datastructure.OrdersAndCounts;
+import com.lanyage.datamining.datastructure.SequenceSuffix;
 import com.lanyage.datamining.entity.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,13 +22,14 @@ public class MineFromNodeListForth {
         TreeTraverser treeTraverser = new TreeTraverser();
         treeTraverser.preTraverse(root);
         treeTraverser.postTraverse(root);                                                                               //前后序遍历添加索引
+        treeTraverser.breadthFirstTraverse(root);
         /*—————————————————————————————————
         | 遍历ROOT，确保所有路径正确。如:FDGB |
          ————————————————————————————-————*/
         //treeTraverser.traverseAndPrintTransactions(root);
 
         CPNodeListCreator cpNodeListCreator = new CPNodeListCreator();
-        Map<Object, List<OrdersAndCounts>> initialNodeListMap = cpNodeListCreator.createInitialNodeList(root);          //根据root创建初始NodeList
+        Map<Object, List<SequenceSuffix>> initialNodeListMap = cpNodeListCreator.createInitialNodeList(root);          //根据root创建初始NodeList
 
         /*———————————————
         | 开始挖掘对比模式 |
@@ -42,5 +43,6 @@ public class MineFromNodeListForth {
 
         LOGGER.info("INDEX {}, N1 {}, N2 {}", TreeAppender.INDEX - 1, Ns[0], Ns[1]);
         LOGGER.info("cost : {} ms.", end - start);
+        LOGGER.info("SIZE OF PRUNE PREFIX : {}", nodeListMiner.PRUNESET().size());
     }
 }
