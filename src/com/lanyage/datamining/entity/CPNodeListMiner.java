@@ -75,7 +75,6 @@ public class CPNodeListMiner {
             SequenceSuffix coc = child.get(j);
             if (poc.preIndex() < coc.preIndex()) {
                 if (poc.postIndex() > coc.postIndex()) {
-                    //boolean canCombine = poc.preIndex() == coc.preIndex() - 1 || poc.postIndex() == coc.postIndex() + 1;
                     boolean canCombine = coc.node().parent() == poc.node();
                     if (canCombine) {
                         SequenceSuffix combinedOne = new SequenceSuffix(poc.preIndex(), poc.postIndex(), coc.c1(), coc.c2());
@@ -151,10 +150,10 @@ public class CPNodeListMiner {
             cpcount++;
             LOGGER.info("1 - {}, [{} {}], [{} {}]", key, candidate.c1(), candidate.c2(), MINIMAL_THRESHOLD * this.N1, MAXIMUM_THRESHOLD * this.N2);
         } else if (!canPrune(candidate, this.N1, this.N2)) {
-            LOGGER.info("2 - {}, [{} {}], [{} {}]", key, candidate.c1(), candidate.c2(), MINIMAL_THRESHOLD * this.N1, MAXIMUM_THRESHOLD * this.N2);
+            //LOGGER.info("2 - {}, [{} {}], [{} {}]", key, candidate.c1(), candidate.c2(), MINIMAL_THRESHOLD * this.N1, MAXIMUM_THRESHOLD * this.N2);
         } else {
             PRUNE_SET.add(sequence);
-            LOGGER.info("3 - {}, [{} {}], [{} {}]", key, candidate.c1(), candidate.c2(), MINIMAL_THRESHOLD * this.N1, MAXIMUM_THRESHOLD * this.N2);
+            //LOGGER.info("3 - {}, [{} {}], [{} {}]", key, candidate.c1(), candidate.c2(), MINIMAL_THRESHOLD * this.N1, MAXIMUM_THRESHOLD * this.N2);
         }
     }
 
