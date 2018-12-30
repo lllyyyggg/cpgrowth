@@ -12,10 +12,8 @@ import java.util.*;
 public class CPGrowth {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(CPGrowth.class);
-    //public static final double MINIMAL_THRESHOLD = 0.6d;
-    //public static final double MAXIMUM_THRESHOLD = 0.05d;
-    public static final double MINIMAL_THRESHOLD = 0.7d;
-    public static final double MAXIMUM_THRESHOLD = 0.3d;
+    public static final double MINIMAL_THRESHOLD = 0.6d;
+    public static final double MAXIMUM_THRESHOLD = 0.05d;
 
     private static int cpcount = 0;
     private static int calccount = 0;
@@ -57,8 +55,8 @@ public class CPGrowth {
                 for (int k = 1; k < root.children().size(); k++) {
                     CPTreeNode<Object> prev = root.children().get(k - 1);
                     CPTreeNode<Object> now = root.children().get(k);
-                    prev.setSibling(now);
-                    now.setSibling(null);
+                    prev.sibling(now);
+                    now.sibling(null);
                 }
             }
             //LOGGER.info("————————————————————————————————mine {}——————————————————————————————————", node);
@@ -74,9 +72,12 @@ public class CPGrowth {
      ———————————————————————————————————*/
     public CPTreeNode<Object> copyTree(CPTreeNode<Object> head) {
         CPTreeNode<Object> newHead = new CPTreeNode<>();
-        newHead.setValue(head.value());
-        newHead.setC1(head.c1());
-        newHead.setC2(head.c2());
+
+        newHead
+                .value(head.value())
+                .c1(head.c1())
+                .c2(head.c2());
+
         List<CPTreeNode<Object>> nodeList = new ArrayList<>();
         nodeList.add(newHead);
         copySubTree(nodeList, head);
@@ -138,7 +139,7 @@ public class CPGrowth {
                 for (int i = 0; i < topChildren.size(); i++) {
                     CPTreeNode<Object> node = topChildren.get(i);
                     if (node.sibling() == top) {
-                        node.setSibling(top.sibling());
+                        node.sibling(top.sibling());
                         break;
                     }
                     if (node == top) {
@@ -186,12 +187,14 @@ public class CPGrowth {
             for (int i = 0; i < topChildren.size(); i++) {
                 CPTreeNode<Object> child = topChildren.get(i);
                 CPTreeNode<Object> newChild = CPTreeNode.getInstance();
-                newChild.setValue(child.value());
-                newChild.setC1(child.c1());
-                newChild.setC2(child.c2());
+
+                newChild
+                        .value(child.value())
+                        .c1(child.c1())
+                        .c2(child.c2())
+                        .parent(parent);
 
                 parent.children().add(newChild);
-                newChild.setParent(parent);
 
                 nodeList.add(newChild);
                 copySubTree(nodeList, child);                                                                           //递归调用方法
@@ -200,7 +203,7 @@ public class CPGrowth {
             for (int i = nodeList.size() - nodeChildrenSize + 1; i < nodeList.size(); i++) {                            //在这里父子关系已经从做好了，开始做兄弟关系
                 CPTreeNode<Object> prev = nodeList.get(i - 1);
                 CPTreeNode<Object> curr = nodeList.get(i);
-                prev.setSibling(curr);
+                prev.sibling(curr);
             }
 
             for (int i = 0; i < nodeChildrenSize; i++) {                                                                //兄弟关系设置好了，然后就可以移除后缀，回溯到上一层

@@ -31,19 +31,18 @@ public class CPTreeConstructor {
     |初始化根节点|
      ——————————*/
     private void initializeRoot(CPTreeNode<Object> root) {
-        //root.setIndex(0);
-        root.setValue("$");
-        root.setC1(0);
-        root.setC2(0);
-        //root.setLevel(0);
-        root.setParent(null);
-        root.setSibling(null);
+        root
+                .value("$")
+                .c1(0)
+                .c2(0)
+                .parent(null)
+                .sibling(null);
     }
 
     /*——————————————————————————————
     |根据已有的transactions生成初始CP树|
      ———————————————————————————————*/
-    public CPTreeNode<Object> createInitialCPTree(){
+    public CPTreeNode<Object> createInitialCPTree() {
         CPTreeNode<Object> root = new CPTreeNode<>();
         initializeRoot(root);                                                                                           //初始化root节点
 
@@ -63,9 +62,9 @@ public class CPTreeConstructor {
                 addTreeToTree.addTreeToTree(head, root);
                 //LOGGER.info("{},{} —————————————— end", nodesString, classTag);
             }
-        }catch (IOException e){
+        } catch (IOException e) {
             throw new RuntimeException("发生了IO异常");
-        }finally {
+        } finally {
             try {
                 br.close();
             } catch (IOException e) {
@@ -96,7 +95,7 @@ public class CPTreeConstructor {
                 CPTreeNode<Object> prev = nodeList.get(i - 1);
                 CPTreeNode<Object> curr = nodeList.get(i);
                 prev.children().add(curr);
-                curr.setParent(prev);
+                curr.parent(prev);
             }
         } else {
             //LOGGER.info("nodeList size = 1，no need to set the parent-child relationship");

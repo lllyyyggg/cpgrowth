@@ -60,7 +60,7 @@ public class TreeTraverser {
 
         while (!stack.isEmpty()) {
             CPTreeNode<Object> node = stack.pollLast();
-            node.setPreIndex(preIndex++);
+            node.preIndex(preIndex++);
             //LOGGER.info("{}", node);
             int childSize;
             if ((childSize = node.children().size()) > 0) {
@@ -88,8 +88,8 @@ public class TreeTraverser {
                 stack.addLast(curr);
             }
             CPTreeNode<Object> node = stack.pollLast();
-            node.setVisited(true);
-            node.setPostIndex(postIndex++);
+            node.visited(true);
+            node.postIndex(postIndex++);
             //LOGGER.info("{}", node);
             if (node.sibling() != null) {
                 stack.addLast(node.sibling());
@@ -105,9 +105,6 @@ public class TreeTraverser {
         }
         while (!queue.isEmpty()) {
             CPTreeNode<Object> node = queue.pollLast();
-            CPTreeNode<Object> parent = node.parent();
-            //node.setLevel(parent.level() + 1);
-            //System.out.println(node + " " + node.level());
             for (CPTreeNode<Object> child : node.children()) {
                 queue.addFirst(child);
             }

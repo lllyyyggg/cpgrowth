@@ -10,10 +10,8 @@ import java.util.*;
 
 public class CPNodeListMiner {
     public static final Logger LOGGER = LoggerFactory.getLogger(CPNodeListMiner.class);
-    //public static final double MINIMAL_THRESHOLD = 0.6d;
-    //public static final double MAXIMUM_THRESHOLD = 0.05d;
-    public static final double MINIMAL_THRESHOLD = 0.7d;
-    public static final double MAXIMUM_THRESHOLD = 0.3d;
+    public static final double MINIMAL_THRESHOLD = 0.6d;
+    public static final double MAXIMUM_THRESHOLD = 0.05d;
     private final Set<String> PRUNE_SET = new HashSet<>();
     private Integer N1;
     private Integer N2;

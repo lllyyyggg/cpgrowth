@@ -26,7 +26,7 @@ public class TreeAppender {
             while (toAdd != null) {
                 //LOGGER.info("ADD {} TO {}", toAdd, parent);
                 parent.children().add(toAdd);
-                toAdd.setParent(parent);
+                toAdd.parent(parent);
                 traverseAndAddIndexForNodes(toAdd);                                                                     //把toAdd添加index
                 toAdd = toAdd.sibling();
             }
@@ -38,8 +38,8 @@ public class TreeAppender {
                     CPTreeNode<Object> currChild = parent.children().get(i);
                     if (parent.children().get(i).value().equals(toAdd.value())) {
                         CPTreeNode<Object> prev = new CPTreeNode<>(currChild.value(), currChild.c1(), currChild.c2());
-                        currChild.setC1(toAdd.c1() + currChild.c1());
-                        currChild.setC2(toAdd.c2() + currChild.c2());
+                        currChild.c1(toAdd.c1() + currChild.c1());
+                        currChild.c2(toAdd.c2() + currChild.c2());
                         //LOGGER.info("COMBINE {} TO {}, now the node is {}", toAdd, prev, currChild);
                         addTreeToTree(toAdd.children().size() == 0 ? null : toAdd.children().get(0), currChild);
                         break;                                                                                          //找到了就跳出循环，开始将兄弟节点添加到root
@@ -48,10 +48,10 @@ public class TreeAppender {
                 CPTreeNode<Object> next = toAdd.sibling();                                                              //此处也就是root没有child和toAdd的value等价，那么直接将toAdd加到root
                 if (i == parent.children().size()) {
                     //LOGGER.info("ADD {} TO {}", toAdd, parent);
-                    parent.children().get(parent.children().size() - 1).setSibling(toAdd);
-                    toAdd.setSibling(null);
+                    parent.children().get(parent.children().size() - 1).sibling(toAdd);
+                    toAdd.sibling(null);
                     parent.children().add(toAdd);
-                    toAdd.setParent(parent);
+                    toAdd.parent(parent);
 
                     List<CPTreeNode<Object>> parentChildren = parent.children();
                     Collections.sort(parentChildren, (o1, o2) -> {
@@ -65,8 +65,8 @@ public class TreeAppender {
                     for (int k = 1; k < parentChildren.size(); k++) {
                         CPTreeNode<Object> prev = parentChildren.get(k - 1);
                         CPTreeNode<Object> curr = parentChildren.get(k);
-                        prev.setSibling(curr);
-                        curr.setSibling(null);
+                        prev.sibling(curr);
+                        curr.sibling(null);
                     }
                     traverseAndAddIndexForNodes(toAdd);                                                                 //把toAdd添加index
                 }

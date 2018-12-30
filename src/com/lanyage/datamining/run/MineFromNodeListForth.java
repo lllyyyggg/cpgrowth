@@ -26,7 +26,6 @@ public class MineFromNodeListForth {
         /*—————————————————————————————————
         | 遍历ROOT，确保所有路径正确。如:FDGB |
          ————————————————————————————-————*/
-        //treeTraverser.traverseAndPrintTransactions(root);
 
         CPNodeListCreator cpNodeListCreator = new CPNodeListCreator();
         Map<Object, List<SequenceSuffix>> initialNodeListMap = cpNodeListCreator.createInitialNodeList(root);          //根据root创建初始NodeList

@@ -29,14 +29,12 @@ public class StringSplitBySpaceStrategy implements IStringSplitStrategy<Object> 
         for (int i = 0; i < items.length; i++) {
             String value = items[i];
             CPTreeNode<Object> node = new CPTreeNode<>();
-            node.setValue(value);
+            node.value(value);
             if (classTag.equals("1")) {                                                                                 //设置左右计数
-                node.setC1(1);
-                node.setC2(0);
+                node.c1(1).c2(0);
             }
             if (classTag.equals("2")) {
-                node.setC1(0);
-                node.setC2(1);
+                node.c1(0).c2(1);
             }
             nodes.add(node);
         }

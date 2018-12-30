@@ -8,12 +8,11 @@ public class CPTreeNode<T> {
     private Integer c1;                                                                                                 //第一个类的count
     private Integer c2;                                                                                                 //第二个类的count
     private CPTreeNode<T> parent;                                                                                       //父节点
-    private List<CPTreeNode<T>> children = new ArrayList<>(0);                                             //孩子节点集合
+    private List<CPTreeNode<T>> children = new ArrayList<>(3);                                             //孩子节点集合
     private CPTreeNode<T> sibling;                                                                                      //右边的兄弟节点
-    private Integer preIndex;
-    private Integer postIndex;
-    private Boolean isVisited;
-    //private Integer level;
+    private Integer preIndex;                                                                                           //前序遍历索引
+    private Integer postIndex;                                                                                          //后序遍历索引
+    private Boolean isVisited;                                                                                          //是否已经遍历
 
     public CPTreeNode() {
         this.isVisited = false;
@@ -26,14 +25,6 @@ public class CPTreeNode<T> {
         this.isVisited = false;
     }
 
-    //public Integer level() {
-    //    return level;
-    //}
-    //
-    //public void setLevel(Integer level) {
-    //    this.level = level;
-    //}
-
     public T value() {
         return value;
     }
@@ -42,16 +33,18 @@ public class CPTreeNode<T> {
         return c1;
     }
 
-    public void setC1(Integer c1) {
+    public CPTreeNode c1(Integer c1) {
         this.c1 = c1;
+        return this;
     }
 
     public Integer c2() {
         return c2;
     }
 
-    public void setC2(Integer c2) {
+    public CPTreeNode<T> c2(Integer c2) {
         this.c2 = c2;
+        return this;
     }
 
     public CPTreeNode<T> parent() {
@@ -60,32 +53,26 @@ public class CPTreeNode<T> {
 
     public List<CPTreeNode<T>> children() {
         return this.children;
+
     }
 
     public CPTreeNode<T> sibling() {
         return sibling;
     }
 
-
-    public void setValue(T value) {
+    public CPTreeNode<T> value(T value) {
         this.value = value;
+        return this;
     }
 
-
-    public void setParent(CPTreeNode<T> parent) {
+    public CPTreeNode<T> parent(CPTreeNode<T> parent) {
         this.parent = parent;
+        return this;
     }
 
-    public void setSibling(CPTreeNode<T> sibling) {
+    public CPTreeNode<T> sibling(CPTreeNode<T> sibling) {
         this.sibling = sibling;
-    }
-
-    public double supportOfD1(Integer N1) {
-        return (double) this.c1 / N1;
-    }
-
-    public double supportOfD2(Integer N2) {
-        return (double) this.c2 / N2;
+        return this;
     }
 
     public static <T> CPTreeNode<T> getInstance() {
@@ -96,24 +83,27 @@ public class CPTreeNode<T> {
         return preIndex;
     }
 
-    public void setPreIndex(Integer preIndex) {
+    public CPTreeNode<T> preIndex(Integer preIndex) {
         this.preIndex = preIndex;
+        return this;
     }
 
     public Integer postIndex() {
         return postIndex;
     }
 
-    public void setPostIndex(Integer postIndex) {
+    public CPTreeNode<T> postIndex(Integer postIndex) {
         this.postIndex = postIndex;
+        return this;
     }
 
     public Boolean isVisited() {
         return isVisited;
     }
 
-    public void setVisited(Boolean visited) {
+    public CPTreeNode<T> visited(Boolean visited) {
         isVisited = visited;
+        return this;
     }
 
     @Override

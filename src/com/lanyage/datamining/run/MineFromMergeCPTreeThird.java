@@ -15,11 +15,6 @@ public class MineFromMergeCPTreeThird {
          ————————————————————————————-————————————*/
         CPTreeConstructor constructor = new CPTreeConstructor();
         CPTreeNode<Object> root = constructor.createInitialCPTree();
-        /*—————————————————————————————————
-        | 遍历ROOT，确保所有路径正确。如:FDGB |
-         ————————————————————————————-————*/
-        //TreeTraverser treeTraverser = new TreeTraverser();
-        //treeTraverser.traverseAndPrintTransactions(root);
 
         /*—————————————
         | merge并且挖掘 |
