@@ -15,7 +15,7 @@ public class MineFromMergeCPTreeThird {
          ————————————————————————————-————————————*/
         CPTreeConstructor constructor = new CPTreeConstructor();
         CPTreeNode<Object> root = constructor.createInitialCPTree();
-
+        LOGGER.info("Initial CP Tree Nodes : {}", TreeAppender.INDEX - 1);
         /*—————————————
         | merge并且挖掘 |
          ——————————————*/

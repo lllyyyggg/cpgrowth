@@ -42,6 +42,6 @@ public class MineFromNodeListForth {
 
         LOGGER.info("INDEX {}, N1 {}, N2 {}", TreeAppender.INDEX - 1, Ns[0], Ns[1]);
         LOGGER.info("cost : {} ms.", end - start);
-        LOGGER.info("SIZE OF PRUNE PREFIX : {}", nodeListMiner.PRUNESET().size());
+        LOGGER.info("SIZE OF PRUNE PREFIX : {}", nodeListMiner.prunesetSize());
     }
 }

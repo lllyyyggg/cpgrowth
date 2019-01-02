@@ -58,8 +58,8 @@ public class CPNodeListMiner {
         LOGGER.info("TOTAL OF CPS : {}, AND CALCULATED FOR {} TIMES", cpcount, calccount);
     }
 
-    public Set<String> PRUNESET() {
-        return PRUNE_SET;
+    public Integer prunesetSize() {
+        return PRUNE_SET.size();
     }
 
     /*————————————————————————————————————————
@@ -148,10 +148,10 @@ public class CPNodeListMiner {
             cpcount++;
             LOGGER.info("1 - {}, [{} {}], [{} {}]", key, candidate.c1(), candidate.c2(), MINIMAL_THRESHOLD * this.N1, MAXIMUM_THRESHOLD * this.N2);
         } else if (!canPrune(candidate, this.N1, this.N2)) {
-            //LOGGER.info("2 - {}, [{} {}], [{} {}]", key, candidate.c1(), candidate.c2(), MINIMAL_THRESHOLD * this.N1, MAXIMUM_THRESHOLD * this.N2);
+            LOGGER.info("2 - {}, [{} {}], [{} {}]", key, candidate.c1(), candidate.c2(), MINIMAL_THRESHOLD * this.N1, MAXIMUM_THRESHOLD * this.N2);
         } else {
             PRUNE_SET.add(sequence);
-            //LOGGER.info("3 - {}, [{} {}], [{} {}]", key, candidate.c1(), candidate.c2(), MINIMAL_THRESHOLD * this.N1, MAXIMUM_THRESHOLD * this.N2);
+            LOGGER.info("3 - {}, [{} {}], [{} {}]", key, candidate.c1(), candidate.c2(), MINIMAL_THRESHOLD * this.N1, MAXIMUM_THRESHOLD * this.N2);
         }
     }
 

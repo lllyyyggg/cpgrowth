@@ -2,7 +2,7 @@
 /out
 /.idea
 *.iml
-*.log
+*.log*
 resources/ITEMSCOUNT_FILE
 resources/MIXED_DATASET
 resources/COUNT_OF*
