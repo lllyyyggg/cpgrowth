@@ -7,12 +7,12 @@ public class CPTreeNode<T> {
     private T value;
     private Integer c1;                                                                                                 //第一个类的count
     private Integer c2;                                                                                                 //第二个类的count
-    private CPTreeNode<T> parent;                                                                                       //父节点
-    private List<CPTreeNode<T>> children = new ArrayList<>(3);                                             //孩子节点集合
-    private CPTreeNode<T> sibling;                                                                                      //右边的兄弟节点
     private Integer preIndex;                                                                                           //前序遍历索引
     private Integer postIndex;                                                                                          //后序遍历索引
     private Boolean isVisited;                                                                                          //是否已经遍历
+    private CPTreeNode<T> parent;                                                                                       //父节点
+    private CPTreeNode<T> sibling;                                                                                      //右边的兄弟节点
+    private List<CPTreeNode<T>> children = new ArrayList<>(3);                                             //孩子节点集合
 
     public CPTreeNode() {
         this.isVisited = false;

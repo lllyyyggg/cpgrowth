@@ -32,21 +32,21 @@ public class CPNodeListMiner {
         for (int i = 0; i < sortedItemList.size(); i++) {
             sortedItemMap.put(sortedItemList.get(i).value(), i);
         }
-        Map<Object, List<SequenceSuffix>> newMap = new HashMap<>(initialNodeListMap);                                  //生成的高项集的NodeList的Map
+        Map<Object, List<SequenceSuffix>> newMap = new HashMap<>(initialNodeListMap);                                   //生成的高项集的NodeList的Map
         newMap.remove("$");
         LOGGER.info("———————————————————————————————————————————————————————————————————————————————————————————————————the beginning of mining from nodelists");
         while (newMap != null) {                                                                                        //和数据集的维数有关
             //LOGGER.info("项集大小 : {}", newMap.size());
             mineNodeList(newMap);
-            Map<Object, List<SequenceSuffix>> tempTable = new HashMap<>();                                             //临时的Map用于存储高项集的NodeList
+            Map<Object, List<SequenceSuffix>> tempTable = new HashMap<>();                                              //临时的Map用于存储高项集的NodeList
             for (Object key : newMap.keySet()) {
                 Object prefix = ((String) key).split(" ")[0];                                                    //获取首Item,如 A11 D1获取A11
                 int parentIndex = sortedItemMap.get(prefix) - 1;
                 for (int i = parentIndex; i >= 0; i--) {
                     Item<Object> parentItem = sortedItemList.get(i);
-                    List<SequenceSuffix> parentNodeList = initialNodeListMap.get(parentItem.value());                  //每次都要从initialNodeListMap选取一个头进行combine
+                    List<SequenceSuffix> parentNodeList = initialNodeListMap.get(parentItem.value());                   //每次都要从initialNodeListMap选取一个头进行combine
                     List<SequenceSuffix> tobeCombinedNodeList = newMap.get(key);
-                    List<SequenceSuffix> newOrdersAndCounts = combine(parentNodeList, tobeCombinedNodeList);           // 生成高项集
+                    List<SequenceSuffix> newOrdersAndCounts = combine(parentNodeList, tobeCombinedNodeList);            // 生成高项集
                     if (newOrdersAndCounts != null) {
                         tempTable.put(sortedItemList.get(i).value() + " " + key, newOrdersAndCounts);
                     }
