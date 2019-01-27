@@ -5,21 +5,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 // Tested
-public class CPTree {
-    public static final CPTreeNode NULL = CPTreeNode.NullCpTreeNode.NULL;
+public class ContrastPatternTree {
+    public static final ContrastPatterTreeNode NULL = ContrastPatterTreeNode.NullContrastPatterTreeNode.NULL;
 
-    public static class CPTreeNode implements Cloneable {
+    public static class ContrastPatterTreeNode implements Cloneable {
         private String value;
         private Integer c1;
         private Integer c2;
         private Integer preIndex;
         private Integer postIndex;
         private Boolean isVisited;
-        private CPTreeNode parent;
-        private CPTreeNode sibling;
-        private List<CPTreeNode> children;
+        private ContrastPatterTreeNode parent;
+        private ContrastPatterTreeNode sibling;
+        private List<ContrastPatterTreeNode> children;
 
-        private CPTreeNode() {
+        private ContrastPatterTreeNode() {
         }
 
         public String getValue() {
@@ -70,16 +70,16 @@ public class CPTree {
             isVisited = visited;
         }
 
-        public CPTreeNode getParent() {
+        public ContrastPatterTreeNode getParent() {
             return parent;
         }
 
-        public void setParent(CPTreeNode parent) {
+        public void setParent(ContrastPatterTreeNode parent) {
             this.parent = parent;
             parent.addChild(this);
         }
 
-        public CPTreeNode getChild(int index) {
+        public ContrastPatterTreeNode getChild(int index) {
             return children.get(index);
         }
 
@@ -87,22 +87,22 @@ public class CPTree {
             return children.size();
         }
 
-        public CPTreeNode getSibling() {
+        public ContrastPatterTreeNode getSibling() {
             return sibling;
         }
 
-        public void setSibling(CPTreeNode sibling) {
+        public void setSibling(ContrastPatterTreeNode sibling) {
             this.sibling = sibling;
             parent.addChild(sibling);
             sibling.parent = parent;
 
         }
 
-        public List<CPTreeNode> getChildren() {
+        public List<ContrastPatterTreeNode> getChildren() {
             return children;
         }
 
-        public void addChild(CPTreeNode child) {
+        public void addChild(ContrastPatterTreeNode child) {
             if (children.size() > 0) {
                 children.get(children.size() - 1).sibling = child;
             }
@@ -115,25 +115,25 @@ public class CPTree {
         }
 
         @Override
-        protected CPTreeNode clone() throws CloneNotSupportedException {
-            CPTreeNode newNode = (CPTreeNode) super.clone();
+        protected ContrastPatterTreeNode clone() throws CloneNotSupportedException {
+            ContrastPatterTreeNode newNode = (ContrastPatterTreeNode) super.clone();
             newNode.parent = NULL;
             if (!this.sibling.isNull()) {
-                CPTreeNode sibling = newNode.sibling.clone();
+                ContrastPatterTreeNode sibling = newNode.sibling.clone();
                 newNode.sibling = sibling;
             }
             newNode.children = new ArrayList<>(3);
             if (children.size() > 0) {
-                for (CPTreeNode child : children) {
-                    CPTreeNode newChild = child.clone();
+                for (ContrastPatterTreeNode child : children) {
+                    ContrastPatterTreeNode newChild = child.clone();
                     newNode.addChild(newChild);
                 }
             }
             return newNode;
         }
 
-        public CPTreeNode copy() {
-            CPTreeNode newNode;
+        public ContrastPatterTreeNode copy() {
+            ContrastPatterTreeNode newNode;
             try {
                 newNode = this.clone();
             } catch (CloneNotSupportedException e) {
@@ -154,10 +154,10 @@ public class CPTree {
                     ')';
         }
 
-        private static class NullCpTreeNode extends CPTreeNode {
-            public static final CPTreeNode NULL = new NullCpTreeNode();
+        private static class NullContrastPatterTreeNode extends ContrastPatterTreeNode {
+            public static final ContrastPatterTreeNode NULL = new NullContrastPatterTreeNode();
 
-            private NullCpTreeNode() {
+            private NullContrastPatterTreeNode() {
             }
 
             @Override
@@ -166,7 +166,7 @@ public class CPTree {
             }
 
             @Override
-            protected CPTreeNode clone() {
+            protected ContrastPatterTreeNode clone() {
                 throw new RuntimeException("Method not supported");
             }
 
@@ -178,9 +178,9 @@ public class CPTree {
 
     }
 
-    static class CPTreeNodeFactory {
-        public static CPTreeNode newNode() {
-            CPTreeNode node = new CPTreeNode();
+    static class ContrastPatternTreeNodeFactory {
+        public static ContrastPatterTreeNode newNode() {
+            ContrastPatterTreeNode node = new ContrastPatterTreeNode();
             node.c1 = 0;
             node.c2 = 0;
             node.preIndex = -1;
@@ -192,8 +192,8 @@ public class CPTree {
             return node;
         }
 
-        public static CPTreeNode newNode(String value) {
-            CPTreeNode node = newNode();
+        public static ContrastPatterTreeNode newNode(String value) {
+            ContrastPatterTreeNode node = newNode();
             node.value = value;
             return node;
         }

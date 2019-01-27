@@ -6,14 +6,14 @@ import java.util.List;
 import java.util.Objects;
 
 // Tested
-public class ItemSet implements Comparable<ItemSet> {
+public class Transaction implements Comparable<Transaction> {
     private List<Item> itemList;
 
-    public ItemSet() {
+    public Transaction() {
         itemList = new ArrayList<>(3);
     }
 
-    public ItemSet(List<Item> itemList) {
+    public Transaction(List<Item> itemList) {
         this.itemList = itemList;
     }
 
@@ -29,6 +29,10 @@ public class ItemSet implements Comparable<ItemSet> {
         Collections.sort(itemList);
     }
 
+    public List<Item> getItemList() {
+        return itemList;
+    }
+
     public int length() {
         return itemList.size();
     }
@@ -37,14 +41,14 @@ public class ItemSet implements Comparable<ItemSet> {
     public String toString() {
         StringBuilder s = new StringBuilder();
         for (Item item : itemList) {
-            s.append(item.value).append(":");
+            s.append(item.value).append(" ");
         }
         s.deleteCharAt(s.length() - 1);
         return s.toString();
     }
 
     @Override
-    public int compareTo(ItemSet o) {
+    public int compareTo(Transaction o) {
         List<Item> self = this.itemList;
         List<Item> other = o.itemList;
         int minLen = Math.min(self.size(), other.size());
