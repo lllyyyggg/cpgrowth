@@ -33,10 +33,12 @@ public class CPGrowth {
      —————————————————————————*/
     public void mergeAndMine(CPTreeNode<Object> root) {
         LOGGER.info("———————————————————————————————————————————————————————————————————————————————————————————————————the beginning of merging and mining");
-        for (int i = 0; i < root.children().size(); i++) {
-            CPTreeNode<Object> node = root.children().get(i);                                                           //root的直接子节点
+        List<CPTreeNode<Object>> rc = root.children();
+        int i = 0;
+        for (; i < rc.size(); i++) {
+            CPTreeNode<Object> rci = rc.get(i);                                                                         //root的直接子节点
             //————————————————————————————————————————————————————————————————
-            List<CPTreeNode<Object>> nodeChildren = node.children();
+            List<CPTreeNode<Object>> nodeChildren = rci.children();
             TreeAppender treeAppender = new TreeAppender();
             for (int j = 0; j < nodeChildren.size(); j++) {
                 CPTreeNode<Object> subHead = nodeChildren.get(j);
@@ -46,6 +48,7 @@ public class CPGrowth {
                 treeAppender.addTreeToTree(toAdd, root);
                 //LOGGER.info("—————————————————————————————————merge——end——————————————————————————————————————");
                 Collections.sort(root.children(), (o1, o2) -> {
+
                     if (!this.nodeCountMap.get(o1.value()).equals(this.nodeCountMap.get(o2.value()))) {
                         return this.nodeCountMap.get(o2.value()).compareTo(this.nodeCountMap.get(o1.value()));
                     } else {
@@ -60,7 +63,7 @@ public class CPGrowth {
                 }
             }
             //LOGGER.info("————————————————————————————————mine {}——————————————————————————————————", node);
-            i = i + (mineCpFromNode(node) ? -1 : 0);                                                                    //如果删除的是直接孩子节点，那么必须退一格
+            i = i + (mineCpFromNode(rci) ? -1 : 0);                                                                    //如果删除的是直接孩子节点，那么必须退一格
             //LOGGER.info("—————————————————————————————————mine——end———————————————————————————————————————");
         }
         LOGGER.info("———————————————————————————————————————————————————————————————————————————————————————————————————the beginning of merging and mining");

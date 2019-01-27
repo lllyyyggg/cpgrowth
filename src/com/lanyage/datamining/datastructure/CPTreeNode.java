@@ -113,7 +113,8 @@ public class CPTreeNode<T> {
                 preIndex + "," +
                 postIndex + "," +
                 c1 + "," +
-                c2 +
+                c2 + "," +
+                isVisited +
                 ')';
     }
 }
