@@ -1,8 +1,6 @@
 package refine;
 
 
-import com.lanyage.datamining.datastructure.Item;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -11,12 +9,15 @@ import java.util.function.Function;
 
 // TESTED
 public class ItemCountFacade {
-    public static Map<String, Integer> load(String countFile) {
+    public static ItemCountFacade get(){return INSTANCE;}
+    private static final ItemCountFacade INSTANCE = new ItemCountFacade();
+    private ItemCountFacade(){}
+    public Map<String, Integer> load(String countFile) {
         Counter counter = ItemCounter.Factory.create(countFile);
         return counter.load();
     }
 
-    public static void sortAndSaveTransaction(String countFile, String source1, String source2, String dest) {
+    public void sortAndSaveTransaction(String countFile, String source1, String source2, String dest) {
         Map<String, Integer> itemCount = load(countFile);
         Set<Transaction> set1 = extractTransaction(itemCount, source1);
         Set<Transaction> set2 = extractTransaction(itemCount, source2);
@@ -24,7 +25,7 @@ public class ItemCountFacade {
         List<Transaction> transactionList = new ArrayList<>();
         transactionList.addAll(set1);
         transactionList.addAll(set2);
-        Collections.sort(transactionList);
+        //Collections.sort(transactionList);
         try {
             for (Transaction transaction : transactionList) {
                 String transactionString = transaction.toString();
@@ -53,7 +54,7 @@ public class ItemCountFacade {
         }
     }
 
-    public static Set<Transaction> extractTransaction(Map<String, Integer> itemCount, String source) {
+    public Set<Transaction> extractTransaction(Map<String, Integer> itemCount, String source) {
         BufferedReader br = FunctorFactory.getBufferReaderGetter().apply(source);
         String line;
         Set<Transaction> set = new HashSet<>();
@@ -81,7 +82,7 @@ public class ItemCountFacade {
         return set;
     }
 
-    public static int getAndSaveItemCount(String source1, String source2, String dest) {
+    public int getAndSaveItemCount(String source1, String source2, String dest) {
         Counter counter1 = ItemCounter.Factory.create(source1);
         Counter counter2 = ItemCounter.Factory.create(source2);
         Map<String, Integer> m1 = counter1.getItemCountMap();
@@ -174,8 +175,8 @@ public class ItemCountFacade {
         }
 
         static class Factory {
-            public static ItemCounter create(String dest) {
-                return new ItemCounter(dest);
+            public static ItemCounter create(String source) {
+                return new ItemCounter(source);
             }
         }
 

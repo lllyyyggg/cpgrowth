@@ -45,7 +45,7 @@ public class FunctorFactory {
             for (Map.Entry<String, Integer> entry : minMap.entrySet()) {
                 Integer value = maxMap.getOrDefault(entry.getKey(), null);
                 if (null == value) {
-                    maxMap.put(entry.getKey(), 1);
+                    maxMap.put(entry.getKey(), entry.getValue());
                 } else {
                     maxMap.put(entry.getKey(), value + entry.getValue());
                 }
