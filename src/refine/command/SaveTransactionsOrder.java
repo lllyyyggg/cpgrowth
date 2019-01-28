@@ -1,21 +1,16 @@
 package refine.command;
 
+import com.lanyage.datamining.enums.FilePathEnum;
 import refine.ItemCountFacade;
 
 public class SaveTransactionsOrder implements Order {
-    private String itemCountFile;
     private String dataSet1File;
     private String dataSet2File;
-    private String mixedDataSetFile;
 
-    public SaveTransactionsOrder(String itemCountFile,
-                                 String dataSet1File,
-                                 String dataSet2File,
-                                 String mixedDataSetFile) {
-        this.itemCountFile = itemCountFile;
+    public SaveTransactionsOrder(String dataSet1File,
+                                 String dataSet2File) {
         this.dataSet1File = dataSet1File;
         this.dataSet2File = dataSet2File;
-        this.mixedDataSetFile = mixedDataSetFile;
     }
 
     @Override
@@ -23,9 +18,9 @@ public class SaveTransactionsOrder implements Order {
         ItemCountFacade
                 .get()
                 .sortAndSaveTransaction(
-                        itemCountFile,
+                        FilePathEnum.ITEM_COUNT_FILE.getSource(),
                         dataSet1File,
                         dataSet2File,
-                        mixedDataSetFile);
+                        FilePathEnum.MIX_DATASET.getSource());
     }
 }

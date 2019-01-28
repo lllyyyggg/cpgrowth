@@ -7,6 +7,23 @@ import java.util.List;
 // Tested
 public class ContrastPatternTree {
     public static final ContrastPatterTreeNode NULL = ContrastPatterTreeNode.NullContrastPatterTreeNode.NULL;
+    private ContrastPatterTreeNode root;
+
+    public static class Factory {
+        public static ContrastPatternTree newTree() {
+            ContrastPatternTree tree = new ContrastPatternTree();
+            tree.root = ContrastPatternTreeNodeFactory.newNode("$root");
+            return tree;
+        }
+    }
+
+
+    public static void main(String[] args) {
+        System.out.println(ContrastPatternTree.Factory.newTree());
+    }
+
+    private ContrastPatternTree() {
+    }
 
     public static class ContrastPatterTreeNode implements Cloneable {
         private String value;
