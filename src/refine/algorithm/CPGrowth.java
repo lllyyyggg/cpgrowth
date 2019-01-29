@@ -1,7 +1,7 @@
 package refine.algorithm;
 
 import refine.ContrastPatternTree;
-import refine.ItemCountFacade;
+import refine.context.Context;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,15 +13,16 @@ public class CPGrowth {
     private int n2;
     private ContrastPatternTree tree;
 
+    public static final Context CONTEXT = Context.getInstance();
     public CPGrowth(double alpha, double beta) {
         this.alpha = alpha;
         this.beta = beta;
-        this.n1 = ItemCountFacade.get().getN1();
-        this.n2 = ItemCountFacade.get().getN2();
+        this.n1 = CONTEXT.getN1();
+        this.n2 = CONTEXT.getN2();
         this.tree = ContrastPatternTree.newTree();
     }
 
-    
+
     public void mine() {
         ContrastPatternTree.ContrastPatterTreeNode root = tree.getRoot();
         for (int i = 0; i < root.childrenSize(); i++) {
@@ -31,7 +32,7 @@ public class CPGrowth {
                 ContrastPatternTree.ContrastPatterTreeNode subHead = nodeChildren.get(j);
                 ContrastPatternTree.ContrastPatterTreeNode toAdd = subHead.copy();                                                           //拷贝子树
                 tree.addTree(toAdd);
-                tree.sortRootChildren();
+                root.sortChildren();
             }
             i = i + (mineCpFromNode(currRootChild) ? -1 : 0);                                                                    //如果删除的是直接孩子节点，那么必须退一格
         }

@@ -2,14 +2,13 @@ package com.lanyage.datamining.run;
 
 import com.lanyage.datamining.datastructure.CPTreeNode;
 import com.lanyage.datamining.entity.*;
-import com.lanyage.datamining.enums.FilePathEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import refine.ItemCountFacade;
+import refine.context.Context;
 
 public class MineFromMergeCPTreeThird {
     public static final Logger LOGGER = LoggerFactory.getLogger(TreeTraverser.class);
-
+    public static final Context CONTEXT = Context.getInstance();
     public static void main(String[] args) {
 
         /*—————————————————————————————————————————
@@ -22,7 +21,7 @@ public class MineFromMergeCPTreeThird {
         | merge并且挖掘 |
          ——————————————*/
         Integer[] Ns = new DataSetCounter().getCountOfDataSets();
-        CPGrowth cpGrowth = new CPGrowth(ItemCountFacade.get().load(FilePathEnum.getPath("itemcount")), Ns[0], Ns[1]);
+        CPGrowth cpGrowth = new CPGrowth(CONTEXT.getItemcountMap(), Ns[0], Ns[1]);
 
         long start = System.currentTimeMillis();
         cpGrowth.mergeAndMine(root);

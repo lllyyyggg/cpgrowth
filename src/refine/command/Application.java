@@ -1,12 +1,12 @@
-package refine;
+package refine.command;
 
-import refine.command.Order;
-
+// TESTED
 import java.util.ArrayList;
 import java.util.List;
 
 public class Application {
     private List<Order> orderList;
+
     public Application() {
         this.orderList = new ArrayList<>();
     }

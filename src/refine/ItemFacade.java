@@ -1,6 +1,8 @@
 package refine;
 
 
+import refine.context.Context;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -8,54 +10,35 @@ import java.util.*;
 import java.util.function.Function;
 
 // TESTED
-public class ItemCountFacade {
-    public static ItemCountFacade get() {
-        return INSTANCE;
-    }
+public class ItemFacade {
 
-    private static final ItemCountFacade INSTANCE = new ItemCountFacade();
-    private Integer N1;
-    private Integer N2;
-
-    private ItemCountFacade() {
-        N1 = 0;
-        N2 = 0;
-    }
-
-    public Map<String, Integer> load(String countFile) {
-        Counter counter = ItemCounter.Factory.create(countFile);
-        return counter.load();
-    }
-
-    public Integer getN1() {
-        return N1;
-    }
-
-    public Integer getN2() {
-        return N2;
-    }
-
-    public void sortAndSaveTransaction(String countFile, String source1, String source2, String dest) {
-        Map<String, Integer> itemCount = load(countFile);
+    public static final ItemFacade INSTANCE = new ItemFacade();
+    private ItemFacade() {}
+    public void createMixedDatasetFile(String source1, String source2) {
+        Context context = Context.getInstance();
+        Map<String, Integer> itemCount = context.getItemcountMap();
         Set<Transaction> set1 = extractTransaction(itemCount, source1);
         Set<Transaction> set2 = extractTransaction(itemCount, source2);
-        BufferedWriter writer = FunctorFactory.getBufferWriterGetter().apply(dest);
+        BufferedWriter writer = FunctorFactory.getBufferWriterGetter().apply(context.getMixedDatasetFile());
         List<Transaction> transactionList = new ArrayList<>();
         transactionList.addAll(set1);
         transactionList.addAll(set2);
         //Collections.sort(transactionList);
         try {
+            int n1 = 0, n2 = 0;
             for (Transaction transaction : transactionList) {
                 String transactionString = transaction.toString();
                 if (set1.contains(transaction)) {
-                    INSTANCE.N1++;
+                    n1++;
                     writer.write(transactionString + ",1");
                 } else {
-                    INSTANCE.N2++;
+                    n2++;
                     writer.write(transactionString + ",2");
                 }
                 writer.newLine();
             }
+            context.setN1(n1);
+            context.setN2(n2);
         } catch (IOException e) {
             throw new RuntimeException("写入异常");
         } finally {
@@ -73,8 +56,26 @@ public class ItemCountFacade {
             }
         }
     }
-
-    public Set<Transaction> extractTransaction(Map<String, Integer> itemCount, String source) {
+    public int createItemCountFile(String source1, String source2) {
+        Counter counter1 = ItemCounter.Factory.create(source1);
+        Counter counter2 = ItemCounter.Factory.create(source2);
+        Map<String, Integer> m1 = counter1.getItemCountMap();
+        Map<String, Integer> m2 = counter2.getItemCountMap();
+        Function<Map<String, Integer>, Function<Map<String, Integer>, Map<String, Integer>>> mapMerger = FunctorFactory.getMapMerger();
+        Map<String, Integer> mergedMap = mapMerger.apply(m1).apply(m2);
+        Context context = Context.getInstance();
+        Writer writer = ItemWriter.Factory.create(context.getItemCountFile());
+        List<Map.Entry<String, Integer>> list = new ArrayList<>(mergedMap.entrySet());
+        Collections.sort(list, (entry1, entry2) -> {
+            int valueGap = entry2.getValue().compareTo(entry1.getValue());
+            if (0 == valueGap) {
+                return entry1.getKey().compareTo(entry2.getKey());
+            }
+            return valueGap;
+        });
+        return writer.writeItemCounts(list, context);
+    }
+    private Set<Transaction> extractTransaction(Map<String, Integer> itemCount, String source) {
         BufferedReader br = FunctorFactory.getBufferReaderGetter().apply(source);
         String line;
         Set<Transaction> set = new HashSet<>();
@@ -82,6 +83,7 @@ public class ItemCountFacade {
             while (null != (line = br.readLine()) && !"".equals(line = line.trim())) {
                 String[] items = SequenceSplitter.split(line);
                 Transaction transaction = new Transaction();
+
                 for (String item : items) {
                     transaction.addItem(item, itemCount.get(item));
                 }
@@ -101,40 +103,18 @@ public class ItemCountFacade {
         }
         return set;
     }
-
-    public int getAndSaveItemCount(String source1, String source2, String dest) {
-        Counter counter1 = ItemCounter.Factory.create(source1);
-        Counter counter2 = ItemCounter.Factory.create(source2);
-        Map<String, Integer> m1 = counter1.getItemCountMap();
-        Map<String, Integer> m2 = counter2.getItemCountMap();
-        Function<Map<String, Integer>, Function<Map<String, Integer>, Map<String, Integer>>> mapMerger = FunctorFactory.getMapMerger();
-        Map<String, Integer> mergedMap = mapMerger.apply(m1).apply(m2);
-        Writer writer = ItemWriter.Factory.create(dest);
-        List<Map.Entry<String, Integer>> list = new ArrayList<>(mergedMap.entrySet());
-        Collections.sort(list, (entry1, entry2) -> {
-            int valueGap = entry2.getValue().compareTo(entry1.getValue());
-            if (0 == valueGap) {
-                return entry1.getKey().compareTo(entry2.getKey());
-            }
-            return valueGap;
-        });
-        return writer.writeItemCounts(list);
-    }
-
     interface Writer {
-        int writeItemCounts(List<Map.Entry<String, Integer>> sortedEntry);
+        int writeItemCounts(List<Map.Entry<String, Integer>> sortedEntry, Context context);
 
         void writeItemCount(String item, Integer count) throws IOException;
     }
-
     interface Counter {
         Map<String, Integer> getItemCountMap();
 
         String[] getItems(String transactionString);
 
-        Map<String, Integer> load();
+        Map<String, Integer> load(Context context);
     }
-
     static class ItemWriter implements Writer {
         private String dest;
         private BufferedWriter bufferedWriter;
@@ -152,12 +132,13 @@ public class ItemCountFacade {
                     .apply(dest);
         }
 
-        public int writeItemCounts(List<Map.Entry<String, Integer>> sortedEntry) {
+        public int writeItemCounts(List<Map.Entry<String, Integer>> sortedEntry, Context context) {
 
             try {
                 for (Map.Entry<String, Integer> entry : sortedEntry) {
                     // write
                     writeItemCount(entry.getKey(), entry.getValue());
+                    context.addItemCount(entry.getKey(), entry.getValue());
                     bufferedWriter.newLine();
                 }
             } catch (IOException e) {
@@ -184,8 +165,7 @@ public class ItemCountFacade {
             bufferedWriter.write(item + " " + count);
         }
     }
-
-    public static class ItemCounter implements Counter {
+    static class ItemCounter implements Counter {
         private String source;
         private BufferedReader br;
 
@@ -237,15 +217,15 @@ public class ItemCountFacade {
         }
 
         @Override
-        public Map<String, Integer> load() {
+        public Map<String, Integer> load(Context context) {
             Map<String, Integer> map = new HashMap<>();
             try {
                 String itemCount;
-                Integer total = 0;
+                //Integer total = 0;
                 while (null != (itemCount = br.readLine()) && !"".equals(itemCount = itemCount.trim())) {
                     String[] splits = SequenceSplitter.split(itemCount);
                     map.put(splits[0], Integer.valueOf(splits[1]));
-                    total += Integer.valueOf(splits[1]);
+                    //total += Integer.valueOf(splits[1]);
                 }
             } catch (IOException e) {
                 throw new RuntimeException("读取异常");
