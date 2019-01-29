@@ -1,5 +1,7 @@
 package refine;
 
+
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -7,6 +9,33 @@ import java.util.Objects;
 
 // Tested
 public class Transaction implements Comparable<Transaction> {
+
+    public static void main(String[] args) {
+    }
+
+    static class Factory {
+        public static Transaction create(List<Item> itemList) {
+            return new Transaction(itemList);
+        }
+
+        public static Transaction create(String itemString) {
+            Transaction transaction = new Transaction();
+            String[] items = SequenceSplitter.split(itemString.trim());
+            for (String item : items) {
+                transaction.addItem(item);
+            }
+            return transaction;
+        }
+    }
+
+    public int size() {
+        return itemList.size();
+    }
+
+    public Item get(int index) {
+        return itemList.get(index);
+    }
+
     private List<Item> itemList;
 
     public Transaction() {
@@ -77,6 +106,10 @@ public class Transaction implements Comparable<Transaction> {
         public Item(String value, Integer count) {
             this(value);
             this.count = count;
+        }
+
+        public String getValue() {
+            return value;
         }
 
         @Override

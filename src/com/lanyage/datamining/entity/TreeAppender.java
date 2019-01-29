@@ -11,7 +11,7 @@ import java.util.Map;
 
 public class TreeAppender {
     public static final Logger LOGGER = LoggerFactory.getLogger(TreeAppender.class);
-    public static final Map<Object, Integer> NODE_AND_COUNT = new NodeCounter(FilePathEnum.ITEM_COUNT_FILE.getSource()).getNodeCountMap();
+    public static final Map<Object, Integer> NODE_AND_COUNT = new NodeCounter(FilePathEnum.getPath("itemcount")).getNodeCountMap();
     public static Integer INDEX = 1;
 
     /*————————————————————
@@ -37,7 +37,7 @@ public class TreeAppender {
                 for (i = 0; i < parent.children().size(); i++) {
                     CPTreeNode<Object> currChild = parent.children().get(i);
                     if (parent.children().get(i).value().equals(toAdd.value())) {
-                        CPTreeNode<Object> prev = new CPTreeNode<>(currChild.value(), currChild.c1(), currChild.c2());
+                        //CPTreeNode<Object> prev = new CPTreeNode<>(currChild.value(), currChild.c1(), currChild.c2());
                         currChild.c1(toAdd.c1() + currChild.c1());
                         currChild.c2(toAdd.c2() + currChild.c2());
                         //LOGGER.info("COMBINE {} TO {}, now the node is {}", toAdd, prev, currChild);

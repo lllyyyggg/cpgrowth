@@ -19,10 +19,10 @@ public class CPGrowth {
     private static int calccount = 0;
     private int n1;
     private int n2;
-    private Map<Object, Integer> nodeCountMap;
+    private Map<String, Integer> nodeCountMap;
 
 
-    public CPGrowth(Map<Object, Integer> nodeCountMap, int n1, int n2) {
+    public CPGrowth(Map<String, Integer> nodeCountMap, int n1, int n2) {
         this.n1 = n1;
         this.n2 = n2;
         this.nodeCountMap = nodeCountMap;

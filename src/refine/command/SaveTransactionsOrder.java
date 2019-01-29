@@ -18,9 +18,9 @@ public class SaveTransactionsOrder implements Order {
         ItemCountFacade
                 .get()
                 .sortAndSaveTransaction(
-                        FilePathEnum.ITEM_COUNT_FILE.getSource(),
+                        FilePathEnum.getPath("itemcount"),
                         dataSet1File,
                         dataSet2File,
-                        FilePathEnum.MIX_DATASET.getSource());
+                        FilePathEnum.getPath("mixeddataset"));
     }
 }

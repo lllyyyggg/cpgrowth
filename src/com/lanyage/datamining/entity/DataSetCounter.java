@@ -15,7 +15,7 @@ public class DataSetCounter {
         Integer[] result = new Integer[2];
         BufferedReader br = null;
         try {
-            br = new BufferedReader(new InputStreamReader(new FileInputStream(FilePathEnum.DATA_SET_I.getSource())));
+            br = new BufferedReader(new InputStreamReader(new FileInputStream(FilePathEnum.getPath("dataset1"))));
             Integer countI = 0;
             while (br.readLine() != null) {
                 countI++;
@@ -23,7 +23,7 @@ public class DataSetCounter {
 
             result[0] = countI;
         } catch (IOException e) {
-            throw new RuntimeException("读取文件出错了:" + FilePathEnum.DATA_SET_II.getSource());
+            throw new RuntimeException("读取文件出错了:" + FilePathEnum.getPath("dataset2"));
         } finally {
             try {
                 br.close();
@@ -33,13 +33,13 @@ public class DataSetCounter {
         }
         try {
             Integer countII = 0;
-            br = new BufferedReader(new InputStreamReader(new FileInputStream(FilePathEnum.DATA_SET_II.getSource())));
+            br = new BufferedReader(new InputStreamReader(new FileInputStream(FilePathEnum.getPath("dataset2"))));
             while (br.readLine() != null) {
                 countII++;
             }
             result[1] = countII;
         } catch (IOException e) {
-            throw new RuntimeException("读取文件出错了:" + FilePathEnum.DATA_SET_II.getSource());
+            throw new RuntimeException("读取文件出错了:" + FilePathEnum.getPath("dataset2"));
         } finally {
             try {
                 br.close();

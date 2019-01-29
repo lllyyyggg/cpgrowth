@@ -9,12 +9,30 @@ import java.util.function.Function;
 
 // TESTED
 public class ItemCountFacade {
-    public static ItemCountFacade get(){return INSTANCE;}
+    public static ItemCountFacade get() {
+        return INSTANCE;
+    }
+
     private static final ItemCountFacade INSTANCE = new ItemCountFacade();
-    private ItemCountFacade(){}
+    private Integer N1;
+    private Integer N2;
+
+    private ItemCountFacade() {
+        N1 = 0;
+        N2 = 0;
+    }
+
     public Map<String, Integer> load(String countFile) {
         Counter counter = ItemCounter.Factory.create(countFile);
         return counter.load();
+    }
+
+    public Integer getN1() {
+        return N1;
+    }
+
+    public Integer getN2() {
+        return N2;
     }
 
     public void sortAndSaveTransaction(String countFile, String source1, String source2, String dest) {
@@ -30,8 +48,10 @@ public class ItemCountFacade {
             for (Transaction transaction : transactionList) {
                 String transactionString = transaction.toString();
                 if (set1.contains(transaction)) {
+                    INSTANCE.N1++;
                     writer.write(transactionString + ",1");
-                }else {
+                } else {
+                    INSTANCE.N2++;
                     writer.write(transactionString + ",2");
                 }
                 writer.newLine();
@@ -165,7 +185,7 @@ public class ItemCountFacade {
         }
     }
 
-    static class ItemCounter implements Counter {
+    public static class ItemCounter implements Counter {
         private String source;
         private BufferedReader br;
 
@@ -174,7 +194,7 @@ public class ItemCountFacade {
             this.br = FunctorFactory.getBufferReaderGetter().apply(source);
         }
 
-        static class Factory {
+        public static class Factory {
             public static ItemCounter create(String source) {
                 return new ItemCounter(source);
             }
@@ -227,7 +247,6 @@ public class ItemCountFacade {
                     map.put(splits[0], Integer.valueOf(splits[1]));
                     total += Integer.valueOf(splits[1]);
                 }
-                System.out.println(total);
             } catch (IOException e) {
                 throw new RuntimeException("读取异常");
             } finally {

@@ -20,7 +20,7 @@ public class CPTreeConstructor {
     private Map<Object, Integer> nodeAndCount;
 
     public CPTreeConstructor() {
-        this.nodeAndCount = new NodeCounter(FilePathEnum.ITEM_COUNT_FILE.getSource()).getNodeCountMap();
+        this.nodeAndCount = new NodeCounter(FilePathEnum.getPath("itemcount")).getNodeCountMap();
     }
 
     public Map<Object, Integer> nodeAndCount() {
@@ -48,7 +48,7 @@ public class CPTreeConstructor {
 
         //LOGGER.info("———————————————————————————————————————————————————————————————————————————————————————————————————the beginning of constructing a cp tree with existing transactions");
         TreeAppender addTreeToTree = new TreeAppender();
-        File file = new File(FilePathEnum.MIX_DATASET.getSource());
+        File file = new File(FilePathEnum.getPath("mixeddataset"));
         BufferedReader br = null;
         try {
             br = new BufferedReader(new InputStreamReader(new FileInputStream(file)));

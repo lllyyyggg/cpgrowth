@@ -26,10 +26,10 @@ public class CalculateItemCountFirst {
 
         LOGGER.info("———————————————————————————————————————————————————————————————————————————————————————————————————the beginning of calculating item counts");
         Map<Object, Integer> itemCountMap = new HashMap<>();
-        Map<Object, Integer> map1 = calculateCountOfItems(FilePathEnum.DATA_SET_I.getSource());
-        LOGGER.info("successfully count items from \"{}\"", FilePathEnum.DATA_SET_I.getSource());
-        Map<Object, Integer> map2 = calculateCountOfItems(FilePathEnum.DATA_SET_II.getSource());
-        LOGGER.info("successfully count items from \"{}\"", FilePathEnum.DATA_SET_II.getSource());
+        Map<Object, Integer> map1 = calculateCountOfItems(FilePathEnum.getPath("dataset1"));
+        LOGGER.info("successfully count items from \"{}\"", FilePathEnum.getPath("dataset1"));
+        Map<Object, Integer> map2 = calculateCountOfItems(FilePathEnum.getPath("dataset2"));
+        LOGGER.info("successfully count items from \"{}\"", FilePathEnum.getPath("dataset2"));
         LOGGER.info("———————————————————————————————————————————————————————————————————————————————————————————————————the end of calculating item counts");
         LOGGER.info("———————————————————————————————————————————————————————————————————————————————————————————————————the beginning of mixing item counts");
         itemCountMap.putAll(map1);
@@ -50,14 +50,14 @@ public class CalculateItemCountFirst {
                 return ((Comparable) o1.getKey()).compareTo(o2.getKey());
             }
         });
-        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(FilePathEnum.ITEM_COUNT_FILE.getSource())));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(FilePathEnum.getPath("itemcount"))));
         for (Map.Entry<Object, Integer> entry : entryList) {
             Object key = entry.getKey();
             Integer count = entry.getValue();
             String content = key + " " + count;
             bw.write(content);
             bw.newLine();
-            LOGGER.info("write <{}={}> to the file \"{}\"", key, count, FilePathEnum.ITEM_COUNT_FILE.getSource());
+            LOGGER.info("write <{}={}> to the file \"{}\"", key, count, FilePathEnum.getPath("itemcount"));
         }
         bw.flush();
         bw.close();

@@ -63,8 +63,8 @@ public class CPNodeListMiner {
     }
 
     /*————————————————————————————————————————
-        | 组合两个父子节点的NodeList形成新的NodeList |
-         ————————————————————————————————————————*/
+    | 组合两个父子节点的NodeList形成新的NodeList |
+     ————————————————————————————————————————*/
     public List<SequenceSuffix> combine(List<SequenceSuffix> parent, List<SequenceSuffix> child) {
         int i = 0, j = 0;
         List<SequenceSuffix> highLevelItemSet = new ArrayList<>();
@@ -172,7 +172,7 @@ public class CPNodeListMiner {
     |           获取排好序的ItemList           |
      ————————————————————————————————————————*/
     private List<Item<Object>> getSortedItemList() {
-        NodeCounter nodeCounter = new NodeCounter(FilePathEnum.ITEM_COUNT_FILE.getSource());
+        NodeCounter nodeCounter = new NodeCounter(FilePathEnum.getPath("itemcount"));
         Map<Object, Integer> nodeCountMap = nodeCounter.getNodeCountMap();
         List<Item<Object>> itemList = new ArrayList<>();
         for (Map.Entry<Object, Integer> entry : nodeCountMap.entrySet()) {

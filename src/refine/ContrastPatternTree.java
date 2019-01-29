@@ -1,28 +1,86 @@
 package refine;
 
 
-import java.util.ArrayList;
-import java.util.List;
+import com.lanyage.datamining.datastructure.CPTreeNode;
+import com.lanyage.datamining.enums.FilePathEnum;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.util.*;
 
 // Tested
 public class ContrastPatternTree {
     public static final ContrastPatterTreeNode NULL = ContrastPatterTreeNode.NullContrastPatterTreeNode.NULL;
+    public static final ThreadLocal<Map<String, Integer>> LOCAL = new ThreadLocal<>();
+    public static final Map<String, Integer> itemCount = ItemCountFacade.get().load(FilePathEnum.getPath("itemcount"));
+
+
     private ContrastPatterTreeNode root;
 
-    public static class Factory {
-        public static ContrastPatternTree newTree() {
-            ContrastPatternTree tree = new ContrastPatternTree();
-            tree.root = ContrastPatternTreeNodeFactory.newNode("$root");
-            return tree;
+    private ContrastPatternTree() {
+    }
+
+    public static void preTraverse(ContrastPatterTreeNode node) {
+        Traverser.preTraverse(node);
+    }
+    public static void postTraverse(ContrastPatterTreeNode node) {
+        Traverser.postTraverse(node);
+    }
+    public void sortRootChildren() {
+        Collections.sort(root.getChildren(), (o1, o2) -> {
+            if (!itemCount.get(o1.getValue()).equals(itemCount.get(o2.getValue()))) {
+                return itemCount.get(o2.getValue()).compareTo(itemCount.get(o1.getValue()));
+            } else {
+                return o1.getValue().compareTo(o2.getValue());
+            }
+        });
+        for (int k = 1; k < root.childrenSize(); k++) {
+            ContrastPatterTreeNode prev = root.getChild(k - 1);
+            ContrastPatterTreeNode now = root.getChild(k);
+            prev.sibling = now;
+            now.sibling = NULL;
         }
     }
 
-
-    public static void main(String[] args) {
-        System.out.println(ContrastPatternTree.Factory.newTree());
+    public void preTraverse() {
+        LinkedList<ContrastPatterTreeNode> stack = new LinkedList<>();
+        stack.addLast(root);
+        while (!stack.isEmpty()) {
+            ContrastPatterTreeNode node = stack.pollLast();
+            System.out.println("preTraverse : (" + node.value + "," + node.c1 + "," + node.c2 + ")");
+            if (node.childrenSize() > 0) {
+                for (int j = node.childrenSize() - 1; j >= 0; j--) {
+                    stack.addLast(node.getChild(j));
+                }
+            }
+        }
     }
 
-    private ContrastPatternTree() {
+    public void postTraverse() {
+        int postIndex = 0;
+        LinkedList<ContrastPatterTreeNode> stack = new LinkedList<>();
+        stack.addLast(root);
+        while (!stack.isEmpty()) {
+            ContrastPatterTreeNode curr = stack.peekLast();
+            while (curr.childrenSize() > 0 && !curr.getChild(0).isVisited) {
+                curr = curr.getChild(0);
+                stack.addLast(curr);
+            }
+            ContrastPatterTreeNode node = stack.pollLast();
+            System.out.println("preTraverse : (" + node.value + "," + node.c1 + "," + node.c2 + ")");
+            node.setVisited(true);
+            if (!node.getSibling().isNull()) {
+                stack.addLast(node.getSibling());
+            }
+        }
+    }
+
+    public ContrastPatterTreeNode getRoot() {
+        return root;
+    }
+
+    public static ContrastPatternTree newTree() {
+        return Factory.newTree();
     }
 
     public static class ContrastPatterTreeNode implements Cloneable {
@@ -100,7 +158,7 @@ public class ContrastPatternTree {
             return children.get(index);
         }
 
-        public int size() {
+        public int childrenSize() {
             return children.size();
         }
 
@@ -171,6 +229,57 @@ public class ContrastPatternTree {
                     ')';
         }
 
+        public static class Factory {
+            public static ContrastPatterTreeNode newNode() {
+                ContrastPatterTreeNode node = new ContrastPatterTreeNode();
+                node.c1 = 0;
+                node.c2 = 0;
+                node.preIndex = -1;
+                node.postIndex = -1;
+                node.isVisited = false;
+                node.parent = NULL;
+                node.sibling = NULL;
+                node.children = new ArrayList<>(3);
+                return node;
+            }
+
+            public static ContrastPatterTreeNode newNode(String value) {
+                ContrastPatterTreeNode node = newNode();
+                node.value = value;
+                return node;
+            }
+
+            public static ContrastPatterTreeNode getFromTransaction(Transaction transaction, String classTag) {
+                List<ContrastPatterTreeNode> nodes = new ArrayList<>();
+                for (int i = 0; i < transaction.size(); i++) {
+                    Transaction.Item item = transaction.get(i);
+                    ContrastPatterTreeNode node = newNode(item.getValue());
+                    if ("1".equals(classTag)) {
+                        node.setC1(1);
+                    } else {
+                        node.setC2(1);
+                    }
+                    nodes.add(node);
+                }
+                int nodeSize = nodes.size();
+                if (nodeSize >= 1) {
+                    if (nodeSize > 1) {
+                        for (int i = 1; i < nodes.size(); i++) {
+                            ContrastPatterTreeNode prev = nodes.get(i - 1);
+                            ContrastPatterTreeNode curr = nodes.get(i);
+                            prev.addChild(curr);
+                        }
+                    }
+                    return nodes.get(0);
+                }
+                return null;
+            }
+
+            public static ContrastPatterTreeNode getFromTransaction(String transaction, String classTag) {
+                return getFromTransaction(Transaction.Factory.create(transaction.trim()), classTag);
+            }
+        }
+
         private static class NullContrastPatterTreeNode extends ContrastPatterTreeNode {
             public static final ContrastPatterTreeNode NULL = new NullContrastPatterTreeNode();
 
@@ -195,24 +304,102 @@ public class ContrastPatternTree {
 
     }
 
-    static class ContrastPatternTreeNodeFactory {
-        public static ContrastPatterTreeNode newNode() {
-            ContrastPatterTreeNode node = new ContrastPatterTreeNode();
-            node.c1 = 0;
-            node.c2 = 0;
-            node.preIndex = -1;
-            node.postIndex = -1;
-            node.isVisited = false;
-            node.parent = NULL;
-            node.sibling = NULL;
-            node.children = new ArrayList<>(3);
-            return node;
+
+    public void addTree(ContrastPatterTreeNode root, ContrastPatterTreeNode newNode) {
+        if (root.isNull() || newNode.isNull()) return;
+        ContrastPatterTreeNode toadd = newNode;
+        if (root.childrenSize() == 0) {
+            while (!toadd.isNull()) {
+                root.addChild(toadd);
+                toadd = toadd.sibling;
+            }
+        } else {
+            while (!toadd.isNull()) {
+                int j;
+                for (j = 0; j < root.childrenSize(); j++) {
+                    ContrastPatterTreeNode currChild = root.getChild(j);
+                    if (currChild.value.equals(toadd.value)) {
+                        currChild.c1 = toadd.c1 + currChild.c1;
+                        currChild.c2 = toadd.c2 + currChild.c2;
+                        addTree(currChild, toadd.childrenSize() == 0 ? NULL : toadd.getChild(0));
+                        break;
+                    }
+                }
+                ContrastPatterTreeNode next = toadd.sibling;
+                if (j == root.childrenSize()) {
+                    root.getChildren().get(root.childrenSize() - 1).sibling = toadd;
+                    toadd.sibling = NULL;
+                    root.addChild(toadd);
+                    Map<String, Integer> ITEMCOUNT = LOCAL.get();
+                    Collections.sort(root.children, (o1, o2) -> {
+                        if (ITEMCOUNT.get(o1.value) != ITEMCOUNT.get(o2.value)) {
+                            return ITEMCOUNT.get(o2.value).compareTo(ITEMCOUNT.get(o1.value));
+                        } else {
+                            return o1.value.compareTo(o2.value);
+                        }
+                    });
+                    for (int k = 1; k < root.childrenSize(); k++) {
+                        root.getChild(k - 1).sibling = root.getChild(k);
+                        root.getChild(k).sibling = NULL;
+                    }
+                }
+                toadd = next;
+            }
+        }
+    }
+
+    public void addTree(ContrastPatterTreeNode newNode) {
+        addTree(this.root, newNode);
+    }
+
+    public static class Factory {
+        public static ContrastPatternTree newTree() {
+            ContrastPatternTree tree = new ContrastPatternTree();
+            tree.root = ContrastPatterTreeNode.Factory.newNode("$");
+            LOCAL.set(ContrastPatternTree.itemCount);
+
+            BufferedReader br = FunctorFactory.getBufferReaderGetter().apply(FilePathEnum.getPath("mixeddataset"));
+            String line;
+            try {
+                while (null != (line = br.readLine()) && !"".equals(line = line.trim())) {
+                    String[] transactionAndclasstag = line.split(",");
+                    String transaction = transactionAndclasstag[0];
+                    String classTag = transactionAndclasstag[1];
+                    ContrastPatterTreeNode newNode = ContrastPatterTreeNode
+                            .Factory
+                            .getFromTransaction(transaction, classTag);
+                    tree.addTree(newNode);
+                }
+            } catch (IOException e) {
+                throw new RuntimeException("读取异常");
+            } finally {
+                if (null != br) {
+                    try {
+                        br.close();
+                    } catch (IOException e) {
+                        throw new RuntimeException("关闭失败");
+                    }
+                }
+            }
+            return tree;
+        }
+    }
+
+    public static class Traverser {
+        public static void preTraverse(ContrastPatternTree.ContrastPatterTreeNode node) {
+            if (node.isNull()) return;
+            System.out.println("preTraverse : (" + node.getValue() + "," + node.getC1() + "," + node.getC2() + ")");
+            for (ContrastPatternTree.ContrastPatterTreeNode child : node.getChildren()) {
+                preTraverse(child);
+            }
         }
 
-        public static ContrastPatterTreeNode newNode(String value) {
-            ContrastPatterTreeNode node = newNode();
-            node.value = value;
-            return node;
+        public static void postTraverse(ContrastPatternTree.ContrastPatterTreeNode node) {
+            if (node.isNull()) return;
+            for (ContrastPatternTree.ContrastPatterTreeNode child : node.getChildren()) {
+                preTraverse(child);
+            }
+            System.out.println("preTraverse : (" + node.getValue() + "," + node.getC1() + "," + node.getC2() + ")");
         }
     }
 }

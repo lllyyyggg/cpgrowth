@@ -20,6 +20,6 @@ public class SaveItemCountOrder implements Order {
                 .getAndSaveItemCount(
                         dataSet1,
                         dataSet2,
-                        FilePathEnum.ITEM_COUNT_FILE.getSource());
+                        FilePathEnum.getPath("itemcount"));
     }
 }

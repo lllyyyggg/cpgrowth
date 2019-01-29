@@ -24,7 +24,7 @@ public class SortItemsForItemSetSecond {
     public static void main(String[] args) throws IOException {
         LOGGER.info("———————————————————————————————————————————————————————————————————————————————————————————————————the beginning of getting map entries from \"resources/ITEMSCOUNT_FILE\"");
         Map<Object, Integer> valueAndCount = new HashMap<>();
-        BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(FilePathEnum.ITEM_COUNT_FILE.getSource())));
+        BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(FilePathEnum.getPath("itemcount"))));
         String line;
         int total = 0;
         while ((line = br.readLine()) != null && !line.trim().equals("")) {
@@ -37,7 +37,7 @@ public class SortItemsForItemSetSecond {
         LOGGER.info("———————————————————————————————————————————————————————————————————————————————————————————————————the end of getting map entries from \"resources/ITEMSCOUNT_FILE\",total = " + total);
 
         LOGGER.info("———————————————————————————————————————————————————————————————————————————————————————————————————the beginning of putting sorted itemsets into \"resources/MIXED_DATASET\"");
-        String dest = FilePathEnum.MIX_DATASET.getSource();
+        String dest = FilePathEnum.getPath("mixeddataset");
         File destFile = new File(dest);
         if (destFile.exists()) {
             destFile.delete();
@@ -45,7 +45,7 @@ public class SortItemsForItemSetSecond {
             destFile.createNewFile();
         }
         Integer[] tags = new Integer[]{1, 2};
-        String[] sources = new String[]{FilePathEnum.DATA_SET_I.getSource(), FilePathEnum.DATA_SET_II.getSource()};
+        String[] sources = new String[]{FilePathEnum.getPath("dataset1"), FilePathEnum.getPath("dataset2")};
         sortAndAddTags(valueAndCount, dest, tags, sources);                                                         //将两个数据集排序好然后存入DATASET_ALL
         br.close();
         LOGGER.info("———————————————————————————————————————————————————————————————————————————————————————————————————the end of putting sorted itemsets into \"resources/MIXED_DATASET\"");
