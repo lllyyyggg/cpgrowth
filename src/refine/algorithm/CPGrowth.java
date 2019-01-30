@@ -1,110 +1,79 @@
 package refine.algorithm;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import refine.ContrastPatternTree;
 import refine.context.Context;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedList;
 
 public class CPGrowth {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CPGrowth.class);
     private double alpha;
     private double beta;
-
     private ContrastPatternTree tree;
-
     public CPGrowth(double alpha, double beta) {
         this.alpha = alpha;
         this.beta = beta;
     }
-
-
     public void mine() {
+        LOGGER.info("————————————STARTING CPGROWTH ALGORITHM————————————");
+        Context context = Context.getInstance();
+        int n1 = context.getN1();
+        int n2 = context.getN2();
+        int total = 0;
         this.tree = ContrastPatternTree.newTree();
         ContrastPatternTree.ContrastPatterTreeNode root = tree.getRoot();
         for (int i = 0; i < root.childrenSize(); i++) {
             ContrastPatternTree.ContrastPatterTreeNode currRootChild = root.getChild(i);                                                                         //root的直接子节点
-            if (currRootChild.childrenSize() == 0) continue;
-            ContrastPatternTree.ContrastPatterTreeNode firstChild = currRootChild.getChild(0).copy();
-            tree.addTree(firstChild);
-            root.sortChildren();
-
-
-            i = i + (mineCpFromNode(currRootChild) ? -1 : 0);                                                                    //如果删除的是直接孩子节点，那么必须退一格
+            if (currRootChild.childrenSize() > 0) {
+                ContrastPatternTree.ContrastPatterTreeNode firstChild = currRootChild.getChild(0).copy();
+                //ContrastPatternTree.ContrastPatterTreeNode firstChild = ContrastPatternTree.copy(currRootChild.getChild(0));
+                tree.addTree(firstChild);
+                root.sortChildren();
+            }
+            total += mine(currRootChild);
         }
-        //ContrastPatternTree.preTraverse(root);
+        LOGGER.info("TOTAL : {}, N1: {}, N2: {}, ALPHA: {}, BETA: {}", total, n1, n2, alpha, beta);
     }
-
-    /*————————————————————————
-   | 从指的节点开始挖掘对比模式 |
-    ————————————————————————*/
-    public boolean mineCpFromNode(ContrastPatternTree.ContrastPatterTreeNode node) {                                    //返回-1说明删掉了一个节点
-        return mineTraverse(new ArrayList<>(), node) == -1;
-    }
-
-    private int mineTraverse(List<ContrastPatternTree.ContrastPatterTreeNode> prefix, ContrastPatternTree.ContrastPatterTreeNode top) {
+    private int mine(ContrastPatternTree.ContrastPatterTreeNode head) {
+        int sum = 0;
+        LinkedList<ContrastPatternTree.ContrastPatterTreeNode> stack = new LinkedList<>();
+        stack.addLast(head);
         Context context = Context.getInstance();
         int n1 = context.getN1();
         int n2 = context.getN2();
-        if (top.isNull()) {
-            return 0;
-        } else {
-            if (isContrastPattern(top)) {                                                                               //如果当前是对比模式
-                prefix.add(top);                                                                                        //添加到前缀
-                StringBuilder sb = new StringBuilder();
-                for (int i = 0; i < prefix.size(); i++) {
-                    sb.append(prefix.get(i).getValue()).append(" ");
-                }
-                System.out.println(String.format("1 - %s, [%d %d], [%.3f %.3f]", sb.toString().trim(), top.getC1(), top.getC2(), n1 * alpha, n2 * beta));
-            } else if (!canPrune(top)) {
-                prefix.add(top);                                                                                        //添加到前缀
-                StringBuilder sb = new StringBuilder();
-                for (int i = 0; i < prefix.size(); i++) {
-                    sb.append(prefix.get(i).getValue()).append(" ");
-                }
-                System.out.println(String.format("2 - %s, [%d %d], [%.3f %.3f]", sb.toString().trim(), top.getC1(), top.getC2(), n1 * alpha, n2 * beta));
+        while (!stack.isEmpty()) {
+            ContrastPatternTree.ContrastPatterTreeNode node = stack.pollLast();
+            String sequence = getSequence(node);
+            if (isContrastPattern(node)) {
+                sum++;
+                LOGGER.info("1 - {}, [{} {}], [{} {}]", sequence, node.getC1(), node.getC2(), n1 * alpha, n2 * beta);
+            } else if (!canPrune(node)) {
+                //LOGGER.info("2 - {}, [{} {}], [{} {}]", sequence, node.getC1(), node.getC2(), n1 * alpha, n2 * beta);
             } else {
-                StringBuilder sb = new StringBuilder();
-                for (int i = 0; i < prefix.size(); i++) {
-                    sb.append(prefix.get(i).getValue()).append(" ");
+                //LOGGER.info("3 - {}, [{} {}], [{} {}]", sequence, node.getC1(), node.getC2(), n1 * alpha, n2 * beta);
+                ContrastPatternTree.ContrastPatterTreeNode parent = node.getParent();
+                if (!node.isRootChild()) parent.removeChild(node);
+                continue;
+            }
+            if (node.childrenSize() > 0) {
+                for (int j = node.childrenSize() - 1; j >= 0; j--) {
+                    stack.addLast(node.getChild(j));
                 }
-                sb.append(top.getValue());
-                System.out.println(String.format("3 - %s, [%d %d], [%.3f %.3f]", sb.toString().trim(), top.getC1(), top.getC2(), n1 * alpha, n2 * beta));
-
-                ContrastPatternTree.ContrastPatterTreeNode topParent = top.getParent();
-
-                for (int i = 0; i < topParent.childrenSize(); i++) {
-                    ContrastPatternTree.ContrastPatterTreeNode node = topParent.getChild(i);
-                    if (node.getSibling() == top) {
-                        node.setSibling(top.getSibling());
-                        break;
-                    }
-                    if (node == top) {
-                        break;
-                    }
-                }
-                topParent.getChildren().remove(top);
-                return -1;
             }
         }
-        List<ContrastPatternTree.ContrastPatterTreeNode> topChildren = top.getChildren();
-        if (topChildren.size() == 0) {
-            prefix.remove(prefix.size() - 1);
-            return 0;
-        }
-        for (int i = 0; i < topChildren.size(); i++) {
-            ContrastPatternTree.ContrastPatterTreeNode currChild = topChildren.get(i);
-            int response = mineTraverse(prefix, currChild);
-            if (response == -1) {
-                i--;
-            }
-        }
-        prefix.remove(prefix.size() - 1);
-        return 0;
+        return sum;
     }
-
-    /*——————————————-
-   |判断是不是对比模式|
-    ——————————————-*/
+    private String getSequence(ContrastPatternTree.ContrastPatterTreeNode node) {
+        LinkedList<String> list = new LinkedList<>();
+        ContrastPatternTree.ContrastPatterTreeNode last = node;
+        while (!last.isRoot()) {
+            list.addFirst(last.getValue());
+            last = last.getParent();
+        }
+        return list.toString();
+    }
     private boolean isContrastPattern(ContrastPatternTree.ContrastPatterTreeNode node) {
         Context context = Context.getInstance();
         int n1 = context.getN1();
@@ -112,15 +81,15 @@ public class CPGrowth {
         boolean result = (node.getC1() > alpha * n1 && node.getC2() <= beta * n2) || (node.getC2() > alpha * n2 && node.getC1() <= beta * n1);
         return result;
     }
-
-    /*——————————————-
-    | 判断是不是能剪枝 |
-     ——————————————-*/
     private boolean canPrune(ContrastPatternTree.ContrastPatterTreeNode node) {
         Context context = Context.getInstance();
         int n1 = context.getN1();
         int n2 = context.getN2();
         boolean result = node.getC1() > alpha * n1 || node.getC2() > alpha * n2;
         return !result;
+    }
+
+    public static void main(String[] args) {
+        CPGrowth cpGrowth = new CPGrowth(0.6d, 0.05d);
     }
 }

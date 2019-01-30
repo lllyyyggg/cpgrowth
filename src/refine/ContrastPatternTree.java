@@ -1,14 +1,11 @@
 package refine;
 
 
-
 import refine.context.Context;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.*;
 
-// Tested
 public class ContrastPatternTree {
     private static final ContrastPatterTreeNode NULL = ContrastPatterTreeNode.NullContrastPatterTreeNode.NULL;
     private ContrastPatterTreeNode root;
@@ -90,7 +87,6 @@ public class ContrastPatternTree {
     public static void postTraverse(ContrastPatterTreeNode node) {
         Traverser.postTraverse(node);
     }
-
     public static class Factory {
         public static ContrastPatternTree newTree() {
             ContrastPatternTree tree = new ContrastPatternTree();
@@ -135,6 +131,49 @@ public class ContrastPatternTree {
                 postTraverse(child);
             }
             System.out.println("postTraverse : (" + node.getValue() + "," + node.getC1() + "," + node.getC2() + ")");
+        }
+    }
+    public static ContrastPatterTreeNode copy(ContrastPatterTreeNode node) {
+        ContrastPatterTreeNode nnode = ContrastPatterTreeNode.Factory.newNode();
+        nnode.c1 = node.c1;
+        nnode.c2 = node.c2;
+        nnode.value = node.value;
+        List<ContrastPatterTreeNode> nodeList = new ArrayList<>();
+        nodeList.add(nnode);
+        copySubTree(nodeList, node);
+        return nnode;
+    }
+    private static void copySubTree(List<ContrastPatterTreeNode> nodeList, ContrastPatterTreeNode top) {
+        int nodeChildrenSize = top.childrenSize();                                                                   //获取top的子节点的个数
+        if (nodeChildrenSize == 0) {
+            return;
+        } else {
+            List<ContrastPatterTreeNode> topChildren = top.children;
+            ContrastPatterTreeNode parent = NULL;
+            for (int i = 0; i < nodeList.size(); i++) {                                                                 //确保和nodeList里面的newChildK的值相等, 获取parent用于下面的设置子节点
+                if (nodeList.get(i).value.equals(top.value)) {
+                    parent = nodeList.get(i);
+                    break;
+                }
+            }
+            for (int i = 0; i < topChildren.size(); i++) {
+                ContrastPatterTreeNode child = topChildren.get(i);
+                ContrastPatterTreeNode newChild = ContrastPatterTreeNode.Factory.newNode();
+                newChild.value = child.value;
+                newChild.c1 = child.c1;
+                newChild.c2 = child.c2;
+                parent.addChild(newChild);
+                nodeList.add(newChild);
+                copySubTree(nodeList, child);
+            }
+            for (int i = nodeList.size() - nodeChildrenSize + 1; i < nodeList.size(); i++) {
+                ContrastPatterTreeNode prev = nodeList.get(i - 1);
+                ContrastPatterTreeNode curr = nodeList.get(i);
+                prev.sibling = curr;
+            }
+            for (int i = 0; i < nodeChildrenSize; i++) {
+                nodeList.remove(nodeList.size() - 1);
+            }
         }
     }
     public static class ContrastPatterTreeNode implements Cloneable {
@@ -200,7 +239,9 @@ public class ContrastPatternTree {
         public List<ContrastPatterTreeNode> getChildren() {
             return children;
         }
-
+        public void removeChild(ContrastPatterTreeNode child){children.remove(child);}
+        public boolean isRoot(){return value.equals("$");}
+        public boolean isRootChild(){return parent.isRoot();}
         public void sortChildren() {
             Context context = Context.getInstance();
             Map<String, Integer> itemCount = context.getItemcountMap();
@@ -246,6 +287,7 @@ public class ContrastPatternTree {
             }
             return newNode;
         }
+
         @Override
         protected ContrastPatterTreeNode clone() throws CloneNotSupportedException {
             ContrastPatterTreeNode newNode = (ContrastPatterTreeNode) super.clone();
@@ -346,5 +388,6 @@ public class ContrastPatternTree {
                 return "NULL";
             }
         }
+
     }
 }
