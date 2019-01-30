@@ -6,8 +6,8 @@ import java.util.Map;
 public enum FilePathEnum {
     DATA_SET_I("resources/DATASET_I"),
     DATA_SET_II("resources/DATASET_II"),
-    MIX_DATASET("resources/MIXED_DATASET"),
-    ITEM_COUNT_FILE("resources/ITEMSCOUNT_FILE");
+    MIX_DATASET("resources/MIXEDDATASET"),
+    ITEM_COUNT_FILE("resources/ITEMCOUNT");
 
     private static Map<String, String> CACHE = new HashMap<>();
 

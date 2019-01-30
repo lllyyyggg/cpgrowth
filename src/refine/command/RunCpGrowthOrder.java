@@ -6,7 +6,6 @@ import refine.algorithm.CPGrowth;
 
 public class RunCpGrowthOrder implements Order {
     private CPGrowth cpGrowth;
-
     public RunCpGrowthOrder(double alpha, double beta) {
         this.cpGrowth = new CPGrowth(alpha, beta);
     }

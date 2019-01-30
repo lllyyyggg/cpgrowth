@@ -19,9 +19,6 @@ public class Context {
 
     private static final Context INSTANCE = new Context();
 
-    public static void main(String[] args) {
-        System.out.println(Context.getInstance());
-    }
     public String getItemCountFile() {
         return locationsMap.get("itemcount");
     }

@@ -113,7 +113,7 @@ public class ItemFacade {
 
         String[] getItems(String transactionString);
 
-        Map<String, Integer> load(Context context);
+        Map<String, Integer> load();
     }
     static class ItemWriter implements Writer {
         private String dest;
@@ -165,7 +165,7 @@ public class ItemFacade {
             bufferedWriter.write(item + " " + count);
         }
     }
-    static class ItemCounter implements Counter {
+    public static class ItemCounter implements Counter {
         private String source;
         private BufferedReader br;
 
@@ -217,7 +217,7 @@ public class ItemFacade {
         }
 
         @Override
-        public Map<String, Integer> load(Context context) {
+        public Map<String, Integer> load() {
             Map<String, Integer> map = new HashMap<>();
             try {
                 String itemCount;

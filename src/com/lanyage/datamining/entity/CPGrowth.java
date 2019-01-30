@@ -48,7 +48,6 @@ public class CPGrowth {
                 treeAppender.addTreeToTree(toAdd, root);
                 //LOGGER.info("—————————————————————————————————merge——end——————————————————————————————————————");
                 Collections.sort(root.children(), (o1, o2) -> {
-
                     if (!this.nodeCountMap.get(o1.value()).equals(this.nodeCountMap.get(o2.value()))) {
                         return this.nodeCountMap.get(o2.value()).compareTo(this.nodeCountMap.get(o1.value()));
                     } else {

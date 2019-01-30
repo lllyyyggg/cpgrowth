@@ -11,7 +11,6 @@ import java.util.*;
 // Tested
 public class ContrastPatternTree {
     private static final ContrastPatterTreeNode NULL = ContrastPatterTreeNode.NullContrastPatterTreeNode.NULL;
-    private static final Context CONTEXT = Context.getInstance();
     private ContrastPatterTreeNode root;
     public void addTree(ContrastPatterTreeNode newNode) {
         addTree(this.root, newNode);
@@ -96,7 +95,7 @@ public class ContrastPatternTree {
         public static ContrastPatternTree newTree() {
             ContrastPatternTree tree = new ContrastPatternTree();
             tree.root = ContrastPatterTreeNode.Factory.newNode("$");
-            BufferedReader br = FunctorFactory.getBufferReaderGetter().apply(CONTEXT.getMixedDatasetFile());
+            BufferedReader br = FunctorFactory.getBufferReaderGetter().apply(Context.getInstance().getMixedDatasetFile());
             String line;
             try {
                 while (null != (line = br.readLine()) && !"".equals(line = line.trim())) {
@@ -203,7 +202,8 @@ public class ContrastPatternTree {
         }
 
         public void sortChildren() {
-            Map<String, Integer> itemCount = CONTEXT.getItemcountMap();
+            Context context = Context.getInstance();
+            Map<String, Integer> itemCount = context.getItemcountMap();
             Collections.sort(this.children, (o1, o2) -> {
                 if (!itemCount.get(o1.getValue()).equals(itemCount.get(o2.getValue()))) {
                     return itemCount.get(o2.getValue()).compareTo(itemCount.get(o1.getValue()));
