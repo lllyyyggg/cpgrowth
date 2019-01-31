@@ -9,63 +9,36 @@ import java.util.Objects;
 
 // Tested
 public class Transaction implements Comparable<Transaction> {
-
     public static void main(String[] args) {
     }
-
-    static class Factory {
-        public static Transaction create(List<Item> itemList) {
-            return new Transaction(itemList);
-        }
-
-        public static Transaction create(String itemString) {
-            Transaction transaction = new Transaction();
-            String[] items = SequenceSplitter.split(itemString.trim());
-            for (String item : items) {
-                transaction.addItem(item);
-            }
-            return transaction;
-        }
-    }
-
     public int size() {
         return itemList.size();
     }
-
     public Item get(int index) {
         return itemList.get(index);
     }
-
     private List<Item> itemList;
-
     public Transaction() {
         itemList = new ArrayList<>(3);
     }
-
     public Transaction(List<Item> itemList) {
         this.itemList = itemList;
     }
-
     public void addItem(String value) {
         addItem(value, 0);
     }
-
     public void addItem(String value, Integer count) {
         itemList.add(ItemFactory.create(value, count));
     }
-
     public void sort() {
         Collections.sort(itemList);
     }
-
     public List<Item> getItemList() {
         return itemList;
     }
-
     public int length() {
         return itemList.size();
     }
-
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder();
@@ -75,7 +48,6 @@ public class Transaction implements Comparable<Transaction> {
         s.deleteCharAt(s.length() - 1);
         return s.toString();
     }
-
     @Override
     public int compareTo(Transaction o) {
         List<Item> self = this.itemList;
@@ -89,7 +61,19 @@ public class Transaction implements Comparable<Transaction> {
         }
         return 0;
     }
-
+    public static class Factory {
+        public static Transaction create(List<Item> itemList) {
+            return new Transaction(itemList);
+        }
+        public static Transaction create(String itemString) {
+            Transaction transaction = new Transaction();
+            String[] items = SequenceSplitter.split(itemString.trim());
+            for (String item : items) {
+                transaction.addItem(item);
+            }
+            return transaction;
+        }
+    }
     public static class Item implements Comparable<Item> {
         private String value;
         private Integer count;
@@ -137,12 +121,10 @@ public class Transaction implements Comparable<Transaction> {
         }
 
     }
-
     public static class ItemFactory {
         public static Item create() {
             return new Item();
         }
-
         public static Item create(String value, Integer count) {
             Item item = create();
             item.value = value;

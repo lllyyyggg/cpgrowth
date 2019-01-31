@@ -28,7 +28,7 @@ public class MineFromNodeListForth {
          ————————————————————————————-————*/
 
         CPNodeListCreator cpNodeListCreator = new CPNodeListCreator();
-        Map<Object, List<SequenceSuffix>> initialNodeListMap = cpNodeListCreator.createInitialNodeList(root);          //根据root创建初始NodeList
+        Map<Object, List<SequenceSuffix>> initialNodeListMap = cpNodeListCreator.createInitialNodeList(root);           //根据root创建初始NodeList
 
         /*———————————————
         | 开始挖掘对比模式 |

@@ -2,13 +2,18 @@ package refine;
 
 
 import refine.context.Context;
+import refine.utils.ContrastPatternUtil;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.*;
 
 public class ContrastPatternTree {
     private static final ContrastPatterTreeNode NULL = ContrastPatterTreeNode.NullContrastPatterTreeNode.NULL;
+    private static final ThreadLocal<Integer> preIndex = ThreadLocal.withInitial(()->0);
+    private static final ThreadLocal<Integer> postIndex = ThreadLocal.withInitial(()->0);
     private ContrastPatterTreeNode root;
+
     public void addTree(ContrastPatterTreeNode newNode) {
         addTree(this.root, newNode);
     }
@@ -17,7 +22,9 @@ public class ContrastPatternTree {
         stack.addLast(root);
         while (!stack.isEmpty()) {
             ContrastPatterTreeNode node = stack.pollLast();
-            System.out.println("preTraverse : (" + node.value + "," + node.c1 + "," + node.c2 + ")");
+            node.setPreIndex(preIndex.get());
+            preIndex.set(preIndex.get() + 1);
+            //System.out.println("preTraverse : " + node);
             if (node.childrenSize() > 0) {
                 for (int j = node.childrenSize() - 1; j >= 0; j--) {
                     stack.addLast(node.getChild(j));
@@ -26,7 +33,6 @@ public class ContrastPatternTree {
         }
     }
     public void postTraverse() {
-        int postIndex = 0;
         LinkedList<ContrastPatterTreeNode> stack = new LinkedList<>();
         stack.addLast(root);
         while (!stack.isEmpty()) {
@@ -36,7 +42,9 @@ public class ContrastPatternTree {
                 stack.addLast(curr);
             }
             ContrastPatterTreeNode node = stack.pollLast();
-            System.out.println("preTraverse : (" + node.value + "," + node.c1 + "," + node.c2 + ")");
+            node.setPostIndex(postIndex.get());
+            postIndex.set(postIndex.get() + 1);
+            //System.out.println("postTraverse : " + node);
             node.setVisited(true);
             if (!node.getSibling().isNull()) {
                 stack.addLast(node.getSibling());
@@ -278,7 +286,7 @@ public class ContrastPatternTree {
         public boolean isNull() {
             return false;
         }
-        public ContrastPatterTreeNode copy() {
+        public ContrastPatterTreeNode copyWithClone() {
             ContrastPatterTreeNode newNode;
             try {
                 newNode = this.clone();
@@ -287,7 +295,18 @@ public class ContrastPatternTree {
             }
             return newNode;
         }
-
+        public boolean isContrastPattern(double alpha, double beta) {
+            Context context = Context.getInstance();
+            int n1 = context.getN1();
+            int n2 = context.getN2();
+            return ContrastPatternUtil.isContrastPatter(c1, c2, n1, n2, alpha, beta);
+        }
+        public boolean canPrune(double alpha) {
+            Context context = Context.getInstance();
+            int n1 = context.getN1();
+            int n2 = context.getN2();
+            return ContrastPatternUtil.canPrune(c1, c2, n1, n2, alpha);
+        }
         @Override
         protected ContrastPatterTreeNode clone() throws CloneNotSupportedException {
             ContrastPatterTreeNode newNode = (ContrastPatterTreeNode) super.clone();

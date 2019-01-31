@@ -9,9 +9,9 @@ import java.util.LinkedList;
 
 public class CPGrowth {
     private static final Logger LOGGER = LoggerFactory.getLogger(CPGrowth.class);
+    private static final ThreadLocal<Integer> total = ThreadLocal.withInitial(()->0);
     private double alpha;
     private double beta;
-    private ContrastPatternTree tree;
     public CPGrowth(double alpha, double beta) {
         this.alpha = alpha;
         this.beta = beta;
@@ -21,38 +21,37 @@ public class CPGrowth {
         Context context = Context.getInstance();
         int n1 = context.getN1();
         int n2 = context.getN2();
-        int total = 0;
-        this.tree = ContrastPatternTree.newTree();
+        ContrastPatternTree tree = context.getTree();
         ContrastPatternTree.ContrastPatterTreeNode root = tree.getRoot();
         for (int i = 0; i < root.childrenSize(); i++) {
             ContrastPatternTree.ContrastPatterTreeNode currRootChild = root.getChild(i);                                                                         //root的直接子节点
             if (currRootChild.childrenSize() > 0) {
-                ContrastPatternTree.ContrastPatterTreeNode firstChild = currRootChild.getChild(0).copy();
-                //ContrastPatternTree.ContrastPatterTreeNode firstChild = ContrastPatternTree.copy(currRootChild.getChild(0));
+                // Copy with cloning
+                // ContrastPatternTree.ContrastPatterTreeNode firstChild = currRootChild.getChild(0).copyWithClone();
+                // Copy without cloning
+                ContrastPatternTree.ContrastPatterTreeNode currentRootChildCopy = ContrastPatternTree.copy(currRootChild);
+                ContrastPatternTree.ContrastPatterTreeNode firstChild = currentRootChildCopy.getChild(0);
                 tree.addTree(firstChild);
                 root.sortChildren();
             }
-            total += mine(currRootChild);
+            //mine(currRootChild, n1, n2);
+            mineRecursively(currRootChild, n1, n2);
         }
-        LOGGER.info("TOTAL : {}, N1: {}, N2: {}, ALPHA: {}, BETA: {}", total, n1, n2, alpha, beta);
+        LOGGER.info("TOTAL : {}, N1: {}, N2: {}, ALPHA: {}, BETA: {}", total.get(), n1, n2, alpha, beta);
     }
-    private int mine(ContrastPatternTree.ContrastPatterTreeNode head) {
-        int sum = 0;
+    private void mine(ContrastPatternTree.ContrastPatterTreeNode head, int n1, int n2) {
         LinkedList<ContrastPatternTree.ContrastPatterTreeNode> stack = new LinkedList<>();
         stack.addLast(head);
-        Context context = Context.getInstance();
-        int n1 = context.getN1();
-        int n2 = context.getN2();
         while (!stack.isEmpty()) {
             ContrastPatternTree.ContrastPatterTreeNode node = stack.pollLast();
             String sequence = getSequence(node);
             if (isContrastPattern(node)) {
-                sum++;
+                total.set(total.get() + 1);
                 LOGGER.info("1 - {}, [{} {}], [{} {}]", sequence, node.getC1(), node.getC2(), n1 * alpha, n2 * beta);
             } else if (!canPrune(node)) {
-                //LOGGER.info("2 - {}, [{} {}], [{} {}]", sequence, node.getC1(), node.getC2(), n1 * alpha, n2 * beta);
+                LOGGER.info("2 - {}, [{} {}], [{} {}]", sequence, node.getC1(), node.getC2(), n1 * alpha, n2 * beta);
             } else {
-                //LOGGER.info("3 - {}, [{} {}], [{} {}]", sequence, node.getC1(), node.getC2(), n1 * alpha, n2 * beta);
+                LOGGER.info("3 - {}, [{} {}], [{} {}]", sequence, node.getC1(), node.getC2(), n1 * alpha, n2 * beta);
                 ContrastPatternTree.ContrastPatterTreeNode parent = node.getParent();
                 if (!node.isRootChild()) parent.removeChild(node);
                 continue;
@@ -63,7 +62,29 @@ public class CPGrowth {
                 }
             }
         }
-        return sum;
+    }
+    private boolean mineRecursively(ContrastPatternTree.ContrastPatterTreeNode head, int n1, int n2) {
+        if (head.isNull()) return false;
+        if(!head.isRootChild()){
+            StringBuilder sb = new StringBuilder(head.getParent().getValue()).append(" ").append(head.getValue());
+            head.setValue(sb.toString());
+        }
+        //if (isContrastPattern(head)) {
+        if (head.isContrastPattern(alpha, beta)) {
+            total.set(total.get() + 1);
+            LOGGER.info("1 - {}, [{} {}], [{} {}]", head.getValue(), head.getC1(), head.getC2(), n1 * alpha, n2 * beta);
+        }else if (!head.canPrune(alpha)) {
+            LOGGER.info("2 - {}, [{} {}], [{} {}]", head.getValue(), head.getC1(), head.getC2(), n1 * alpha, n2 * beta);
+        } else {
+            LOGGER.info("3 - {}, [{} {}], [{} {}]", head.getValue(), head.getC1(), head.getC2(), n1 * alpha, n2 * beta);
+            ContrastPatternTree.ContrastPatterTreeNode parent = head.getParent();
+            if (!head.isRootChild()) parent.removeChild(head);
+            return true;
+        }
+        for(int j = 0; j < head.childrenSize(); j++) {
+           if(mineRecursively(head.getChild(j), n1, n2)) j--;
+        }
+        return false;
     }
     private String getSequence(ContrastPatternTree.ContrastPatterTreeNode node) {
         LinkedList<String> list = new LinkedList<>();
@@ -87,9 +108,5 @@ public class CPGrowth {
         int n2 = context.getN2();
         boolean result = node.getC1() > alpha * n1 || node.getC2() > alpha * n2;
         return !result;
-    }
-
-    public static void main(String[] args) {
-        CPGrowth cpGrowth = new CPGrowth(0.6d, 0.05d);
     }
 }
