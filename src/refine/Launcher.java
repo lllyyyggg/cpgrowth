@@ -1,8 +1,6 @@
 package refine;
 
-
 import refine.command.*;
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 public class Launcher {
@@ -10,7 +8,6 @@ public class Launcher {
     static {
         algorithmMap.put("cpgrowth", RunCpGrowthOrder.class);
         algorithmMap.put("cpnodelist", RunNodeListAlgorithmOrder.class);
-
     }
     public static void main(String[] args) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
         Application application = new Application();

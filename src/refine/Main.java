@@ -1,7 +1,6 @@
 package refine;
 
 import com.lanyage.datamining.enums.FilePathEnum;
-
 public class Main {
     public static void main(String[] args) {
         try {

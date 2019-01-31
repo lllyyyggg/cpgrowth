@@ -6,11 +6,9 @@ import refine.ContrastPatternTree;
 import refine.FunctorFactory;
 import refine.context.Context;
 import refine.utils.ContrastPatternUtil;
-
 import java.util.*;
 import java.util.function.Function;
-
-public class MineFromNodeList {
+public class MineFromNodeList implements MiningAlgorithm{
     private Double alpha;
     private Double beta;
     private static final ThreadLocal<Integer> total = ThreadLocal.withInitial(() -> 0);
@@ -22,21 +20,21 @@ public class MineFromNodeList {
         this.alpha = alpha;
         this.beta = beta;
     }
+    @Override
     public void mine() {
         LOGGER.info("————————————STARTING MINECPNODELIST ALGORITHM————————————");
         Context context = Context.getInstance();
         int n1 = context.getN1();
         int n2 = context.getN2();
+        this.tree = context.getTree();
         Map<String, Integer> itemCount = context.getItemcountMap();
         Function<Map<String, Integer>, List<String>> getSortedItems = FunctorFactory.getSortedItems();
         Function<List<String>, Map<String, Integer>> getItemIndexMap = FunctorFactory.getItemIndexMap();
-
         List<String> sortedItems = getSortedItems.apply(itemCount);
         Map<String, Integer> itemIndexMap = getItemIndexMap.apply(sortedItems);
-        tree = context.getTree();
-        Map<String, List<SequenceSuffix>> suffixMap = getInitialSuffix(tree.getRoot());
+        Map<String, List<SequenceSuffix>> suffixMap = getInitialSuffix(this.tree.getRoot());
+        Map<String, List<SequenceSuffix>> tempMap = suffixMap;
         suffixMap.remove("$");
-        Map<String, List<SequenceSuffix>> tempMap = new HashMap<>(suffixMap);
         while (!tempMap.isEmpty()) {
             mine(tempMap, n1, n2);
             Map<String, List<SequenceSuffix>> m = new HashMap<>();
@@ -198,13 +196,7 @@ public class MineFromNodeList {
         }
         @Override
         public String toString() {
-            return "(" +
-                    sequence + "," +
-                    preIndex + ","
-                    + postIndex + ","
-                    + c1 + ","
-                    + c2 +
-                    ")";
+            return "(" + sequence + ", " + preIndex + ", " + postIndex + ", " + c1 + ", " + c2 + ")";
         }
         public boolean isContrastPattern(Double alpha, Double beta) {
             Context context = Context.getInstance();

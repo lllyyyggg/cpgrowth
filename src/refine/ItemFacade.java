@@ -1,17 +1,12 @@
 package refine;
 
-
 import refine.context.Context;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.*;
 import java.util.function.Function;
-
-// TESTED
 public class ItemFacade {
-
     public static final ItemFacade INSTANCE = new ItemFacade();
     private ItemFacade() {}
     public void createMixedDatasetFile(String source1, String source2) {
@@ -23,22 +18,19 @@ public class ItemFacade {
         List<Transaction> transactionList = new ArrayList<>();
         transactionList.addAll(set1);
         transactionList.addAll(set2);
-        //Collections.sort(transactionList);
         try {
             int n1 = 0, n2 = 0;
             for (Transaction transaction : transactionList) {
                 String transactionString = transaction.toString();
                 if (set1.contains(transaction)) {
-                    n1++;
+                    context.setN1(++n1);
                     writer.write(transactionString + ",1");
                 } else {
-                    n2++;
+                    context.setN2(++n2);
                     writer.write(transactionString + ",2");
                 }
                 writer.newLine();
             }
-            context.setN1(n1);
-            context.setN2(n2);
         } catch (IOException e) {
             throw new RuntimeException("写入异常");
         } finally {
@@ -68,9 +60,7 @@ public class ItemFacade {
         List<Map.Entry<String, Integer>> list = new ArrayList<>(mergedMap.entrySet());
         Collections.sort(list, (entry1, entry2) -> {
             int valueGap = entry2.getValue().compareTo(entry1.getValue());
-            if (0 == valueGap) {
-                return entry1.getKey().compareTo(entry2.getKey());
-            }
+            if (0 == valueGap) return entry1.getKey().compareTo(entry2.getKey());
             return valueGap;
         });
         return writer.writeItemCounts(list, context);
@@ -105,38 +95,28 @@ public class ItemFacade {
     }
     interface Writer {
         int writeItemCounts(List<Map.Entry<String, Integer>> sortedEntry, Context context);
-
         void writeItemCount(String item, Integer count) throws IOException;
     }
     interface Counter {
         Map<String, Integer> getItemCountMap();
-
         String[] getItems(String transactionString);
-
         Map<String, Integer> load();
     }
     static class ItemWriter implements Writer {
         private String dest;
         private BufferedWriter bufferedWriter;
-
         static class Factory {
             public static ItemWriter create(String dest) {
                 return new ItemWriter(dest);
             }
         }
-
         private ItemWriter(String dest) {
             this.dest = dest;
-            this.bufferedWriter = FunctorFactory
-                    .getBufferWriterGetter()
-                    .apply(dest);
+            this.bufferedWriter = FunctorFactory.getBufferWriterGetter().apply(dest);
         }
-
         public int writeItemCounts(List<Map.Entry<String, Integer>> sortedEntry, Context context) {
-
             try {
                 for (Map.Entry<String, Integer> entry : sortedEntry) {
-                    // write
                     writeItemCount(entry.getKey(), entry.getValue());
                     context.addItemCount(entry.getKey(), entry.getValue());
                     bufferedWriter.newLine();
@@ -159,7 +139,6 @@ public class ItemFacade {
             }
             return sortedEntry.size();
         }
-
         @Override
         public void writeItemCount(String item, Integer count) throws IOException {
             bufferedWriter.write(item + " " + count);
@@ -168,25 +147,21 @@ public class ItemFacade {
     public static class ItemCounter implements Counter {
         private String source;
         private BufferedReader br;
-
         private ItemCounter(String source) {
             this.source = source;
             this.br = FunctorFactory.getBufferReaderGetter().apply(source);
         }
-
         public static class Factory {
             public static ItemCounter create(String source) {
                 return new ItemCounter(source);
             }
         }
-
         public Map<String, Integer> getItemCountMap() {
             Map<String, Integer> map = new HashMap<>();
             String transactionString;
             try {
                 while (null != (transactionString = br.readLine())
                         && !"".equals(transactionString = transactionString.trim())) {
-                    // split
                     String[] items = getItems(transactionString);
                     for (String item : items) {
                         Integer count = map.getOrDefault(item, null);
@@ -210,22 +185,18 @@ public class ItemFacade {
             }
             return map;
         }
-
         @Override
         public String[] getItems(String transactionString) {
             return SequenceSplitter.split(transactionString);
         }
-
         @Override
         public Map<String, Integer> load() {
             Map<String, Integer> map = new HashMap<>();
             try {
                 String itemCount;
-                //Integer total = 0;
                 while (null != (itemCount = br.readLine()) && !"".equals(itemCount = itemCount.trim())) {
                     String[] splits = SequenceSplitter.split(itemCount);
                     map.put(splits[0], Integer.valueOf(splits[1]));
-                    //total += Integer.valueOf(splits[1]);
                 }
             } catch (IOException e) {
                 throw new RuntimeException("读取异常");

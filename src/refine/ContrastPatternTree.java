@@ -3,7 +3,6 @@ package refine;
 
 import refine.context.Context;
 import refine.utils.ContrastPatternUtil;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.*;
@@ -13,7 +12,6 @@ public class ContrastPatternTree {
     private static final ThreadLocal<Integer> preIndex = ThreadLocal.withInitial(()->0);
     private static final ThreadLocal<Integer> postIndex = ThreadLocal.withInitial(()->0);
     private ContrastPatterTreeNode root;
-
     public void addTree(ContrastPatterTreeNode newNode) {
         addTree(this.root, newNode);
     }
@@ -24,7 +22,6 @@ public class ContrastPatternTree {
             ContrastPatterTreeNode node = stack.pollLast();
             node.setPreIndex(preIndex.get());
             preIndex.set(preIndex.get() + 1);
-            //System.out.println("preTraverse : " + node);
             if (node.childrenSize() > 0) {
                 for (int j = node.childrenSize() - 1; j >= 0; j--) {
                     stack.addLast(node.getChild(j));
@@ -44,7 +41,6 @@ public class ContrastPatternTree {
             ContrastPatterTreeNode node = stack.pollLast();
             node.setPostIndex(postIndex.get());
             postIndex.set(postIndex.get() + 1);
-            //System.out.println("postTraverse : " + node);
             node.setVisited(true);
             if (!node.getSibling().isNull()) {
                 stack.addLast(node.getSibling());
@@ -85,7 +81,6 @@ public class ContrastPatternTree {
             }
         }
     }
-
     public static ContrastPatternTree newTree() {
         return Factory.newTree();
     }
@@ -194,7 +189,6 @@ public class ContrastPatternTree {
         private ContrastPatterTreeNode parent;
         private ContrastPatterTreeNode sibling;
         private List<ContrastPatterTreeNode> children;
-
         private ContrastPatterTreeNode() {}
         public String getValue() {
             return value;
@@ -349,13 +343,11 @@ public class ContrastPatternTree {
                 node.children = new ArrayList<>(3);
                 return node;
             }
-
             public static ContrastPatterTreeNode newNode(String value) {
                 ContrastPatterTreeNode node = newNode();
                 node.value = value;
                 return node;
             }
-
             public static ContrastPatterTreeNode getFromTransaction(Transaction transaction, String classTag) {
                 List<ContrastPatterTreeNode> nodes = new ArrayList<>();
                 for (int i = 0; i < transaction.size(); i++) {
@@ -381,32 +373,25 @@ public class ContrastPatternTree {
                 }
                 return null;
             }
-
             public static ContrastPatterTreeNode getFromTransaction(String transaction, String classTag) {
                 return getFromTransaction(Transaction.Factory.create(transaction.trim()), classTag);
             }
         }
         private static class NullContrastPatterTreeNode extends ContrastPatterTreeNode {
             public static final ContrastPatterTreeNode NULL = new NullContrastPatterTreeNode();
-
-            private NullContrastPatterTreeNode() {
-            }
-
+            private NullContrastPatterTreeNode() {}
             @Override
             public boolean isNull() {
                 return true;
             }
-
             @Override
             protected ContrastPatterTreeNode clone() {
                 throw new RuntimeException("Method not supported");
             }
-
             @Override
             public String toString() {
                 return "NULL";
             }
         }
-
     }
 }

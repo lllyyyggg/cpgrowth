@@ -6,8 +6,7 @@ import refine.ContrastPatternTree;
 import refine.context.Context;
 
 import java.util.LinkedList;
-
-public class CPGrowth {
+public class CPGrowth implements MiningAlgorithm{
     private static final Logger LOGGER = LoggerFactory.getLogger(CPGrowth.class);
     private static final ThreadLocal<Integer> total = ThreadLocal.withInitial(()->0);
     private double alpha;
@@ -16,6 +15,7 @@ public class CPGrowth {
         this.alpha = alpha;
         this.beta = beta;
     }
+    @Override
     public void mine() {
         LOGGER.info("————————————STARTING CPGROWTH ALGORITHM————————————");
         Context context = Context.getInstance();

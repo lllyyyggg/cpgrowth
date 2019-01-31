@@ -6,11 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-
-// Tested
 public class Transaction implements Comparable<Transaction> {
-    public static void main(String[] args) {
-    }
     public int size() {
         return itemList.size();
     }
@@ -77,25 +73,20 @@ public class Transaction implements Comparable<Transaction> {
     public static class Item implements Comparable<Item> {
         private String value;
         private Integer count;
-
         private Item() {
             this.count = 0;
         }
-
         public Item(String value) {
             this();
             this.value = value;
         }
-
         public Item(String value, Integer count) {
             this(value);
             this.count = count;
         }
-
         public String getValue() {
             return value;
         }
-
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
@@ -103,23 +94,18 @@ public class Transaction implements Comparable<Transaction> {
             Item item = (Item) o;
             return Objects.equals(value, item.value);
         }
-
         @Override
         public int hashCode() {
             return Objects.hash(value);
         }
-
         @Override
         public String toString() {
-            return "<" + this.value + "," + this.count + ">";
+            return "[" + this.value + "," + this.count + "]";
         }
-
-
         @Override
         public int compareTo(Item anotherItem) {
             return anotherItem.count - count == 0 ? value.compareTo(anotherItem.value) : anotherItem.count - count;
         }
-
     }
     public static class ItemFactory {
         public static Item create() {
