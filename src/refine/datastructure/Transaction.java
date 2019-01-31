@@ -1,6 +1,8 @@
-package refine;
+package refine.datastructure;
 
 
+
+import refine.utils.SequenceSplitUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -63,7 +65,7 @@ public class Transaction implements Comparable<Transaction> {
         }
         public static Transaction create(String itemString) {
             Transaction transaction = new Transaction();
-            String[] items = SequenceSplitter.split(itemString.trim());
+            String[] items = SequenceSplitUtil.split(itemString.trim());
             for (String item : items) {
                 transaction.addItem(item);
             }

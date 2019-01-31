@@ -1,9 +1,9 @@
-package refine;
+package refine.utils;
 
 import java.io.*;
 import java.util.*;
 import java.util.function.Function;
-public class FunctorFactory {
+public class FunctorStaticFactory {
     public static Function<String, BufferedReader> getBufferReaderGetter() {
         Function<String, BufferedReader> bufferedReaderGetter = source -> {
             try {

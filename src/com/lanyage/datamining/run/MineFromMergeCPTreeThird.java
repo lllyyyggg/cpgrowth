@@ -5,7 +5,7 @@ import com.lanyage.datamining.entity.*;
 import com.lanyage.datamining.enums.FilePathEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import refine.ItemFacade;
+import refine.datastructure.ItemFacade;
 
 import java.util.Map;
 

@@ -1,6 +1,6 @@
 package refine.command;
 
-import refine.ContrastPatternTree;
+import refine.datastructure.ContrastPatternTree;
 import refine.context.Context;
 public class CreateMixedDatasetFile implements Order {
     private String dataSet1File;

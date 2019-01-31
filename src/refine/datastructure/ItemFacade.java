@@ -1,6 +1,9 @@
-package refine;
+package refine.datastructure;
 
 import refine.context.Context;
+import refine.utils.FunctorStaticFactory;
+import refine.utils.SequenceSplitUtil;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -14,7 +17,7 @@ public class ItemFacade {
         Map<String, Integer> itemCount = context.getItemcountMap();
         Set<Transaction> set1 = extractTransaction(itemCount, source1);
         Set<Transaction> set2 = extractTransaction(itemCount, source2);
-        BufferedWriter writer = FunctorFactory.getBufferWriterGetter().apply(context.getMixedDatasetFile());
+        BufferedWriter writer = FunctorStaticFactory.getBufferWriterGetter().apply(context.getMixedDatasetFile());
         List<Transaction> transactionList = new ArrayList<>();
         transactionList.addAll(set1);
         transactionList.addAll(set2);
@@ -53,7 +56,7 @@ public class ItemFacade {
         Counter counter2 = ItemCounter.Factory.create(source2);
         Map<String, Integer> m1 = counter1.getItemCountMap();
         Map<String, Integer> m2 = counter2.getItemCountMap();
-        Function<Map<String, Integer>, Function<Map<String, Integer>, Map<String, Integer>>> mapMerger = FunctorFactory.getMapMerger();
+        Function<Map<String, Integer>, Function<Map<String, Integer>, Map<String, Integer>>> mapMerger = FunctorStaticFactory.getMapMerger();
         Map<String, Integer> mergedMap = mapMerger.apply(m1).apply(m2);
         Context context = Context.getInstance();
         Writer writer = ItemWriter.Factory.create(context.getItemCountFile());
@@ -66,12 +69,12 @@ public class ItemFacade {
         return writer.writeItemCounts(list, context);
     }
     private Set<Transaction> extractTransaction(Map<String, Integer> itemCount, String source) {
-        BufferedReader br = FunctorFactory.getBufferReaderGetter().apply(source);
+        BufferedReader br = FunctorStaticFactory.getBufferReaderGetter().apply(source);
         String line;
         Set<Transaction> set = new HashSet<>();
         try {
             while (null != (line = br.readLine()) && !"".equals(line = line.trim())) {
-                String[] items = SequenceSplitter.split(line);
+                String[] items = SequenceSplitUtil.split(line);
                 Transaction transaction = new Transaction();
 
                 for (String item : items) {
@@ -112,7 +115,7 @@ public class ItemFacade {
         }
         private ItemWriter(String dest) {
             this.dest = dest;
-            this.bufferedWriter = FunctorFactory.getBufferWriterGetter().apply(dest);
+            this.bufferedWriter = FunctorStaticFactory.getBufferWriterGetter().apply(dest);
         }
         public int writeItemCounts(List<Map.Entry<String, Integer>> sortedEntry, Context context) {
             try {
@@ -149,7 +152,7 @@ public class ItemFacade {
         private BufferedReader br;
         private ItemCounter(String source) {
             this.source = source;
-            this.br = FunctorFactory.getBufferReaderGetter().apply(source);
+            this.br = FunctorStaticFactory.getBufferReaderGetter().apply(source);
         }
         public static class Factory {
             public static ItemCounter create(String source) {
@@ -187,7 +190,7 @@ public class ItemFacade {
         }
         @Override
         public String[] getItems(String transactionString) {
-            return SequenceSplitter.split(transactionString);
+            return SequenceSplitUtil.split(transactionString);
         }
         @Override
         public Map<String, Integer> load() {
@@ -195,7 +198,7 @@ public class ItemFacade {
             try {
                 String itemCount;
                 while (null != (itemCount = br.readLine()) && !"".equals(itemCount = itemCount.trim())) {
-                    String[] splits = SequenceSplitter.split(itemCount);
+                    String[] splits = SequenceSplitUtil.split(itemCount);
                     map.put(splits[0], Integer.valueOf(splits[1]));
                 }
             } catch (IOException e) {

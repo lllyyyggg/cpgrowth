@@ -1,8 +1,9 @@
-package refine;
+package refine.datastructure;
 
 
 import refine.context.Context;
 import refine.utils.ContrastPatternUtil;
+import refine.utils.FunctorStaticFactory;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.*;
@@ -94,7 +95,7 @@ public class ContrastPatternTree {
         public static ContrastPatternTree newTree() {
             ContrastPatternTree tree = new ContrastPatternTree();
             tree.root = ContrastPatterTreeNode.Factory.newNode("$");
-            BufferedReader br = FunctorFactory.getBufferReaderGetter().apply(Context.getInstance().getMixedDatasetFile());
+            BufferedReader br = FunctorStaticFactory.getBufferReaderGetter().apply(Context.getInstance().getMixedDatasetFile());
             String line;
             try {
                 while (null != (line = br.readLine()) && !"".equals(line = line.trim())) {

@@ -2,8 +2,8 @@ package refine.algorithm;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import refine.ContrastPatternTree;
-import refine.FunctorFactory;
+import refine.datastructure.ContrastPatternTree;
+import refine.utils.FunctorStaticFactory;
 import refine.context.Context;
 import refine.utils.ContrastPatternUtil;
 import java.util.*;
@@ -28,8 +28,8 @@ public class MineFromNodeList implements MiningAlgorithm{
         int n2 = context.getN2();
         this.tree = context.getTree();
         Map<String, Integer> itemCount = context.getItemcountMap();
-        Function<Map<String, Integer>, List<String>> getSortedItems = FunctorFactory.getSortedItems();
-        Function<List<String>, Map<String, Integer>> getItemIndexMap = FunctorFactory.getItemIndexMap();
+        Function<Map<String, Integer>, List<String>> getSortedItems = FunctorStaticFactory.getSortedItems();
+        Function<List<String>, Map<String, Integer>> getItemIndexMap = FunctorStaticFactory.getItemIndexMap();
         List<String> sortedItems = getSortedItems.apply(itemCount);
         Map<String, Integer> itemIndexMap = getItemIndexMap.apply(sortedItems);
         Map<String, List<SequenceSuffix>> suffixMap = getInitialSuffix(this.tree.getRoot());

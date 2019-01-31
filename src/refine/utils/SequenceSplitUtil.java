@@ -1,6 +1,6 @@
-package refine;
+package refine.utils;
 
-public class SequenceSplitter {
+public class SequenceSplitUtil {
     public static String[] split(String sequence, String delim) {
         if (null != sequence) return sequence.trim().split(delim);
         return null;

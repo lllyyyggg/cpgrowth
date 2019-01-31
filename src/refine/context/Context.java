@@ -1,6 +1,6 @@
 package refine.context;
-import refine.ContrastPatternTree;
-import refine.ItemFacade;
+import refine.datastructure.ContrastPatternTree;
+import refine.datastructure.ItemFacade;
 import java.util.HashMap;
 import java.util.Map;
 public class Context {
