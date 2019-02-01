@@ -1,4 +1,4 @@
-package refine;
+package refine.utils;
 
 import refine.command.*;
 import java.lang.reflect.InvocationTargetException;
@@ -23,4 +23,5 @@ public class Launcher {
         }
         application.run();
     }
+    public static void registerNewAlgorithm(String algorithmName, Class<? extends Order> clazz){algorithmMap.put(algorithmName, clazz);}
 }

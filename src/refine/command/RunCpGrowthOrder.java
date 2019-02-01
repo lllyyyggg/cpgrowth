@@ -1,8 +1,9 @@
 package refine.command;
-import refine.algorithm.CPGrowth;
+import refine.algorithm.MineWithCPGrowth;
+import refine.algorithm.MiningAlgorithm;
 public class RunCpGrowthOrder implements Order {
-    private CPGrowth cpGrowth;
-    public RunCpGrowthOrder(Double alpha, Double beta) { this.cpGrowth = new CPGrowth(alpha, beta); }
+    private MiningAlgorithm cpGrowth;
+    public RunCpGrowthOrder(Double alpha, Double beta) { this.cpGrowth = new MineWithCPGrowth(alpha, beta); }
     @Override
     public void execute() {
         long start = System.currentTimeMillis();

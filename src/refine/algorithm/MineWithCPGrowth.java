@@ -6,12 +6,12 @@ import refine.datastructure.ContrastPatternTree;
 import refine.context.Context;
 
 import java.util.LinkedList;
-public class CPGrowth implements MiningAlgorithm{
-    private static final Logger LOGGER = LoggerFactory.getLogger(CPGrowth.class);
+public class MineWithCPGrowth implements MiningAlgorithm{
+    private static final Logger LOGGER = LoggerFactory.getLogger(MineWithCPGrowth.class);
     private static final ThreadLocal<Integer> total = ThreadLocal.withInitial(()->0);
     private double alpha;
     private double beta;
-    public CPGrowth(double alpha, double beta) {
+    public MineWithCPGrowth(double alpha, double beta) {
         this.alpha = alpha;
         this.beta = beta;
     }

@@ -13,7 +13,7 @@ public class MineFromNodeList implements MiningAlgorithm{
     private Double beta;
     private static final ThreadLocal<Integer> total = ThreadLocal.withInitial(() -> 0);
     private static final ThreadLocal<Integer> calculated = ThreadLocal.withInitial(() -> 0);
-    private static final Logger LOGGER = LoggerFactory.getLogger(CPGrowth.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MineFromNodeList.class);
     private final Set<String> prune_set = new HashSet<>();
     private ContrastPatternTree tree;
     public MineFromNodeList(Double alpha, Double beta) {
@@ -89,7 +89,7 @@ public class MineFromNodeList implements MiningAlgorithm{
             SequenceSuffix coc = child.get(j);
             if (poc.preIndex() < coc.preIndex()) {
                 if (poc.postIndex() > coc.postIndex()) {
-                    boolean canCombine = coc.node().getParent() == poc.node();
+                    boolean canCombine = coc.node().getParent() == poc.node();// todo
                     if (canCombine) {
                         SequenceSuffix combinedOne = new SequenceSuffix();
                         combinedOne.preIndex = poc.preIndex();
@@ -111,15 +111,28 @@ public class MineFromNodeList implements MiningAlgorithm{
         return combinedNodeList;
     }
     private boolean existsInPruneset(String prefix) {
-        String temp = prefix;
-        while (!"".equals(temp)) {
-            if (prune_set.contains(temp)) return true;
-            int lastindex = temp.lastIndexOf(" ");
-            if (lastindex < 0) return false;
-            temp = temp.substring(0, lastindex);
+        //String temp = prefix;
+        //while (!"".equals(temp)) {
+        //    if (prune_set.contains(temp)) return true;
+        //    int lastindex = temp.lastIndexOf(" ");
+        //    if (lastindex < 0) return false;
+        //    temp = temp.substring(0, lastindex);
+        //}
+        int indexofspace = prefix.indexOf(" ", 0);
+        int lastindexofspace = prefix.lastIndexOf(" ");
+        if (indexofspace < 0) return prune_set.contains(indexofspace);
+        while (indexofspace > 0 && indexofspace <= lastindexofspace){
+            String s = prefix.substring(0, indexofspace);
+            if (prune_set.contains(s)) return true;
+            indexofspace = prefix.indexOf(" ", indexofspace + 1);
         }
         return false;
     }
+    //public static void main(String[] args) {
+    //    MiningAlgorithm algorithm = new MineFromNodeList(null, null);
+    //    ((MineFromNodeList) algorithm).prune_set.add("F D");
+    //    System.out.println(((MineFromNodeList) algorithm).existsInPruneset("F D K"));
+    //}
     private Map<String, List<SequenceSuffix>> getInitialSuffix(ContrastPatternTree.ContrastPatterTreeNode root) {
         Map<String, List<SequenceSuffix>> initialSuffixMap = new HashMap<>();
         LinkedList<ContrastPatternTree.ContrastPatterTreeNode> stack = new LinkedList<>();

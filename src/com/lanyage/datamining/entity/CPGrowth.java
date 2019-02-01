@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 
 /**
- * CPGrowth 算法
+ * MineWithCPGrowth 算法
  */
 public class CPGrowth {
 

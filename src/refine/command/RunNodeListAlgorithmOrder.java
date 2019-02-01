@@ -1,8 +1,9 @@
 package refine.command;
 
 import refine.algorithm.MineFromNodeList;
+import refine.algorithm.MiningAlgorithm;
 public class RunNodeListAlgorithmOrder implements Order {
-    private MineFromNodeList mineFromNodeList;
+    private MiningAlgorithm mineFromNodeList;
     public RunNodeListAlgorithmOrder(Double alpha, Double beta) {
         this.mineFromNodeList = new MineFromNodeList(alpha, beta);
     }
