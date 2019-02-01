@@ -23,6 +23,7 @@ public class ContrastPatternTree {
             ContrastPatterTreeNode node = stack.pollLast();
             node.setPreIndex(preIndex.get());
             preIndex.set(preIndex.get() + 1);
+            node.setDepth(node.getParent().getDepth() + 1);
             if (node.childrenSize() > 0) {
                 for (int j = node.childrenSize() - 1; j >= 0; j--) {
                     stack.addLast(node.getChild(j));
@@ -95,6 +96,7 @@ public class ContrastPatternTree {
         public static ContrastPatternTree newTree() {
             ContrastPatternTree tree = new ContrastPatternTree();
             tree.root = ContrastPatterTreeNode.Factory.newNode("$");
+            tree.root.parent = NULL;
             BufferedReader br = FunctorStaticFactory.getBufferReaderGetter().apply(Context.getInstance().getMixedDatasetFile());
             String line;
             try {
@@ -141,6 +143,7 @@ public class ContrastPatternTree {
         ContrastPatterTreeNode nnode = ContrastPatterTreeNode.Factory.newNode();
         nnode.c1 = node.c1;
         nnode.c2 = node.c2;
+        nnode.depth = node.depth;
         nnode.value = node.value;
         List<ContrastPatterTreeNode> nodeList = new ArrayList<>();
         nodeList.add(nnode);
@@ -148,13 +151,13 @@ public class ContrastPatternTree {
         return nnode;
     }
     private static void copySubTree(List<ContrastPatterTreeNode> nodeList, ContrastPatterTreeNode top) {
-        int nodeChildrenSize = top.childrenSize();                                                                   //获取top的子节点的个数
+        int nodeChildrenSize = top.childrenSize();
         if (nodeChildrenSize == 0) {
             return;
         } else {
             List<ContrastPatterTreeNode> topChildren = top.children;
             ContrastPatterTreeNode parent = NULL;
-            for (int i = 0; i < nodeList.size(); i++) {                                                                 //确保和nodeList里面的newChildK的值相等, 获取parent用于下面的设置子节点
+            for (int i = 0; i < nodeList.size(); i++) {
                 if (nodeList.get(i).value.equals(top.value)) {
                     parent = nodeList.get(i);
                     break;
@@ -166,6 +169,7 @@ public class ContrastPatternTree {
                 newChild.value = child.value;
                 newChild.c1 = child.c1;
                 newChild.c2 = child.c2;
+                newChild.depth = child.depth;
                 parent.addChild(newChild);
                 nodeList.add(newChild);
                 copySubTree(nodeList, child);
@@ -184,6 +188,7 @@ public class ContrastPatternTree {
         private String value;
         private Integer c1;
         private Integer c2;
+        private Integer depth;
         private Integer preIndex;
         private Integer postIndex;
         private Boolean isVisited;
@@ -239,6 +244,15 @@ public class ContrastPatternTree {
             parent.addChild(sibling);
             sibling.parent = parent;
         }
+
+        public Integer getDepth() {
+            return depth;
+        }
+
+        public void setDepth(Integer depth) {
+            this.depth = depth;
+        }
+
         public List<ContrastPatterTreeNode> getChildren() {
             return children;
         }
@@ -294,7 +308,7 @@ public class ContrastPatternTree {
             Context context = Context.getInstance();
             int n1 = context.getN1();
             int n2 = context.getN2();
-            return ContrastPatternUtil.isContrastPatter(c1, c2, n1, n2, alpha, beta);
+            return ContrastPatternUtil.isContrastPattern(c1, c2, n1, n2, alpha, beta);
         }
         public boolean canPrune(double alpha) {
             Context context = Context.getInstance();
@@ -321,14 +335,7 @@ public class ContrastPatternTree {
         }
         @Override
         public String toString() {
-            return "(" +
-                    value + "," +
-                    preIndex + "," +
-                    postIndex + "," +
-                    c1 + "," +
-                    c2 + "," +
-                    isVisited +
-                    ')';
+            return "(" + value + "," + preIndex + "," + postIndex + "," + c1 + "," + c2 + "," + isVisited + ')';
         }
 
         public static class Factory {
@@ -338,6 +345,7 @@ public class ContrastPatternTree {
                 node.c2 = 0;
                 node.preIndex = -1;
                 node.postIndex = -1;
+                node.depth = -1;
                 node.isVisited = false;
                 node.parent = NULL;
                 node.sibling = NULL;
@@ -354,11 +362,8 @@ public class ContrastPatternTree {
                 for (int i = 0; i < transaction.size(); i++) {
                     Transaction.Item item = transaction.get(i);
                     ContrastPatterTreeNode node = newNode(item.getValue());
-                    if ("1".equals(classTag)) {
-                        node.setC1(1);
-                    } else {
-                        node.setC2(1);
-                    }
+                    if ("1".equals(classTag)) node.setC1(1);
+                    else node.setC2(1);
                     nodes.add(node);
                 }
                 int nodeSize = nodes.size();
@@ -380,7 +385,7 @@ public class ContrastPatternTree {
         }
         private static class NullContrastPatterTreeNode extends ContrastPatterTreeNode {
             public static final ContrastPatterTreeNode NULL = new NullContrastPatterTreeNode();
-            private NullContrastPatterTreeNode() {}
+            private NullContrastPatterTreeNode() {this.setDepth(-1);}
             @Override
             public boolean isNull() {
                 return true;
