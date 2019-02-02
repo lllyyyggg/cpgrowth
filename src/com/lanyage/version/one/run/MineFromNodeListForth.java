@@ -2,7 +2,6 @@ package com.lanyage.version.one.run;
 
 import com.lanyage.version.one.datastructure.CPTreeNode;
 import com.lanyage.version.one.datastructure.SequenceSuffix;
-import com.lanyage.datamining.entity.*;
 import com.lanyage.version.one.entity.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

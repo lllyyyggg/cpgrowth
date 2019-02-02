@@ -1,6 +1,0 @@
-Manifest-Version: 1.0
-Class-Path: scala-library.jar scala-swing_2.12-2.0.3.jar scala-reflect
- .jar scala-parser-combinators_2.12-1.0.7.jar scala-xml_2.12-1.0.6.jar
-  slf4j-log4j12-1.7.25.jar log4j-1.2.17.jar slf4j-api-1.7.25.jar
-Main-Class: refine.Test
-
