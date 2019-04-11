@@ -26,18 +26,26 @@ public class MineFromNodeList implements MiningAlgorithm{
         Context context = Context.getInstance();
         int n1 = context.getN1();
         int n2 = context.getN2();
-        this.tree = context.getTree();
+        this.tree = context.getTree();          //构建初始CP树
+
         Function<Map<String, Integer>, List<String>> getSortedItems = FunctorStaticFactory.getSortedItems();
         Function<List<String>, Map<String, Integer>> getItemIndexMap = FunctorStaticFactory.getItemIndexMap();
+
         Map<String, Integer> itemCount = context.getItemcountMap();
         List<String> sortedItems = getSortedItems.apply(itemCount);
         Map<String, Integer> itemIndexMap = getItemIndexMap.apply(sortedItems);
+
+
         Map<String, List<SequenceSuffix>> initialSuffixMap = getInitialSuffix(this.tree.getRoot());
         Map<String, List<SequenceSuffix>> tempMap = initialSuffixMap;
+
+
         initialSuffixMap.remove("$");
         while (!tempMap.isEmpty()) {
+
             mine(tempMap, n1, n2);
             tempMap = tryCombine(tempMap, initialSuffixMap, sortedItems, itemIndexMap);
+
         }
         LOGGER.info("TOTAL : {}, N1: {}, N2: {}, ALPHA: {}, BETA: {}", total.get(), n1, n2, alpha, beta);
         LOGGER.info("CALCULATED TIME : {} TIMES AND PRUNE SIZE : {}", calculated.get(), prune_set.size());
@@ -71,7 +79,7 @@ public class MineFromNodeList implements MiningAlgorithm{
                                                          Map<String, Integer> itemIndexMap) {
         Map<String, List<SequenceSuffix>> m = new HashMap<>();
         for (String childKey : tempMap.keySet()) {
-            int parentIndex = itemIndexMap.get(childKey.substring(0, 2)) - 1;
+            int parentIndex = itemIndexMap.get(childKey.substring(0, 2)) - 1;   //index out of bound
             for(int j = 0; j <= parentIndex; j++) {
                 String parentKey = sortedItems.get(j);
                 List<SequenceSuffix> parentNodeList = initialSuffixMap.get(parentKey);
@@ -117,7 +125,7 @@ public class MineFromNodeList implements MiningAlgorithm{
     private boolean existsInPruneset(String prefix) {
         int indexofspace = prefix.indexOf(" ", 0);
         int lastindexofspace = prefix.lastIndexOf(" ");
-        if (indexofspace < 0) return prune_set.contains(indexofspace);
+        if (indexofspace < 0) return prune_set.contains(prefix);
         while (indexofspace > 0 && indexofspace <= lastindexofspace){
             String s = prefix.substring(0, indexofspace);
             if (prune_set.contains(s)) return true;

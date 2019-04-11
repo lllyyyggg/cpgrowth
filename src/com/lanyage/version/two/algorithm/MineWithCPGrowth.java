@@ -34,8 +34,8 @@ public class MineWithCPGrowth implements MiningAlgorithm{
                 tree.addTree(firstChild);
                 root.sortChildren();
             }
-            //mine(currRootChild, n1, n2);
-            mineRecursively(currRootChild, n1, n2);
+            mine(currRootChild, n1, n2);
+            //mineRecursively(currRootChild, n1, n2);
         }
         LOGGER.info("TOTAL : {}, N1: {}, N2: {}, ALPHA: {}, BETA: {}", total.get(), n1, n2, alpha, beta);
     }
@@ -49,7 +49,7 @@ public class MineWithCPGrowth implements MiningAlgorithm{
                 total.set(total.get() + 1);
                 LOGGER.info("1 - {}, [{} {}], [{} {}]", sequence, node.getC1(), node.getC2(), n1 * alpha, n2 * beta);
             } else if (!canPrune(node)) {
-                LOGGER.info("2 - {}, [{} {}], [{} {}]", sequence, node.getC1(), node.getC2(), n1 * alpha, n2 * beta);
+                //LOGGER.info("2 - {}, [{} {}], [{} {}]", sequence, node.getC1(), node.getC2(), n1 * alpha, n2 * beta);
             } else {
                 LOGGER.info("3 - {}, [{} {}], [{} {}]", sequence, node.getC1(), node.getC2(), n1 * alpha, n2 * beta);
                 ContrastPatternTree.ContrastPatterTreeNode parent = node.getParent();
